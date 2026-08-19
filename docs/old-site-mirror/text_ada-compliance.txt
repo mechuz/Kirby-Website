@@ -1,0 +1,21 @@
+[LI] Get Directions (901) 753-3449 Schedule a Tour Home
+[LI] About Assisted Living
+[LI] Memory Care
+[LI] Amenities
+[LI] Rates & Floor Plans
+[LI] Contact
+[P] Accessibility Statement for www.kirbygateliving.com
+[P] The Pointe at Kirby Gate is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.
+[P] Conformance status The Web Content Accessibility Guidelines (WCAG) defines guidelines for designers and developers to improve accessibility for people with disabilities. It defines three levels of conformance: Level A, Level AA, and Level AAA. www.kirbygateliving.com is partially conformant with WCAG 2.1 level AA. Partially conformant means that some parts of the content do not fully conform to the accessibility standard. While WCAG is a set of guidelines rather than enforceable legislation, The Pointe at Kirby Gate uses every effort apply such recommendations to its web site to ensure equal access to all online users.
+[P] Feedback We welcome your feedback on the accessibility of www.kirbygateliving.com. Please let us know if you encounter accessibility barriers on www.kirbygateliving.com:
+[H4] Visit Us
+[P] Get Directions
+[P] Phone Us (901) 753-3449 Email Us info@kirbygateliving.com
+[LI] Home
+[LI] About
+[LI] Assisted Living
+[LI] Memory Care
+[LI] Amenities
+[LI] Rates & Floor Plans
+[LI] Contact
+[P] © Copyright 2026 The Pointe at Kirby Gate | ADA Compliance | Privacy Policy | Terms of Service | Website Development by Get Indio™
