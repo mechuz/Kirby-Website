@@ -23,12 +23,18 @@ cd public && python3 -m http.server 8741
 
 Edit the relevant file in `content/`, run `python3 build.py`, commit, push. Cloudflare Pages redeploys automatically on push (~30 seconds). Photos go in `public/assets/img/` (keep them under ~700KB; `sips -s format jpeg -s formatOptions 65 --resampleWidth 1800 in.jpg --out out.jpg`).
 
-## Go-live checklist (one-time)
+## Go-live checklist (one-time) — GoDaddy DNS + GitHub Pages (free)
 
-1. **GitHub**: create a private repo (e.g. `medhcp/kirbygateliving`), push this folder.
-2. **Cloudflare**: create a free account (or use existing) → Workers & Pages → Create → Pages → connect the GitHub repo. Build command: `python3 build.py` (or none, since `public/` is committed). Output directory: `public`.
-3. **Add the domain**: in the Pages project → Custom domains → add `kirbygateliving.com` and `www.kirbygateliving.com`. Cloudflare will ask to move DNS: in **GoDaddy** → Domain Settings → Nameservers → change to the two Cloudflare nameservers it shows. (Domain stays registered at GoDaddy; only DNS moves. Keep any MX/email records — Cloudflare imports them, verify email still works.)
-4. **Wait for DNS** (minutes to a few hours), confirm the new site is live at kirbygateliving.com.
+DNS and the domain stay fully in GoDaddy; the files are hosted free on GitHub Pages. `.github/workflows/deploy.yml` rebuilds and redeploys the site automatically on every push.
+
+1. **Publish the repo** (GitHub Desktop): Add Local Repository → this folder → Publish repository. Name it `kirbygateliving`, **uncheck "Keep this code private"** (free GitHub Pages requires a public repo).
+2. **Enable Pages**: on github.com → the repo → Settings → Pages → Source: **GitHub Actions**. The deploy workflow will run and publish to `https://<username>.github.io/kirbygateliving/`.
+3. **Custom domain**: same Settings → Pages page → Custom domain: `www.kirbygateliving.com` → Save. Check "Enforce HTTPS" once the certificate is issued (can take a few minutes after DNS).
+4. **GoDaddy DNS** (My Products → kirbygateliving.com → DNS):
+   - Edit the `www` **CNAME** record → value `<username>.github.io` (replace the old BigRig value)
+   - Replace the apex `@` **A** record(s) with four A records: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+   - **Do not touch MX / email records.**
+   - Wait a few minutes–hours for DNS, then confirm https://www.kirbygateliving.com shows the new site (apex redirects to www automatically).
 5. **Form activation**: submit the contact form once; FormSubmit sends a one-time activation email to info@kirbygateliving.com — click it. After that, every submission lands in that inbox.
 6. **Google Ads form conversion**: in Google Ads → Goals → Conversions → New → Website → "Submit lead form" (page-load on `/thank-you/`), copy the conversion **label**, paste it into `FORM_CONVERSION_LABEL` in `public/assets/js/main.js` (and `assets/js/main.js` stays in git), rebuild, push. Phone-call conversions are already tracked via call reporting.
 7. **Cancel BigRig** — only after the new site has been live and stable for a few days. Before cancelling, confirm: (a) email for info@kirbygateliving.com is NOT hosted by BigRig (check MX records), (b) you have the mirrored copy of the old site (in this repo's history / scratch archive).

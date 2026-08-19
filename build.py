@@ -86,6 +86,8 @@ def build():
     (PUBLIC / "robots.txt").write_text(
         "User-agent: *\nAllow: /\nSitemap: https://www.kirbygateliving.com/sitemap.xml\n"
     )
+    # GitHub Pages custom domain
+    (PUBLIC / "CNAME").write_text("www.kirbygateliving.com\n")
     print(f"built sitemap.xml ({len(sitemap_paths)} urls) + robots.txt")
 
 if __name__ == "__main__":
