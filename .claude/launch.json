@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kirby-site",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd '/Users/maxe./Documents/Code/Kirby Website/public' && exec python3 -m http.server 8741"],
+      "port": 8741
+    }
+  ]
+}
