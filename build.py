@@ -26,7 +26,7 @@ TEMPLATE = (ROOT / "templates" / "base.html").read_text()
 CONTENT = ROOT / "content"
 PUBLIC = ROOT / "public"
 
-NAV_KEYS = ["home", "about", "al", "mc", "amenities", "rates", "contact"]
+NAV_KEYS = ["home", "about", "al", "mc", "amenities", "rates", "reviews", "contact"]
 
 def parse(src: str):
     m = re.match(r"\s*<!--meta\s*(.*?)-->\s*", src, re.S)
