@@ -17,6 +17,7 @@ top of each content file:
 Usage: python3 build.py
 """
 import datetime
+import hashlib
 import pathlib
 import re
 import sys
@@ -61,8 +62,13 @@ def parse(src: str):
         meta[k.strip()] = v.strip()
     return meta, src[m.end():]
 
+def fhash(path):
+    return hashlib.md5(path.read_bytes()).hexdigest()[:8]
+
 def build():
     year = str(datetime.date.today().year)
+    css_v = fhash(PUBLIC / "assets" / "css" / "main.css")
+    js_v = fhash(PUBLIC / "assets" / "js" / "main.js")
     sitemap_paths = []
     for f in sorted(CONTENT.glob("*.html")):
         if f.stem.endswith(".head"):
@@ -76,6 +82,8 @@ def build():
             "path": meta["path"],
             "content": body,
             "year": year,
+            "css_v": css_v,
+            "js_v": js_v,
             "head_extra": meta.get("head_extra", ""),
             "body_attr": (" " + meta["body_attr"]) if meta.get("body_attr") else "",
         }
