@@ -218,6 +218,17 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
   font-size: 0.9rem;
 }
 
+/* Footer legal strip */
+.footer-legal { border-top: 1px solid rgba(255,255,255,0.15); padding: 1.75rem 0 0.5rem; font-size: 0.82rem; line-height: 1.55; color: #b9cbbb; }
+.footer-legal p { margin-bottom: 0.75rem; }
+.legal-badges { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.badge { display: inline-flex; align-items: center; gap: 0.5rem; color: #e4eee5; font-weight: 600; font-size: 0.85rem; }
+.badge-icon { display: inline-flex; width: 34px; height: 34px; border: 1.5px solid #e4eee5; border-radius: 6px; align-items: center; justify-content: center; }
+.badge-icon svg { width: 22px; height: 22px; }
+.footer-bottom a { color: #d5e3d6; }
+.consent { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.9rem; margin: 0.5rem 0 1rem; }
+.consent input { margin-top: 0.3rem; width: auto; }
+
 /* Utility */
 .center { text-align: center; }
 .narrow { max-width: 780px; margin-left: auto; margin-right: auto; }

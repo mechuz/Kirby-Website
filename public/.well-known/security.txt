@@ -1,0 +1,3 @@
+Contact: mailto:info@kirbygateliving.com
+Preferred-Languages: en
+Canonical: https://www.kirbygateliving.com/.well-known/security.txt

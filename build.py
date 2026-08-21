@@ -49,6 +49,8 @@ ICONS = {
  "book":     '<path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',
  "flame":    '<path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1.5.5-2.5 1-3.5.5 1.5 1.5 2 2 2 0-3-1-5 1-7.5z"/>',
  "dumbbell": '<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>',
+ "eho":      '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 13h6M9 16h6"/>',
+ "access":   '<circle cx="12" cy="4" r="1.6"/><path d="M10 8h5l1 5h4M10 8v5h5"/><path d="M8.5 13a4.5 4.5 0 1 0 6 5"/>',
  "brain":    '<path d="M9 4a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5v1a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3zM15 4a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-2 5v1a3 3 0 0 1-6 0V7a3 3 0 0 1 3-3z"/>',
 }
 def icon(name):
@@ -95,6 +97,7 @@ def build():
             repl[f"active_{key}"] = 'aria-current="page"' if meta.get("nav") == key else ""
         for k, v in repl.items():
             html = html.replace("{{%s}}" % k, v)
+        html = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), html)
         # Support per-page head extras stored in a sibling file
         extra_file = CONTENT / (f.stem + ".head.html")
         if extra_file.exists():
