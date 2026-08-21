@@ -147,6 +147,8 @@ h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
 .icon-grid strong { color: var(--navy); font-size: 1.05rem; }
 .icon-grid li > span:last-child { color: #4f5c50; font-size: 0.97rem; line-height: 1.5; }
 
+.social-list li { display: inline-block; margin-right: 0.9rem; }
+
 /* Shop */
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.75rem; margin-top: 2.5rem; }
 .product { display: block; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; text-decoration: none; color: inherit; transition: transform .2s ease; }
