@@ -160,6 +160,12 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
 .product h3 { font-size: 1.05rem; margin: 0.9rem 1rem 0.2rem; }
 .product p { margin: 0 1rem 1rem; font-size: 0.92rem; color: #4f5c50; }
 
+/* Amenity columns */
+.amenity-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem 2.5rem; margin-top: 2.5rem; }
+.amenity-columns h3 { margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--green-light); }
+.amenity-columns .check-list { margin-top: 0.5rem; }
+.amenity-columns .check-list li { font-size: 0.97rem; margin-bottom: 0.45rem; }
+
 /* Checklist */
 .check-list { list-style: none; margin-top: 1rem; }
 .check-list li { padding-left: 1.9rem; position: relative; margin-bottom: 0.6rem; }
