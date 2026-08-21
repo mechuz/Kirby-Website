@@ -11,8 +11,8 @@
   --white: #ffffff;
   --shadow: 0 4px 20px rgba(31, 77, 43, 0.10);
   --radius: 12px;
-  --font-head: "Playfair Display", Georgia, serif;
-  --font-body: "Source Sans 3", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-head: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,10 +28,13 @@ img { max-width: 100%; height: auto; display: block; }
 a { color: var(--blue); }
 a:hover { color: var(--blue-deep); }
 
-h1, h2, h3, h4 { font-family: var(--font-head); color: var(--navy); line-height: 1.2; }
-h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
-h2 { font-size: clamp(1.6rem, 3.5vw, 2.25rem); margin-bottom: 0.75rem; }
-h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+h1, h2, h3, h4 { font-family: var(--font-head); color: var(--navy); line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; }
+h1 { font-size: clamp(2.2rem, 5.2vw, 3.6rem); }
+h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-bottom: 0.75rem; }
+h3 { font-size: 1.2rem; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+body { font-size: 1.0625rem; letter-spacing: -0.005em; }
+.eyebrow { letter-spacing: 0.1em; }
+.btn { letter-spacing: -0.005em; }
 
 .container { max-width: 1140px; margin: 0 auto; padding: 0 1.25rem; }
 
@@ -90,7 +93,7 @@ h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
 }
 .hero .container { position: relative; z-index: 1; padding-top: 4rem; padding-bottom: 4rem; }
 .hero h1 { color: #fff; max-width: 720px; }
-.hero .tagline { color: var(--ice); font-size: 1.3rem; margin: 1rem 0 1.75rem; max-width: 600px; }
+.hero .tagline { color: var(--ice); font-size: 1.3rem; margin: 1rem 0 1.75rem; max-width: 600px; font-weight: 400; }
 .hero-page { min-height: 320px; }
 
 /* Sections */
@@ -139,7 +142,7 @@ h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
 
 /* Icon grid */
 .icon-grid { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem 2rem; margin-top: 2.25rem; }
-.icon-grid li { display: flex; flex-direction: column; gap: 0.3rem; }
+.icon-grid li { display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-start; text-align: left; }
 .icon-grid .icon {
   width: 52px; height: 52px; border-radius: 14px; background: var(--ice); color: var(--blue);
   display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;
