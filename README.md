@@ -43,6 +43,7 @@ DNS and the domain stay fully in GoDaddy; the files are hosted free on GitHub Pa
 
 - **Google Ads**: gtag `AW-18300279647` on every page; `/thank-you/` fires the form conversion once the label is set.
 - **TikTok / Shop**: footer links to @thepointeatkirbygate and the Fourthwall shop.
+- **Yelp**: footer + Reviews-page links to [the Yelp listing](https://www.yelp.com/biz/the-pointe-at-kirby-gate-memphis) (read + write-a-review), listed in the JSON-LD `sameAs`, and outbound clicks tracked as a `review_click` gtag event. On the Yelp for Business side, set the listing's website to `https://www.kirbygateliving.com` so the link goes both ways.
 - **SEO**: same URL structure as the old site (no redirects needed), JSON-LD local-business schema, sitemap.xml, per-page meta. Submit the sitemap in Google Search Console after go-live.
 - **Google Business Profile / Facebook / Instagram**: link the site from those profiles; add FB/IG URLs to the footer (templates/base.html) once the accounts are confirmed.
 

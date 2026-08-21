@@ -29,6 +29,20 @@ var FORM_CONVERSION_LABEL = "";
   });
 })();
 
+// Track clicks out to review platforms (Google, Yelp) as a gtag event.
+(function () {
+  document.querySelectorAll('[data-track="review"]').forEach(function (el) {
+    el.addEventListener("click", function () {
+      if (typeof gtag === "function") {
+        gtag("event", "review_click", {
+          event_category: "engagement",
+          event_label: el.dataset.platform || "unknown",
+        });
+      }
+    });
+  });
+})();
+
 // Fire the form-lead conversion on the thank-you page.
 (function () {
   if (document.body.dataset.page === "thank-you" && FORM_CONVERSION_LABEL && typeof gtag === "function") {
