@@ -35,3 +35,18 @@ var FORM_CONVERSION_LABEL = "";
     gtag("event", "conversion", { send_to: "AW-18300279647/" + FORM_CONVERSION_LABEL });
   }
 })();
+
+// Dropdown toggle for touch devices (hover handles pointer devices)
+(function () {
+  document.querySelectorAll(".has-sub > button").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      var li = btn.parentElement;
+      var open = li.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      document.querySelectorAll(".has-sub.open").forEach(function (o) { if (o !== li) o.classList.remove("open"); });
+    });
+  });
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".has-sub")) document.querySelectorAll(".has-sub.open").forEach(function (o) { o.classList.remove("open"); });
+  });
+})();

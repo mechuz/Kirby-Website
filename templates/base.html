@@ -44,14 +44,30 @@
       </button>
       <ul id="nav-menu">
         <li><a href="/" {{active_home}}>Home</a></li>
-        <li><a href="/about-us/" {{active_about}}>About</a></li>
-        <li><a href="/assisted-living/" {{active_al}}>Assisted Living</a></li>
-        <li><a href="/memory-care/" {{active_mc}}>Memory Care</a></li>
-        <li><a href="/respite-care/" {{active_respite}}>Respite Care</a></li>
-        <li><a href="/amenities/" {{active_amenities}}>Amenities</a></li>
+        <li class="has-sub">
+          <button type="button" aria-expanded="false">Care <span class="caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="sub">
+            <li><a href="/assisted-living/" {{active_al}}>Assisted Living</a></li>
+            <li><a href="/memory-care/" {{active_mc}}>Memory Care &amp; Dementia Care</a></li>
+            <li><a href="/respite-care/" {{active_respite}}>Respite Care</a></li>
+          </ul>
+        </li>
+        <li class="has-sub">
+          <button type="button" aria-expanded="false">Community <span class="caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="sub">
+            <li><a href="/amenities/" {{active_amenities}}>Amenities &amp; Services</a></li>
+            <li><a href="/reviews/" {{active_reviews}}>Reviews</a></li>
+            <li><a href="/merch/" {{active_shop}}>Merch Shop</a></li>
+          </ul>
+        </li>
         <li><a href="/rates-floor-plans/" {{active_rates}}>Rates</a></li>
-        <li><a href="/reviews/" {{active_reviews}}>Reviews</a></li>
-        <li><a href="/merch/" {{active_shop}}>Merch</a></li>
+        <li class="has-sub">
+          <button type="button" aria-expanded="false">About <span class="caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="sub">
+            <li><a href="/about-us/" {{active_about}}>About Us</a></li>
+            <li><a href="/careers/" {{active_careers}}>Careers</a></li>
+          </ul>
+        </li>
         <li><a href="/contact-us/" {{active_contact}}>Contact</a></li>
       </ul>
     </nav>

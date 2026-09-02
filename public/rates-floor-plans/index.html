@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/main.css?v=6074c0fc">
+  <link rel="stylesheet" href="/assets/css/main.css?v=3ece3d13">
   <!-- Google tag: Ads conversion tracking (AW-18300279647) + GA4 analytics (G-1X0LL0YDPZ) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18300279647"></script>
   <script>
@@ -44,14 +44,30 @@
       </button>
       <ul id="nav-menu">
         <li><a href="/" >Home</a></li>
-        <li><a href="/about-us/" >About</a></li>
-        <li><a href="/assisted-living/" >Assisted Living</a></li>
-        <li><a href="/memory-care/" >Memory Care</a></li>
-        <li><a href="/respite-care/" >Respite Care</a></li>
-        <li><a href="/amenities/" >Amenities</a></li>
+        <li class="has-sub">
+          <button type="button" aria-expanded="false">Care <span class="caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="sub">
+            <li><a href="/assisted-living/" >Assisted Living</a></li>
+            <li><a href="/memory-care/" >Memory Care &amp; Dementia Care</a></li>
+            <li><a href="/respite-care/" >Respite Care</a></li>
+          </ul>
+        </li>
+        <li class="has-sub">
+          <button type="button" aria-expanded="false">Community <span class="caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="sub">
+            <li><a href="/amenities/" >Amenities &amp; Services</a></li>
+            <li><a href="/reviews/" >Reviews</a></li>
+            <li><a href="/merch/" >Merch Shop</a></li>
+          </ul>
+        </li>
         <li><a href="/rates-floor-plans/" aria-current="page">Rates</a></li>
-        <li><a href="/reviews/" >Reviews</a></li>
-        <li><a href="/merch/" >Merch</a></li>
+        <li class="has-sub">
+          <button type="button" aria-expanded="false">About <span class="caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="sub">
+            <li><a href="/about-us/" >About Us</a></li>
+            <li><a href="/careers/" >Careers</a></li>
+          </ul>
+        </li>
         <li><a href="/contact-us/" >Contact</a></li>
       </ul>
     </nav>
@@ -206,6 +222,6 @@
     <p>&copy; 2026 The Pointe at Kirby Gate &middot; 6480 Quince Rd, Memphis, TN 38119 &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/terms-of-service/">Terms</a> &middot; <a href="/ada-compliance/">Accessibility</a> &middot; <a href="/nondiscrimination/">Nondiscrimination</a></p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=7c0ac4a6" defer></script>
+<script src="/assets/js/main.js?v=59ba3043" defer></script>
 </body>
 </html>
