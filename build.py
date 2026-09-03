@@ -71,7 +71,25 @@ def parse(src: str):
 def fhash(path):
     return hashlib.md5(path.read_bytes()).hexdigest()[:8]
 
+def check_unique_images():
+    """No photo may appear more than once across the whole site (visual slots only)."""
+    import collections
+    counts = collections.Counter()
+    pat = re.compile(r"/assets/img/([A-Za-z0-9_-]+)\.webp")
+    skip_prefixes = ("logo", "favicon", "floorplan")
+    for f in CONTENT.glob("*.html"):
+        if f.stem.endswith(".head"):
+            continue
+        for name in pat.findall(f.read_text()):
+            if name.startswith(skip_prefixes):
+                continue
+            counts[name] += 1
+    dups = {k: v for k, v in counts.items() if v > 1}
+    if dups:
+        sys.exit(f"BUILD FAILED — image(s) used more than once: {dups}")
+
 def build():
+    check_unique_images()
     year = str(datetime.date.today().year)
     css_v = fhash(PUBLIC / "assets" / "css" / "main.css")
     js_v = fhash(PUBLIC / "assets" / "js" / "main.js")
