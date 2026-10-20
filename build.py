@@ -145,7 +145,37 @@ def build():
     )
     # GitHub Pages custom domain
     (PUBLIC / "CNAME").write_text("www.kirbygateliving.com\n")
+    build_redirects()
     print(f"built sitemap.xml ({len(sitemap_paths)} urls) + robots.txt")
+
+def build_redirects():
+    """GitHub Pages ignores public/_redirects (a Netlify/Cloudflare convention),
+    so emit a meta-refresh stub for each legacy URL listed there. The stub is
+    noindex + canonical to the target so search engines consolidate on the new URL."""
+    rfile = PUBLIC / "_redirects"
+    if not rfile.exists():
+        return
+    n = 0
+    for line in rfile.read_text().splitlines():
+        parts = line.split()
+        if len(parts) < 2 or parts[0].startswith("#"):
+            continue
+        src, dst = parts[0], parts[1]
+        target = dst if dst.startswith("http") else "https://www.kirbygateliving.com" + dst
+        out = PUBLIC / src.strip("/") / "index.html"
+        if out.exists() and "<!-- redirect stub -->" not in out.read_text():
+            sys.exit(f"BUILD FAILED — redirect {src} collides with a real page")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(
+            "<!doctype html><!-- redirect stub --><html lang=\"en\"><head><meta charset=\"utf-8\">"
+            f"<title>Redirecting…</title><meta name=\"robots\" content=\"noindex\">"
+            f"<link rel=\"canonical\" href=\"{target}\">"
+            f"<meta http-equiv=\"refresh\" content=\"0; url={target}\">"
+            f"<script>location.replace(\"{target}\")</script></head>"
+            f"<body><p>This page has moved to <a href=\"{target}\">{target}</a>.</p></body></html>\n"
+        )
+        n += 1
+    print(f"built {n} redirect stubs from _redirects")
 
 if __name__ == "__main__":
     build()
