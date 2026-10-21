@@ -103,6 +103,8 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
 .phone-link:hover { color: var(--green); }
 .nav-toggle { display: none; background: none; border: none; }
 
+.btn-call { display: none; white-space: nowrap; }
+
 /* Hero */
 .hero {
   position: relative; min-height: 480px; display: flex; align-items: center;
@@ -284,6 +286,8 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
 }
 @media (max-width: 700px) {
   .phone-link { display: none; }
+  .header-cta .btn-tour { display: none; }
+  .header-cta .btn-call { display: inline-block; }
 }
 @media (max-width: 520px) {
   .brand img { width: 118px; }

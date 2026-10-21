@@ -100,9 +100,10 @@ def build():
         meta, body = parse(f.read_text())
         html = TEMPLATE
         body = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), body)
+        import html as _html
         repl = {
-            "title": meta["title"],
-            "description": meta.get("description", ""),
+            "title": _html.escape(meta["title"], quote=False),
+            "description": _html.escape(meta.get("description", ""), quote=True),
             "path": meta["path"],
             "content": body,
             "year": year,
