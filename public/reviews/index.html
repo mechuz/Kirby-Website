@@ -21,6 +21,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/main.css?v=c187fe06">
   <!-- Google tag: Ads conversion tracking (AW-18300279647) + GA4 analytics (G-1X0LL0YDPZ) -->
+  <!-- Thank-you page: count one form lead per browser session; a reload/revisit goes home instead of re-firing the conversion -->
+  <script>if(location.pathname==="/thank-you/"){try{if(sessionStorage.getItem("kg_ty")){location.replace("/");}else{sessionStorage.setItem("kg_ty","1");}}catch(e){}}</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18300279647"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
