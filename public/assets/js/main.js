@@ -24,6 +24,9 @@ var FORM_CONVERSION_LABEL = "";
     el.addEventListener("click", function () {
       if (typeof gtag === "function") {
         gtag("event", "phone_click", { event_category: "engagement" });
+        // Google Ads conversion "Website phone click" (ID 7872108647) — counts
+        // tel: taps from ad visitors who call the main line instead of the ad number.
+        gtag("event", "conversion", { send_to: "AW-18300279647/jhcdCOew26kdEN-2oJZE" });
       }
     });
   });
@@ -49,4 +52,14 @@ var FORM_CONVERSION_LABEL = "";
   document.addEventListener("click", function (e) {
     if (!e.target.closest(".has-sub")) document.querySelectorAll(".has-sub.open").forEach(function (o) { o.classList.remove("open"); });
   });
+})();
+
+// Pre-select the "I'm interested in" field from ?interest= (used by ad sitelinks),
+// e.g. /contact-us/?interest=memory-care
+(function () {
+  var sel = document.getElementById("interest");
+  if (!sel) return;
+  var v = (new URLSearchParams(location.search).get("interest") || "").toLowerCase();
+  var map = { "memory-care": "Memory Care", "assisted-living": "Assisted Living", "tour": "Scheduling a Tour", "rates": "Rates & Availability" };
+  if (map[v]) sel.value = map[v];
 })();
