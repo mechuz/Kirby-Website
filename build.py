@@ -27,7 +27,7 @@ TEMPLATE = (ROOT / "templates" / "base.html").read_text()
 CONTENT = ROOT / "content"
 PUBLIC = ROOT / "public"
 
-NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "rates", "reviews", "shop", "contact"]
+NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reviews", "shop", "contact"]
 
 ICONS = {
  "dining":   '<path d="M5 3v7a3 3 0 0 0 6 0V3"/><path d="M8 3v18"/><path d="M18 3c-2.2 0-3.5 2.8-3.5 6v4H18v8"/>',
@@ -88,6 +88,41 @@ def check_unique_images():
     if dups:
         sys.exit(f"BUILD FAILED — image(s) used more than once: {dups}")
 
+def render_calendar():
+    import calendar as _cal, json as _json
+    f = CONTENT / "calendar.json"
+    if not f.exists():
+        return ""
+    d = _json.loads(f.read_text())
+    month_num = list(_cal.month_name).index(d["month"])
+    first_wd = _cal.weekday(d["year"], month_num, 1)      # Mon=0..Sun=6
+    lead = (first_wd + 1) % 7                              # Sun-first grid
+    ndays = _cal.monthrange(d["year"], month_num)[1]
+    out = [f'<div class="center"><p class="eyebrow">Updated Monthly</p>'
+           f'<h2>{d["month"]} {d["year"]} at The Pointe</h2></div>']
+    out.append('<div class="cal-wrap"><div class="cal-grid">')
+    for w in ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]:
+        out.append(f'<div class="cal-wd">{w}</div>')
+    for _ in range(lead):
+        out.append('<div class="cal-cell cal-blank"></div>')
+    import html as _h
+    for day in range(1, ndays + 1):
+        key = str(day)
+        special = d.get("special", {}).get(key)
+        badge = f'<span class="cal-badge">{_h.escape(special)}</span>' if special else ""
+        evs = "".join(
+            f'<li><strong>{_h.escape(e.split(" ", 1)[0])}</strong> {_h.escape(e.split(" ", 1)[1])}</li>'
+            if " " in e and e.split(" ", 1)[0][0].isdigit() else f"<li>{_h.escape(e)}</li>"
+            for e in d["days"].get(key, []))
+        wd_name = _cal.day_name[_cal.weekday(d["year"], month_num, day)]
+        out.append(f'<div class="cal-cell"><div class="cal-day"><span class="cal-num">{day}</span>'
+                   f'<span class="cal-wd-sm">{wd_name[:3]}</span>{badge}</div><ul>{evs}</ul></div>')
+    out.append("</div></div>")
+    note = d.get("note")
+    if note:
+        out.append(f'<p class="form-note center" style="margin-top:1.5rem">{note}</p>')
+    return "\n".join(out)
+
 def build():
     check_unique_images()
     year = str(datetime.date.today().year)
@@ -100,6 +135,8 @@ def build():
         meta, body = parse(f.read_text())
         html = TEMPLATE
         body = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), body)
+        if "{{calendar}}" in body:
+            body = body.replace("{{calendar}}", render_calendar())
         import html as _html
         repl = {
             "title": _html.escape(meta["title"], quote=False),
