@@ -138,7 +138,10 @@ def build():
         if "{{calendar}}" in body:
             body = body.replace("{{calendar}}", render_calendar())
         import html as _html
+        main_phone = meta.get("phone") == "main"
         repl = {
+            "phone_tel": "9017533449" if main_phone else "9012475835",
+            "phone_fmt": "(901) 753-3449" if main_phone else "(901) 247-5835",
             "title": _html.escape(meta["title"], quote=False),
             "description": _html.escape(meta.get("description", ""), quote=True),
             "path": meta["path"],
