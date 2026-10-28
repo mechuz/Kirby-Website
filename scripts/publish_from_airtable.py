@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish approved blog articles from Airtable into content/blog/.
+"""Publish approved blog articles and news items from Airtable into content/.
 
 Run by .github/workflows/publish-blog.yml in two steps:
 
@@ -8,17 +8,22 @@ Run by .github/workflows/publish-blog.yml in two steps:
             each as content/blog/<slug>.html (plus its approved photo under
             public/assets/img/blog/), run build.py to prove the site still
             builds, and record what was written in a manifest file.
+            Then do the same for News Items rows with Status = Approved,
+            Compliance Check ticked and a Post Date that is blank or has
+            arrived (America/Chicago): each becomes content/news/<slug>.html
+            for the Senior Care News page, oldest Post Date first.
   finalize  After the workflow has pushed the commit, mark those rows
-            Published in Airtable and update their linked topics.
+            Published in Airtable and update the articles' linked topics.
 
-Rows that cannot be published (bad slug, unsafe HTML, too short, build
-failure) are set to Failed with the reason in Publish Log, so nothing is
-retried forever. Rows whose file is already on main are only marked Published.
+Rows that cannot be published (bad slug, unsafe HTML, too short, missing
+source, bad link, build failure) are set to Failed with the reason in Publish
+Log, so nothing is retried forever. Rows whose file is already on main are
+only marked Published.
 
 Environment: AIRTABLE_TOKEN (required; without it the script exits quietly),
 MANIFEST (path, default /tmp/publish-manifest.json), MAX_POSTS (default 2),
-AIRTABLE_API_URL (tests only), GITHUB_OUTPUT (set by GitHub Actions).
-Standard library only.
+MAX_NEWS (default 5), AIRTABLE_API_URL (tests only), GITHUB_OUTPUT (set by
+GitHub Actions). Standard library only. Tests: bash scripts/tests/run.sh.
 """
 from __future__ import annotations
 
@@ -31,11 +36,12 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BLOG_DIR = ROOT / "content" / "blog"
+NEWS_DIR = ROOT / "content" / "news"
 IMG_DIR = ROOT / "public" / "assets" / "img" / "blog"
 SITE = "https://www.kirbygateliving.com"
 SITE_NAME = "The Pointe at Kirby Gate"
@@ -45,6 +51,7 @@ BASE = "appZ2xOP1HzOWjug7"          # Kirby Gate Lead Engine
 ITEMS = "tblVtdUcldbtwe50j"         # Content Items
 TOPICS = "tbl2jfMNcGqANbQ2q"        # Content Topics
 PHOTOS = "tbl3Kr5c6Iovf0tx9"        # GBP Post Photos
+NEWS = "tblShi8ugFZKwvz4k"          # News Items
 
 # Content Items fields (by id, so renaming a column cannot break publishing)
 F = {
@@ -69,17 +76,52 @@ F = {
 TF = {"status": "fld9ScdnbK8TEpTuR", "published_url": "fldRXkomlewHN2tux", "pillar": "fldE46oRrF5abE4vg"}
 PF = {"name": "fldSHKs2O4omHOA01", "url": "fldGXEgC4pqcAe99d", "status": "fldjjHNkxpR4eQV8W"}
 
-# The filter runs inside Airtable and therefore uses column names.
+# News Items fields (by id, like F)
+NF = {
+    "title": "fld0j3cwYUexMuUvO",
+    "source": "fldgsvUdQCqYnY49l",
+    "source_url": "fld3TwnCDts5c1kGd",
+    "article_date": "fldTY1vtCesbUxg2O",
+    "category": "fld4DIXgZ1xtHK06z",
+    "summary": "fldnCKId0CrwIsr4z",
+    "why": "fldXOLW8ZapBYq130",
+    "status": "fldQlakdY6hVHwaPZ",
+    "added_by": "fldAO9f4nsvYscAqy",
+    "compliance": "fldO7msiyQ0IeWXPl",
+    "post_date": "fldrmFj75X5EfQGw3",
+    "slug": "fldO7qUjBnbkWWP9n",
+    "published_url": "fldfzfJUHGPygSKUq",
+    "published_at": "fld6WOeBJcbSTXiFs",
+    "publish_log": "fldHzhdfKpokoBZYP",
+    "notes": "fldpJ6h0gYLJfm8dk",
+}
+# Category option name in Airtable -> category key the news page understands
+NEWS_CATEGORIES = {
+    "Paying for care": "finance",
+    "Health & research": "health",
+    "Caregiving & family": "caregiving",
+    "Policy & benefits": "policy",
+    "Memphis & Mid-South": "local",
+    "Community update": "community",
+}
+
+# The filters run inside Airtable and therefore use column names.
 DUE_FORMULA = "AND({Channel}='Blog',{Status}='Approved',{Compliance Check}=1)"
+NEWS_DUE_FORMULA = "AND({Status}='Approved',{Compliance Check}=1)"
 
 MAX_POSTS = int(os.environ.get("MAX_POSTS", "2"))
+MAX_NEWS = int(os.environ.get("MAX_NEWS", "5"))
 MANIFEST = Path(os.environ.get("MANIFEST", "/tmp/publish-manifest.json"))
 TOKEN = os.environ.get("AIRTABLE_TOKEN", "").strip()
 
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 UNSAFE_RE = re.compile(r"<\s*(script|iframe|object|embed|form|style|link|meta)\b|javascript\s*:|\son[a-z]+\s*=", re.I)
 TAG_RE = re.compile(r"<[^>]+>")
+URL_RE = re.compile(r"^https?://[^\s<>\"'`]+$", re.I)
+PATH_RE = re.compile(r"^/(?!/)[^\s<>\"'`]*$")          # site-relative; never protocol-relative (//host)
 MIN_WORDS = 300
+NEWS_TITLE_MAX = 160
+NEWS_MIN_WORDS, NEWS_MAX_WORDS = 20, 160
 IMAGE_TYPES = {"image/jpeg": "jpg", "image/jpg": "jpg", "image/png": "png", "image/webp": "webp"}
 
 
@@ -127,7 +169,7 @@ def update_record(table, rid, fields):
 
 # ----------------------------------------------------------------- helpers
 def one_line(s, limit=None):
-    s = re.sub(r"\s+", " ", str(s or "")).replace("-->", "").strip()
+    s = re.sub(r"\s+", " ", str(s or "").replace("-->", "")).strip()
     return s[:limit].rstrip() if limit else s
 
 
@@ -138,6 +180,18 @@ def slugify(s):
 
 def text_of(body):
     return re.sub(r"\s+", " ", html.unescape(TAG_RE.sub(" ", body))).strip()
+
+
+def plain_text(s):
+    """Plain text for a news field: tags stripped, entities decoded, then
+    stripped again so an entity-encoded tag cannot survive the decoding.
+    The news page renderer escapes it."""
+    return one_line(TAG_RE.sub(" ", text_of(str(s or ""))))
+
+
+def select_name(v):
+    """A single-select value as text (the API sends the name, or a choice object)."""
+    return one_line(v.get("name") if isinstance(v, dict) else v)
 
 
 def excerpt_of(body, limit=200):
@@ -165,6 +219,17 @@ def parse_iso(s):
     except ValueError:
         return None
     return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
+
+
+def iso_date(s):
+    """YYYY-MM-DD from an Airtable date field: '' when blank, None when not a date."""
+    s = str(s or "").strip()
+    if not s:
+        return ""
+    try:
+        return date.fromisoformat(s[:10]).isoformat()
+    except ValueError:
+        return None
 
 
 def local_date(d):
@@ -200,7 +265,7 @@ def write_manifest(m):
 
 def read_manifest():
     if not MANIFEST.exists():
-        return {"posts": []}
+        return {"posts": [], "news": []}
     return json.loads(MANIFEST.read_text(encoding="utf-8"))
 
 
@@ -234,12 +299,12 @@ def build_site():
     return True, "build ok"
 
 
-def mark_failed(rid, reason):
+def mark_failed(rid, reason, table=ITEMS, fields=F):
     print(f"  FAILED: {reason}")
-    update_record(ITEMS, rid, {F["status"]: "Failed", F["publish_log"]: f"{now_iso()} {reason}"})
+    update_record(table, rid, {fields["status"]: "Failed", fields["publish_log"]: f"{now_iso()} {reason}"})
 
 
-# ----------------------------------------------------------------- prepare
+# ------------------------------------------------------------ prepare: blog
 def prepare_one(rec, due_at, manifest):
     rid, f = rec["id"], rec.get("fields", {})
     headline = one_line(f.get(F["headline"]) or f.get(F["title"]), 120)
@@ -338,13 +403,7 @@ def prepare_one(rec, due_at, manifest):
     print(f"  wrote {files[0]} ({words} words); {image_log}")
 
 
-def prepare():
-    manifest = {"prepared_at": now_iso(), "posts": []}
-    if not TOKEN:
-        print("AIRTABLE_TOKEN is not set; nothing to publish.")
-        write_manifest(manifest)
-        gh_output(count=0, finalize=0, commit_message="", headlines="")
-        return 0
+def prepare_blog(manifest):
     rows = list_records(ITEMS, DUE_FORMULA)
     now = datetime.now(timezone.utc)
     due = []
@@ -360,12 +419,137 @@ def prepare():
     print(f"{len(rows)} approved blog row(s), {len(due)} due, publishing up to {MAX_POSTS}")
     for d, r in due[:MAX_POSTS]:
         prepare_one(r, d, manifest)
+
+
+# ------------------------------------------------------------ prepare: news
+def prepare_news_one(rec, post_date, manifest):
+    """Write one News Items row as content/news/<slug>.html:
+
+        <!--meta
+        title: ...            plain text (the renderer escapes it)
+        source: ...           omitted when blank (community updates only)
+        source_url: ...       http(s), or a site path for community updates
+        date: YYYY-MM-DD      Post Date, or today in America/Chicago
+        published: YYYY-MM-DD Article Date, omitted when blank
+        category: finance | health | caregiving | policy | local | community
+        status: published
+        -->
+        <p>Summary</p>
+        <p class="why">Why it matters: ...</p>   (only when set)
+    """
+    rid, f = rec["id"], rec.get("fields", {})
+    fail = lambda reason: mark_failed(rid, reason, NEWS, NF)  # noqa: E731
+    title = plain_text(f.get(NF["title"]))
+    print(f"- {rid}: {title or '(no title)'}")
+
+    raw = "\n".join(str(f.get(NF[k]) or "") for k in ("title", "source", "source_url", "summary", "why"))
+    if UNSAFE_RE.search(raw) or UNSAFE_RE.search(html.unescape(raw)):
+        return fail("fields contain scripts, iframes, forms, style or link tags, or event handlers")
+    if not 1 <= len(title) <= NEWS_TITLE_MAX:
+        return fail(f"Title is {len(title)} characters after stripping HTML; it must be 1 to {NEWS_TITLE_MAX}")
+    category_name = select_name(f.get(NF["category"]))
+    category = NEWS_CATEGORIES.get(category_name)
+    if not category:
+        return fail(f"Category {category_name!r} is not one of: {', '.join(NEWS_CATEGORIES)}")
+    source = plain_text(f.get(NF["source"]))
+    if not source and category != "community":
+        return fail("Source is required (only a Community update may leave it blank)")
+    source_url = one_line(f.get(NF["source_url"]))
+    if not (URL_RE.match(source_url) or (category == "community" and PATH_RE.match(source_url))):
+        return fail(f"Source URL {source_url!r} must start with http:// or https://"
+                    + (" (or / for a page on this site)" if category == "community" else ""))
+    summary = plain_text(f.get(NF["summary"]))
+    words = len(summary.split())
+    if not NEWS_MIN_WORDS <= words <= NEWS_MAX_WORDS:
+        return fail(f"Summary has {words} words; it must have {NEWS_MIN_WORDS} to {NEWS_MAX_WORDS}")
+    article_date = iso_date(f.get(NF["article_date"]))
+    if article_date is None:
+        return fail(f"Article Date {f.get(NF['article_date'])!r} is not a date")
+    why = plain_text(f.get(NF["why"]))
+
+    slug = str(f.get(NF["slug"]) or "").strip().lower()
+    if not SLUG_RE.match(slug):
+        slug = slugify(f"{post_date} {title}")
+    if not SLUG_RE.match(slug):
+        return fail(f"cannot make a valid slug from {title!r}")
+    url = f"{SITE}/news/#{slug}"
+    target = NEWS_DIR / f"{slug}.html"
+
+    if target.exists():
+        print(f"  {target.relative_to(ROOT)} is already on main; the row will be marked Published")
+        manifest["news"].append({"id": rid, "slug": slug, "title": title, "url": url, "files": [],
+                                 "log": f"{now_iso()} {target.relative_to(ROOT)} was already on main; row marked Published by the publisher workflow"})
+        return
+
+    meta = [
+        ("title", title),
+        ("source", source),
+        ("source_url", source_url),
+        ("date", post_date),
+        ("published", article_date),
+        ("category", category),
+        ("status", "published"),
+    ]
+    body = f"<p>{summary}</p>"
+    if why:
+        body += f'\n<p class="why">Why it matters: {why}</p>'
+    NEWS_DIR.mkdir(parents=True, exist_ok=True)
+    target.write_text("\n".join(["<!--meta"] + [f"{k}: {v}" for k, v in meta if v] + ["-->", body, ""]), encoding="utf-8")
+
+    ok, build_log = build_site()
+    if not ok:
+        target.unlink(missing_ok=True)
+        return fail(build_log)
+
+    files = [str(target.relative_to(ROOT))]
+    manifest["news"].append({"id": rid, "slug": slug, "title": title, "url": url, "files": files,
+                             "log": f"{now_iso()} files: {files[0]}; {build_log}; {words} words; {category}"})
+    print(f"  wrote {files[0]} ({words} words, {category})")
+
+
+def prepare_news(manifest):
+    rows = list_records(NEWS, NEWS_DUE_FORMULA)
+    today = local_date(datetime.now(timezone.utc))
+    due = []
+    for r in rows:
+        raw = r.get("fields", {}).get(NF["post_date"])
+        d = iso_date(raw)
+        if d is None:
+            print(f"- {r['id']}: Post Date {raw!r}")
+            mark_failed(r["id"], f"Post Date {raw!r} is not a date", NEWS, NF)
+        elif d > today:
+            print(f"- {r['id']}: Post Date {d}, not yet")
+        else:
+            due.append((d or today, r))   # blank means as soon as approved
+    due.sort(key=lambda x: x[0])
+    print(f"{len(rows)} approved news row(s), {len(due)} due, publishing up to {MAX_NEWS}")
+    for d, r in due[:MAX_NEWS]:
+        prepare_news_one(r, d, manifest)
+
+
+def prepare():
+    manifest = {"prepared_at": now_iso(), "posts": [], "news": []}
+    if not TOKEN:
+        print("AIRTABLE_TOKEN is not set; nothing to publish.")
+        write_manifest(manifest)
+        gh_output(count=0, finalize=0, commit_message="", headlines="")
+        return 0
+    prepare_blog(manifest)
+    prepare_news(manifest)
     write_manifest(manifest)
     written = [p for p in manifest["posts"] if p["files"]]
+    news_written = [n for n in manifest["news"] if n["files"]]
     heads = [p["headline"] for p in written]
-    msg = f"Blog: {heads[0]}" if len(heads) == 1 else (f"Blog: {len(heads)} articles ({'; '.join(heads)})" if heads else "")
-    gh_output(count=len(written), finalize=len(manifest["posts"]), commit_message=msg[:200], headlines="; ".join(heads))
-    print(f"{len(written)} article(s) written; {len(manifest['posts']) - len(written)} already on main; manifest {MANIFEST}")
+    parts = []
+    if heads:
+        parts.append(f"Blog: {heads[0]}" if len(heads) == 1 else f"Blog: {len(heads)} articles ({'; '.join(heads)})")
+    if news_written:
+        parts.append(f"News: {len(news_written)} item" + ("" if len(news_written) == 1 else "s"))
+    total = len(manifest["posts"]) + len(manifest["news"])
+    gh_output(count=len(written) + len(news_written), finalize=total,
+              commit_message="; ".join(parts)[:200], headlines="; ".join(heads))
+    print(f"{len(written)} article(s) and {len(news_written)} news item(s) written; "
+          f"{total - len(written) - len(news_written)} already on main; manifest {MANIFEST}")
     return 0
 
 
@@ -374,8 +558,9 @@ def finalize():
     if not TOKEN:
         print("AIRTABLE_TOKEN is not set; nothing to finalize.")
         return 0
-    posts = read_manifest().get("posts", [])
-    if not posts:
+    manifest = read_manifest()
+    posts, news = manifest.get("posts", []), manifest.get("news", [])
+    if not posts and not news:
         print("nothing to finalize")
         return 0
     sha = git("rev-parse", "--short", "HEAD") or "unknown"
@@ -394,6 +579,18 @@ def finalize():
         except RuntimeError as e:
             errors += 1
             print(f"- {p['headline']}: Airtable update failed: {e}")
+    for n in news:
+        try:
+            update_record(NEWS, n["id"], {
+                NF["status"]: "Published",
+                NF["published_url"]: n["url"],
+                NF["published_at"]: now_iso(),
+                NF["publish_log"]: f"{n['log']}; commit {sha}; published by GitHub Actions",
+            })
+            print(f"- {n['title']}: Published at {n['url']}")
+        except RuntimeError as e:
+            errors += 1
+            print(f"- {n['title']}: Airtable update failed: {e}")
     return 1 if errors else 0
 
 

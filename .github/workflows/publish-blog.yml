@@ -1,13 +1,14 @@
-name: Publish approved blog posts
+name: Publish approved blog posts and news
 
-# Reads approved, due articles from the Airtable content calendar, commits them
-# to main and redeploys the site. Needs the AIRTABLE_TOKEN repository secret;
-# without it the run exits quietly. Rows are marked Published only after the
-# push succeeded, so a failed run is retried on the next schedule.
+# Reads approved, due blog articles and news items from the Airtable content
+# calendar, commits them to main and redeploys the site. Needs the
+# AIRTABLE_TOKEN repository secret; without it the run exits quietly. Rows are
+# marked Published only after the push succeeded, so a failed run is retried
+# on the next schedule.
 
 on:
   schedule:
-    - cron: '30 15 * * 1-5'   # weekdays, 10:30 AM Central in summer, 9:30 AM in winter
+    - cron: '30 15 * * *'   # daily, 10:30 AM Central in summer, 9:30 AM in winter
   workflow_dispatch:
 
 permissions:
@@ -26,12 +27,13 @@ jobs:
         with:
           ref: main
 
-      - name: Prepare approved articles from Airtable
+      - name: Prepare approved articles and news items from Airtable
         id: prepare
         env:
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
           MANIFEST: ${{ runner.temp }}/publish-manifest.json
           MAX_POSTS: "2"
+          MAX_NEWS: "5"
         run: python3 scripts/publish_from_airtable.py prepare
 
       - name: Commit and push to main
@@ -42,6 +44,7 @@ jobs:
           git config user.name "Kirby Gate Marketing Agent"
           git config user.email "community@kirbygateliving.com"
           git add content/blog
+          if [ -d content/news ]; then git add content/news; fi
           if [ -d public/assets/img/blog ]; then git add public/assets/img/blog; fi
           git commit -m "$MSG"
           git stash push --include-untracked --quiet || true
