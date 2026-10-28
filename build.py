@@ -476,6 +476,50 @@ def doorloop_tokens():
     d = _dt.date.fromisoformat(data["fetched"])
     tok["dl_updated"] = "Live availability from our resident system &middot; updated " + d.strftime("%B %-d, %Y")
 
+    FP_FB = {"studio": "/assets/img/floorplan-studio.png", "mc": "/assets/img/floorplan-studio.png",
+             "lgstudio": "/assets/img/floorplan-studio-deluxe.png", "onebed": "/assets/img/floorplan-1bed.png",
+             "companion": ""}
+    import html as _h2
+    rows = []
+    by_type = {}
+    for u in units:
+        by_type.setdefault(u["type"], []).append(u)
+    def _disp_rent(tu):
+        return min((u["rent"] for u in tu if u["available"]), default=min(u["rent"] for u in tu))
+    for t, tu in sorted(by_type.items(), key=lambda kv: _disp_rent(kv[1])):
+        n_avail = sum(1 for u in tu if u["available"])
+        rent = _disp_rent(tu)
+        sqft = max(u["sqft"] for u in tu)
+        photo = next((u.get("photo", "") for u in tu if u.get("photo")), "") or FP_FB.get(t, "")
+        desc = next((u.get("desc", "") for u in tu if u.get("desc")), "")
+        teaser = desc.split(". ")[0].strip()
+        if teaser and not teaser.endswith("."): teaser += "."
+        amen = next((u.get("amen", []) for u in tu if u.get("amen")), [])[:5]
+        chips = "".join(f"<li>{_h2.escape(a)}</li>" for a in amen)
+        if n_avail:
+            badge = f'<span class="avail-badge">{n_avail} available now</span>'
+            cta = f'<a href="/reserve/?type={t}" class="btn btn-primary btn-arrow">Reserve</a>'
+        else:
+            badge = '<span class="avail-badge off">Currently leased</span>'
+            cta = '<a href="/contact-us/?interest=apply" class="btn btn-secondary">Join Waitlist</a>'
+        img_html = f'<img src="{photo}" alt="{DL_TYPES[t]} floor plan" loading="lazy">' if photo else ""
+        extra = " &middot; all care included" if t == "mc" else ""
+        rows.append(f"""<div class="room-row">
+  <div class="room-media">{img_html}</div>
+  <div class="room-info">
+    <h3>{DL_TYPES[t]}</h3>
+    <p class="room-meta">{sqft} sq ft{extra}</p>
+    <p class="room-desc">{_h2.escape(teaser)}</p>
+    <ul class="amen-chips room-chips">{chips}</ul>
+  </div>
+  <div class="room-book">
+    <div class="room-price">${rent:,.0f}<small>/mo</small></div>
+    {badge}
+    {cta}
+  </div>
+</div>""")
+    tok["dl_rooms"] = "\n".join(rows)
+
     if STRIPE_DEPOSIT_URL:
         tok["stripe_deposit"] = (
             f'<a href="{STRIPE_DEPOSIT_URL}" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" '
