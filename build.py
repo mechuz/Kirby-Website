@@ -513,15 +513,16 @@ def _news_item(i):
     target = ' target="_blank" rel="noopener"' if i["external"] else ""
     when = _h.escape(i["source"])
     if i["published"]:
-        when += f' &middot; <time datetime="{i["published"]}">{_fmt_date(i["published"])}</time>'
+        when += f' &middot; Published <time datetime="{i["published"]}">{_fmt_date(i["published"])}</time>'
     when += f' &middot; Shared <time datetime="{i["date"]}">{_fmt_date(i["date"])}</time>'
+    more = f'Read the full story at {_h.escape(i["source"])}' if i["external"] else "Read more on our site"
     return (
         f'<article class="news-item news-{i["category"]}" id="{i["slug"]}" data-category="{i["category"]}">'
         f'<p class="news-badge">{_h.escape(i["label"])}</p>'
         f'<h3 class="news-title"><a href="{href}"{target}>{_h.escape(i["title"])}</a></h3>'
         f'<p class="news-meta">{when}</p>'
         f'<div class="news-body">{i["body"]}</div>'
-        f'<p class="news-more"><a href="{href}"{target}>Read the full story at {_h.escape(i["source"])}</a></p>'
+        f'<p class="news-more"><a href="{href}"{target}>{more}</a></p>'
         f'</article>'
     )
 
@@ -587,7 +588,6 @@ def render_news_index(items, archive_years):
     {archive}
     <p class="post-subscribe">Get new items by RSS: <a href="/news/feed.xml">news/feed.xml</a></p>
     <p class="news-disclaimer">{NEWS_DISCLAIMER}</p>
-    {TOUR_CTA}
   </div>
 </section>
 {NEWS_SCRIPT}"""
@@ -626,7 +626,6 @@ def render_news_archive(year, items, archive_years):
     <p class="news-empty" hidden>Nothing in this topic for {year}.</p>
     {_news_list(items)}
     <p class="news-disclaimer">{NEWS_DISCLAIMER}</p>
-    {TOUR_CTA}
     <p class="post-all"><a href="/news/">Back to the latest news</a></p>
   </div>
 </section>

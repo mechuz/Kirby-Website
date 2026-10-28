@@ -170,7 +170,7 @@ def update_record(table, rid, fields):
 
 # ----------------------------------------------------------------- helpers
 def one_line(s, limit=None):
-    s = re.sub(r"\s+", " ", str(s or "").replace("-->", "")).strip()
+    s = re.sub(r"\s+", " ", re.sub(r"-{2,}>", "", str(s or ""))).strip()
     return s[:limit].rstrip() if limit else s
 
 
@@ -533,6 +533,7 @@ def prepare_news_one(rec, post_date, manifest):
     ]
     body = f"<p>{html.escape(summary, quote=False)}</p>"
     if why:
+        why = re.sub(r"^\s*why it matters:\s*", "", why, flags=re.I)
         body += f'\n<p class="why">Why it matters: {html.escape(why, quote=False)}</p>'
     NEWS_DIR.mkdir(parents=True, exist_ok=True)
     target.write_text("\n".join(["<!--meta"] + [f"{k}: {v}" for k, v in meta if v] + ["-->", body, ""]), encoding="utf-8")
