@@ -1,24 +1,86 @@
 <!--meta
 title: Rates & Floor Plans | Assisted Living Cost in Memphis | The Pointe at Kirby Gate
-description: Transparent assisted living & memory care pricing in East Memphis. Studio, deluxe studio & one-bedroom floor plans. Exceptional value — get a personalized quote: (901) 247-5835.
+description: Published assisted living & memory care pricing in East Memphis — studios from $3,500/mo, one-bedrooms $4,600/mo, all-inclusive memory care $5,450/mo. The most affordable in its class. Call (901) 247-5835.
 path: /rates-floor-plans/
 nav: rates
 -->
-<section class="hero hero-page" style="background-image:url('/assets/img/about_gallery3.webp')">
+<section class="hero hero-page" style="background-image:url('/assets/img/lemonade-welcome.webp'); background-position:center 20%">
   <div class="container">
     <h1>Rates &amp; Floor Plans</h1>
-    <p class="tagline">Exceptional care, honest pricing, and a personal quote after one conversation.</p>
+    <p class="tagline">Real prices, published for every suite. The most affordable community in its class in Memphis.</p>
   </div>
 </section>
 
 <section class="section">
+  <div class="container">
+    <div class="center narrow">
+      <p class="eyebrow">Monthly Rates</p>
+      <h2>A Warm, Vibrant Place to Call Home</h2>
+      <p>Under new ownership, we&rsquo;ve renovated the community and hand-picked a care team we believe is the finest in Memphis &mdash; so your loved one is met with warmth, dignity, and truly attentive care, every day. We publish our rates because families deserve to plan with confidence: one all-in monthly rate covers your suite, meals, housekeeping, activities, and around-the-clock care access &mdash; and Memory Care is all-inclusive of care.</p>
+      <p>The Pointe is a private-pay community &mdash; the most affordable in its class in the Memphis market. These rates are good through December 31, 2026.</p>
+    </div>
+    <div class="price-cards">
+      <a class="price-card" href="/reserve/?type=companion">
+        <h3>Companion Suite</h3>
+        <div class="price-amount">from {{dl_from_companion}}</div>
+        <div class="price-per">per month</div>
+        <p class="price-note">A shared suite with a built-in neighbor.</p>
+        <p>{{dl_badge_companion}}</p>
+        <span class="price-go">Reserve &rarr;</span>
+      </a>
+      <a class="price-card" href="/reserve/?type=studio">
+        <h3>Standard Studio</h3>
+        <div class="price-amount">$3,500</div>
+        <div class="price-per">per month</div>
+        <p class="price-note">298 sq ft of private, newly renovated comfort.</p>
+        <p>{{dl_badge_studio}}</p>
+        <span class="price-go">Reserve &rarr;</span>
+      </a>
+      <a class="price-card" href="/reserve/?type=lgstudio">
+        <h3>Large Studio</h3>
+        <div class="price-amount">$3,800</div>
+        <div class="price-per">per month</div>
+        <p class="price-note">373 sq ft with room for a real sitting area.</p>
+        <p>{{dl_badge_lgstudio}}</p>
+        <span class="price-go">Reserve &rarr;</span>
+      </a>
+      <a class="price-card" href="/reserve/?type=onebed">
+        <h3>One Bedroom</h3>
+        <div class="price-amount">$4,600</div>
+        <div class="price-per">per month</div>
+        <p class="price-note">431 sq ft &mdash; a true bedroom plus living space.</p>
+        <p>{{dl_badge_onebed}}</p>
+        <span class="price-go">Reserve &rarr;</span>
+      </a>
+      <a class="price-card" href="/reserve/?type=mc">
+        <span class="price-badge">All-Inclusive</span>
+        <h3>Memory Care</h3>
+        <div class="price-amount">$5,450</div>
+        <div class="price-per">per month &middot; care included</div>
+        <p class="price-note">Private suite in our secure neighborhood &mdash; one rate covers residence and all care.</p>
+        <p>{{dl_badge_mc}}</p>
+        <span class="price-go">Reserve &rarr;</span>
+      </a>
+    </div>
+    <div class="special-band">
+      <p class="eyebrow">Limited-Time Move-In Special</p>
+      <h3>Up to $3,800 in savings</h3>
+      <div class="special-chips">
+        <span>Move-in fee waived</span>
+        <span>$500 resident credit</span>
+        <span>$300/mo off for 6 months</span>
+      </div>
+      <p class="special-note">Available for families who join us through December 31, 2026.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-ice">
   <div class="container narrow center">
-    <p class="eyebrow">Pricing</p>
-    <h2>Best-in-Class Care at an Affordable Price</h2>
-    <p>The Pointe at Kirby Gate is committed to providing the highest standard of assisted living and memory care in East Memphis at a price families can manage. Rates are based on the suite you choose and the level of care your loved one needs, and we will give you a clear, personalized quote after a short conversation.</p>
-    <p>We accept private pay, long-term care insurance, VA benefits, and Medicaid (TennCare). We invite you to tour the community, see the suites and dining room, and meet the team who will be caring for your family member.</p>
-    <a href="/contact-us/" class="btn btn-primary">Schedule a Tour</a>
-    <a href="tel:9012475835" class="btn btn-secondary" data-track="phone" style="margin-left:0.5rem">Call (901) 247-5835</a>
+    <p class="eyebrow">Ready When You Are</p>
+    <h2>Reserve Your Suite Online</h2>
+    <p>Three easy steps, like booking a stay: pick the care that fits, choose from the suites open today, and check out securely.</p>
+    <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow" style="font-size:1.2rem; padding:1.2rem 2.6rem">Start Your Reservation</a>
   </div>
 </section>
 
@@ -34,7 +96,7 @@ nav: rates
       <li><span class="icon" aria-hidden="true">{{icon:sparkle}}</span><strong>Housekeeping &amp; Laundry</strong><span>Weekly cleaning, linens, and personal laundry</span></li>
       <li><span class="icon" aria-hidden="true">{{icon:calendar}}</span><strong>Activities &amp; Outings</strong><span>Full monthly calendar and scheduled transportation</span></li>
       <li><span class="icon" aria-hidden="true">{{icon:clock}}</span><strong>24-Hour Care Access</strong><span>Licensed staff on site around the clock</span></li>
-      <li><span class="icon" aria-hidden="true">{{icon:heart}}</span><strong>Personalized Care Plan</strong><span>Care level assessed individually and reviewed regularly</span></li>
+      <li><span class="icon" aria-hidden="true">{{icon:heart}}</span><strong>Personalized Care Plan</strong><span>Tailored to each resident and reviewed regularly</span></li>
     </ul>
   </div>
 </section>
@@ -42,30 +104,87 @@ nav: rates
 <section class="section section-alt">
   <div class="container">
     <div class="center narrow">
-      <p class="eyebrow">Floor Plans</p>
-      <h2>Suites Designed for Comfort and Ease</h2>
-      <p>Every floor plan at The Pointe balances privacy, safety, and livability — easy layouts, accessible bathrooms, and room to make it unmistakably yours.</p>
+      <p class="eyebrow">Interactive Floor Plans</p>
+      <h2>Pick Your Suite, See Your Price</h2>
+      <p>Tap a floor plan to explore it &mdash; and tap the plan drawing itself to see it full-screen. When you&rsquo;ve found the one, you can apply online in about ten minutes.</p>
     </div>
-    <div class="floorplan-grid">
-      <div class="floorplan">
-        <img src="/assets/img/floorplan-studio.png" alt="The Iris — studio floor plan, 298 square feet, assisted living Memphis" loading="lazy">
-        <h3>The Iris &mdash; Studio</h3>
-        <p class="size">298 sq ft</p>
+    <div class="fp-tabs" role="tablist" aria-label="Floor plans">
+      <button type="button" role="tab" data-fp="iris" aria-selected="true">Standard Studio<span class="fp-tab-price">$3,500/mo &middot; 298 sq ft</span></button>
+      <button type="button" role="tab" data-fp="azalea" aria-selected="false">Large Studio<span class="fp-tab-price">$3,800/mo &middot; 373 sq ft</span></button>
+      <button type="button" role="tab" data-fp="magnolia" aria-selected="false">One Bedroom<span class="fp-tab-price">$4,600/mo &middot; 431 sq ft</span></button>
+    </div>
+    <div class="fp-panel" id="fp-iris">
+      <div class="fp-media">
+        <img src="/assets/img/floorplan-studio.png" alt="Standard studio floor plan, 298 square feet, assisted living Memphis" loading="lazy">
+      </div>
+      <div>
+        <h3>Standard Studio</h3>
+        <div class="fp-price-row"><span class="fp-price">$3,500<small>/mo</small></span><span class="fp-size">298 sq ft</span>{{dl_badge_studio}}</div>
         <p>Efficient and cozy, with everything close at hand. A favorite for residents who spend their days out in the community.</p>
+        <ul class="check-list">
+          <li>Newly renovated private suite</li>
+          <li>Accessible private bathroom</li>
+          <li>Individual climate control</li>
+          <li>All utilities and Wi-Fi included</li>
+        </ul>
+        <div class="fp-ctas">
+          <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow">Reserve This Suite</a>
+          <a href="/contact-us/?interest=tour" class="btn btn-secondary">Schedule a Tour</a>
+        </div>
       </div>
-      <div class="floorplan">
-        <img src="/assets/img/floorplan-studio-deluxe.png" alt="The Azalea — deluxe studio floor plan, 373 square feet" loading="lazy">
-        <h3>The Azalea &mdash; Studio Deluxe</h3>
-        <p class="size">373 sq ft</p>
+    </div>
+    <div class="fp-panel" id="fp-azalea" hidden>
+      <div class="fp-media">
+        <img src="/assets/img/floorplan-studio-deluxe.png" alt="Large studio floor plan, 373 square feet" loading="lazy">
+      </div>
+      <div>
+        <h3>Large Studio</h3>
+        <div class="fp-price-row"><span class="fp-price">$3,800<small>/mo</small></span><span class="fp-size">373 sq ft</span>{{dl_badge_lgstudio}}</div>
         <p>Extra breathing room for a sitting area, a reading chair, and the furniture that has stories to tell.</p>
+        <ul class="check-list">
+          <li>Oversized studio layout</li>
+          <li>Accessible private bathroom</li>
+          <li>Room for a full sitting area</li>
+          <li>All utilities and Wi-Fi included</li>
+        </ul>
+        <div class="fp-ctas">
+          <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow">Reserve This Suite</a>
+          <a href="/contact-us/?interest=tour" class="btn btn-secondary">Schedule a Tour</a>
+        </div>
       </div>
-      <div class="floorplan">
-        <img src="/assets/img/floorplan-1bed.png" alt="The Magnolia — one-bedroom floor plan, 431 square feet" loading="lazy">
-        <h3>The Magnolia &mdash; One Bedroom</h3>
-        <p class="size">431 sq ft</p>
-        <p>A true bedroom plus living space — our most spacious residence, ideal for couples or lifelong hosts.</p>
+    </div>
+    <div class="fp-panel" id="fp-magnolia" hidden>
+      <div class="fp-media">
+        <img src="/assets/img/floorplan-1bed.png" alt="One-bedroom floor plan, 431 square feet" loading="lazy">
+      </div>
+      <div>
+        <h3>One Bedroom</h3>
+        <div class="fp-price-row"><span class="fp-price">$4,600<small>/mo</small></span><span class="fp-size">431 sq ft</span>{{dl_badge_onebed}}</div>
+        <p>A true bedroom plus living space &mdash; our most spacious residence, ideal for couples or lifelong hosts.</p>
+        <ul class="check-list">
+          <li>Separate bedroom and living room</li>
+          <li>Accessible private bathroom</li>
+          <li>Ideal for couples</li>
+          <li>All utilities and Wi-Fi included</li>
+        </ul>
+        <div class="fp-ctas">
+          <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow">Reserve This Suite</a>
+          <a href="/contact-us/?interest=tour" class="btn btn-secondary">Schedule a Tour</a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<section class="section">
+  <div class="container narrow center">
+    <p class="eyebrow">Ready When You Are</p>
+    <h2>Apply Online in About Ten Minutes</h2>
+    <p>Found the right suite? Checkout is two simple steps: complete the application through our secure resident portal, then leave the $199 deposit to finalize the reservation. Your suite is held from the moment the deposit is received.</p>
+    <p style="margin-top:1rem">
+      <a href="https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="general">Start Your Application</a>
+      <a href="tel:9012475835" class="btn btn-secondary btn-lg" data-track="phone" style="margin-left:0.5rem">Call (901) 247-5835</a>
+    </p>
+    <p class="rate-disclaimer">Rates and move-in special shown are good through December 31, 2026, and subject to change after that date. Availability shown is synced from our resident management system and may change at any time. The Pointe at Kirby Gate is a private-pay community. An online application is not a lease and does not guarantee availability; residency is confirmed by an individual nurse assessment and a written residency agreement, as required for licensed Assisted Care Living Facilities by the Tennessee Department of Health. Memory care is a single all-inclusive rate. No payment is collected on this website. Equal Housing Opportunity.</p>
+  </div>
+</section>
