@@ -50,6 +50,8 @@ nav: reserve
         <h3>Your reservation</h3>
         <p class="wiz-sum-img"><img id="wiz-sum-plan" src="" alt="Selected floor plan" hidden></p>
         <p class="wiz-sum-line"><span id="wiz-sum-type"></span> &middot; <strong id="wiz-sum-price"></strong></p>
+        <p class="wiz-sum-desc" id="wiz-sum-desc" hidden></p>
+        <ul class="amen-chips" id="wiz-sum-amen" hidden></ul>
         <div class="checkout-steps">
           <div class="co-step">
             <div class="co-step-head"><span class="co-num">1</span><strong>Complete your application</strong></div>
@@ -57,9 +59,9 @@ nav: reserve
             <a href="#" id="wiz-checkout" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="wizard">Start the Application</a>
           </div>
           <div class="co-step">
-            <div class="co-step-head"><span class="co-num">2</span><strong>Leave the $199 deposit to finalize</strong></div>
+            <div class="co-step-head"><span class="co-num">2</span><strong>Secure your suite with a $199 deposit</strong></div>
             {{stripe_deposit}}
-            <p style="margin-top:0.6rem">Your suite is reserved once the deposit is received. Deposit terms are provided at checkout.</p>
+            <p style="margin-top:0.6rem">Suites are held in the order deposits arrive &mdash; once yours is in, this suite comes off the market and the welcome preparations begin. Deposit terms are provided at checkout.</p>
           </div>
         </div>
         <p class="form-note" style="margin-top:1rem">Your application and deposit hold the suite while we complete the required nurse assessment and residency agreement &mdash; they are not a lease, and final move-in is confirmed after assessment, as Tennessee requires of licensed assisted-care communities. Deposit terms are provided with the deposit request. No payment is collected on this website. Equal Housing Opportunity.</p>

@@ -530,3 +530,9 @@ body { letter-spacing: -0.005em; }
 a.price-card { text-decoration: none; color: inherit; cursor: pointer; }
 .price-go { margin-top: 0.6rem; font-weight: 700; color: var(--green); font-size: 0.95rem; }
 a.price-card:hover .price-go { text-decoration: underline; }
+
+/* Unit descriptions + amenity chips */
+.wiz-card-desc { color: #4f5c50; font-size: 0.9rem; line-height: 1.5; font-weight: 400; }
+.wiz-sum-desc { text-align: left; color: #3c4a3e; font-size: 0.98rem; line-height: 1.65; background: var(--paper); border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
+.amen-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 0 0 1.25rem; justify-content: center; }
+.amen-chips li { background: var(--ice); color: var(--navy); font-size: 0.82rem; font-weight: 600; padding: 0.35rem 0.85rem; border-radius: 999px; }

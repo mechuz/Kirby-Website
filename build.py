@@ -415,10 +415,15 @@ def fetch_doorloop():
             for fl in (ils.get("File") or []):
                 if fl.get("FileType") == "Photo" and fl.get("Caption") == "Unit Photo" and fl.get("Src"):
                     photo = fl["Src"]; break
+            amen_fix = {"Wheel Chair": "Wheelchair Accessible", "WheelChair": "Wheelchair Accessible", "Heat": "Heating"}
+            amen = [amen_fix.get(a.get("Description", ""), a.get("Description", ""))
+                    for a in (ils.get("Amenity") or []) if a.get("Description")]
             units.append({
                 "room": name.replace(" - Memory Care", ""),
                 "type": _dl_classify(rent, sqft, name),
                 "sqft": sqft, "rent": rent, "photo": photo,
+                "desc": (u.get("Description") or "").strip(),
+                "amen": amen,
                 "available": bool(apply_url), "apply_url": apply_url,
             })
         if units:
@@ -474,12 +479,13 @@ def doorloop_tokens():
     if STRIPE_DEPOSIT_URL:
         tok["stripe_deposit"] = (
             f'<a href="{STRIPE_DEPOSIT_URL}" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" '
-            f'data-track="deposit">Pay the {STRIPE_DEPOSIT_AMOUNT} Deposit Securely</a>'
+            f'data-track="deposit">Secure Your Suite &mdash; {STRIPE_DEPOSIT_AMOUNT} Deposit</a>'
             '<p class="form-note" style="margin-top:0.6rem">Payment is processed by Stripe on a secure stripe.com page.</p>')
     else:
         tok["stripe_deposit"] = (
             "<p>As soon as your application arrives, our team sends you a secure payment "
-            f"request for the {STRIPE_DEPOSIT_AMOUNT} deposit &mdash; usually the same business day.</p>")
+            f"request for the {STRIPE_DEPOSIT_AMOUNT} deposit &mdash; usually the same business day. "
+            "Once it\u2019s in, your suite comes off the market.</p>")
 
     # Reservation wizard step-2 cards: only types with availability, tagged by stay
     FP_FALLBACK = {"studio": "/assets/img/floorplan-studio.png", "mc": "/assets/img/floorplan-studio.png",
@@ -491,18 +497,27 @@ def doorloop_tokens():
         label = "1 suite open" if len(us) == 1 else f"{len(us)} suites open"
         img = next((u["photo"] for u in us if u.get("photo")), "") or FP_FALLBACK.get(t, "")
         img_tag = f'<span class="wiz-card-img"><img src="{img}" alt="{DL_TYPES[t]} floor plan" loading="lazy"></span>' if img else ""
+        import html as _h
+        desc = next((u.get("desc", "") for u in us if u.get("desc")), "")
+        amen = next((u.get("amen", []) for u in us if u.get("amen")), [])
+        teaser = desc.split(". ")[0].strip()
+        if teaser and not teaser.endswith("."): teaser += "."
         wiz.append(
             f'<button type="button" class="wiz-card" data-stay="{stay}" data-key="{t}" data-type="{DL_TYPES[t]}" '
-            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}" data-img="{img}">'
+            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}" data-img="{img}" '
+            f'data-desc="{_h.escape(desc, quote=True)}" data-amen="{_h.escape("|".join(amen), quote=True)}">'
             + img_tag +
             f'<span class="wiz-card-name">{DL_TYPES[t]}</span>'
             f'<span class="wiz-card-price">${rent:,.0f}<small>/mo</small></span>'
             f'<span class="wiz-card-meta">{sqft} sq ft &middot; {label}'
             + (" &middot; all care included" if t == "mc" else "") + "</span>"
-            "</button>")
+            + (f'<span class="wiz-card-desc">{_h.escape(teaser, quote=False)}</span>' if teaser else "")
+            + "</button>")
     wiz.append(
         '<button type="button" class="wiz-card" data-stay="respite" data-key="respite" data-type="Respite Suite" '
-        'data-price="billed daily" data-apply="/respite-care/#book">'
+        'data-price="billed daily" data-apply="/respite-care/#book" '
+        'data-desc="A cozy, fully furnished suite made up and waiting — warm linens, a comfortable bed, and everything your loved one needs for a short stay." '
+        'data-amen="Fully Furnished|Linens &amp; Housekeeping|Chef-Prepared Meals|Medication Support|24-Hour Care Team|Full Activity Calendar">'
         '<span class="wiz-card-name">Furnished Respite Suite</span>'
         '<span class="wiz-card-price">Daily rate</span>'
         '<span class="wiz-card-meta">Cozy furnished suite &middot; 5-night minimum &middot; pick your dates next</span>'
