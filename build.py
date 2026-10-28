@@ -30,11 +30,7 @@ TEMPLATE = (ROOT / "templates" / "base.html").read_text()
 CONTENT = ROOT / "content"
 PUBLIC = ROOT / "public"
 
-<<<<<<< HEAD
-NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reviews", "shop", "contact", "blog", "news"]
-=======
-NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reserve", "reviews", "shop", "contact", "blog"]
->>>>>>> origin/main
+NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reserve", "reviews", "shop", "contact", "blog", "news"]
 
 ICONS = {
  "dining":   '<path d="M5 3v7a3 3 0 0 0 6 0V3"/><path d="M8 3v18"/><path d="M18 3c-2.2 0-3.5 2.8-3.5 6v4H18v8"/>',
@@ -383,7 +379,6 @@ def build_blog():
     return entries
 
 
-<<<<<<< HEAD
 # ---------------------------------------------------------------------------
 # Senior Care News
 #
@@ -684,7 +679,6 @@ def build_news():
     print(f"built news index + news/feed.xml ({len(items)} items)")
     return entries
 
-=======
 
 
 DOORLOOP_FEED = ("https://kirbygate.app.doorloop.com/api/units/listings/mits/json/no_id/1"
@@ -826,7 +820,6 @@ def doorloop_tokens():
         "</button>")
     tok["dl_wizard"] = "\n".join(wiz)
     return tok
->>>>>>> origin/main
 
 def build():
     check_unique_images()
