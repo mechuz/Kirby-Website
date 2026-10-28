@@ -383,6 +383,30 @@ DL_TYPES = {
     "lgstudio": "Large Studio", "onebed": "One Bedroom", "mc": "Memory Care Suite",
 }
 
+# Display cap per suite type, applied at build time to the live DoorLoop feed.
+# The site shows at most this many open suites of a type (lowest room numbers
+# first) and leaves the other open ones off the page entirely; DoorLoop itself
+# is not changed. Set by ownership on 2026-10-28 ("only show 3 memory care
+# units available for now"). Delete an entry to show every open suite again.
+DL_SHOW_MAX = {"mc": 3}
+
+
+def _dl_room_no(u):
+    m = re.search(r"\d+", u.get("room", ""))
+    return (int(m.group()) if m else 10 ** 6, u.get("room", ""))
+
+
+def _dl_apply_caps(units):
+    """Keep at most DL_SHOW_MAX[type] open suites per type, in the feed's order."""
+    drop = set()
+    for t, cap in DL_SHOW_MAX.items():
+        open_units = sorted((u for u in units if u["type"] == t and u["available"]), key=_dl_room_no)
+        drop.update((u["type"], u["room"]) for u in open_units[cap:])
+        if len(open_units) > cap:
+            print(f"doorloop: showing {cap} of {len(open_units)} open {t} suites (DL_SHOW_MAX)")
+    return [u for u in units if (u["type"], u["room"]) not in drop]
+
+
 def _dl_classify(rent, sqft, name):
     if "memory care" in name.lower() or rent == 5450:
         return "mc"
@@ -445,7 +469,7 @@ def doorloop_tokens():
         tok["dl_from_companion"] = "$2,800"
         return tok
     data = _json.loads(cache.read_text())
-    units = data["units"]
+    units = _dl_apply_caps(data["units"])
     for t in DL_TYPES:
         tu = [u for u in units if u["type"] == t]
         n = sum(1 for u in tu if u["available"])
