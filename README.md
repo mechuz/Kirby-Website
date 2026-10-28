@@ -26,6 +26,28 @@ cd public && python3 -m http.server 8741
 - The build writes `/blog/<slug>/`, the `/blog/` index, `/feed.xml` (RSS) and sitemap entries, with Article and BreadcrumbList schema on every post.
 - To publish: add the file, `python3 build.py`, commit, push. Post images go in `public/assets/img/blog/` (under ~300KB, 1600px wide).
 
+## Senior Care News
+
+- `/news/` is a curated page of short summaries that link out to other publishers' articles (paying for care, health research, caregiving, policy, local news) plus our own community updates. One file per item in `content/news/<slug>.html`; the file name is the slug (lowercase letters, digits and hyphens) and the item's anchor on the page (`/news/#<slug>`).
+- Each file is a `<!--meta -->` block followed by a short HTML body:
+
+  ```
+  <!--meta
+  title: Headline, plain text
+  source: Publisher name
+  source_url: https://... (for category community, a path on this site such as /blog/ also works)
+  date: 2026-10-28       (the day we posted it; items are listed newest first)
+  published: 2026-10-01  (the article's own date, optional)
+  category: finance | health | caregiving | policy | local | community
+  status: published      (optional; draft files are skipped)
+  -->
+  <p>Two or three sentence summary in our own words.</p>
+  <p class="why">Why it matters: one line for families (optional).</p>
+  ```
+- Categories and their labels: `finance` = Paying for care, `health` = Health & research, `caregiving` = Caregiving & family, `policy` = Policy & benefits, `local` = Memphis & Mid-South, `community` = Community update.
+- The body may only use `p`, `a`, `strong`, `em`, `ul`, `ol` and `li`. The build stops with a clear message on a bad slug; a missing title, source_url, date or category; an unknown category; a source_url that is not http(s); or a body containing script, iframe, style, object, embed, form or `on*` attributes. Everything from the meta block is HTML-escaped on output.
+- The build writes `/news/` (the newest 60 items under month headings, with topic filter chips), `/news/archive/<year>/` for anything older, `/news/feed.xml` (RSS, newest 20) and sitemap entries, with CollectionPage, ItemList and BreadcrumbList schema. External links open in a new tab. Write summaries in our own words and keep any quotation to a few words.
+
 ## To update content
 
 Edit the relevant file in `content/`, run `python3 build.py`, commit, push. Cloudflare Pages redeploys automatically on push (~30 seconds). Photos go in `public/assets/img/` (keep them under ~700KB; `sips -s format jpeg -s formatOptions 65 --resampleWidth 1800 in.jpg --out out.jpg`).

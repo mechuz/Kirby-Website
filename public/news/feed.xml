@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>The Pointe at Kirby Gate: Senior Care News</title>
+  <link>https://www.kirbygateliving.com/news/</link>
+  <description>Articles and news we think families should see, gathered by our team. The summaries are ours; the full stories belong to their publishers.</description>
+  <language>en-us</language>
+  <lastBuildDate>Wed, 28 Oct 2026 12:00:00 +0000</lastBuildDate>
+  <atom:link href="https://www.kirbygateliving.com/news/feed.xml" rel="self" type="application/rss+xml"/>
+  <item>
+    <title>Family Resources: our new library of guides for families</title>
+    <link>https://www.kirbygateliving.com/blog/</link>
+    <guid isPermaLink="false">https://www.kirbygateliving.com/news/#family-resources-guides-for-families</guid>
+    <pubDate>Wed, 28 Oct 2026 12:00:00 +0000</pubDate>
+    <category>Community update</category>
+    <description>We have opened Family Resources, a library of plain-language guides for families comparing assisted living and memory care in East Memphis, written by the people who answer these questions every day. The first guide, Questions to Ask on an Assisted Living Tour, covers what to ask about care, staffing, daily life, cost and contracts, and what to notice while you are in the building. More guides are on the way. Why it matters: a tour is the one part of this decision you can do in person, and the right questions make it count.</description>
+  </item>
+  <item>
+    <title>Assisted living costs rose about 5 percent in 2025, CareScout survey finds</title>
+    <link>https://www.carescout.com/cost-of-care</link>
+    <guid isPermaLink="false">https://www.kirbygateliving.com/news/#assisted-living-costs-2025-carescout-survey</guid>
+    <pubDate>Wed, 28 Oct 2026 12:00:00 +0000</pubDate>
+    <category>Paying for care</category>
+    <description>CareScout&#x27;s annual Cost of Care Survey, drawn from roughly 16,000 responses from long-term care providers across the country, found that the national median cost of an assisted living community rose about 5 percent in 2025. Home care and nursing home rates rose as well, and a private nursing home room still runs roughly three-quarters more than assisted living. The report breaks the medians down by state and by type of care. Why it matters: rates vary a great deal from one community to the next, so ask exactly what a monthly rate includes before you compare.</description>
+  </item>
+  <item>
+    <title>7.4 million older Americans are living with Alzheimer&#x27;s, new report finds</title>
+    <link>https://www.alz.org/news/2026/facts-figures-report-brain-health</link>
+    <guid isPermaLink="false">https://www.kirbygateliving.com/news/#alzheimers-facts-and-figures-2026</guid>
+    <pubDate>Wed, 28 Oct 2026 12:00:00 +0000</pubDate>
+    <category>Health &amp; research</category>
+    <description>The Alzheimer&#x27;s Association&#x27;s 2026 Facts and Figures report estimates that 7.4 million Americans age 65 and older are living with Alzheimer&#x27;s, and that more than 12 million family members and friends provided unpaid care last year, most of them describing the emotional strain as high. A companion survey found that nearly everyone values brain health, yet fewer than one in ten feel they know much about protecting it. Why it matters: the report lists everyday habits linked to lower risk, such as staying active, sleeping well and managing blood pressure, which makes a good conversation to have with a parent&#x27;s doctor.</description>
+  </item>
+</channel>
+</rss>
