@@ -374,6 +374,10 @@ DOORLOOP_FEED = ("https://kirbygate.app.doorloop.com/api/units/listings/mits/jso
                  "?partnerKey=doorLoopListingSites&subdomain=kirbygate"
                  "&filter_rentalAppListed=true&filter_showPropertyList=false")
 DOORLOOP_APPLY = "https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink"
+# Stripe Payment Link for the $199 reservation deposit. Paste the
+# buy.stripe.com URL here and rebuild — every deposit button appears.
+STRIPE_DEPOSIT_URL = ""
+STRIPE_DEPOSIT_AMOUNT = "$199"
 DL_TYPES = {
     "companion": "Companion Suite", "studio": "Standard Studio",
     "lgstudio": "Large Studio", "onebed": "One Bedroom", "mc": "Memory Care Suite",
@@ -466,6 +470,16 @@ def doorloop_tokens():
     tok["dl_units"] = "\n".join(cards) if cards else         '<p class="center">Every suite is spoken for at the moment &mdash; <a href="' + DOORLOOP_APPLY + '" target="_blank" rel="noopener">join the waiting list</a> or call (901) 247-5835.</p>'
     d = _dt.date.fromisoformat(data["fetched"])
     tok["dl_updated"] = "Live availability from our resident system &middot; updated " + d.strftime("%B %-d, %Y")
+
+    if STRIPE_DEPOSIT_URL:
+        tok["stripe_deposit"] = (
+            f'<a href="{STRIPE_DEPOSIT_URL}" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" '
+            f'data-track="deposit">Pay the {STRIPE_DEPOSIT_AMOUNT} Deposit Securely</a>'
+            '<p class="form-note" style="margin-top:0.6rem">Payment is processed by Stripe on a secure stripe.com page.</p>')
+    else:
+        tok["stripe_deposit"] = (
+            "<p>As soon as your application arrives, our team sends you a secure payment "
+            f"request for the {STRIPE_DEPOSIT_AMOUNT} deposit &mdash; usually the same business day.</p>")
 
     # Reservation wizard step-2 cards: only types with availability, tagged by stay
     FP_FALLBACK = {"studio": "/assets/img/floorplan-studio.png", "mc": "/assets/img/floorplan-studio.png",
