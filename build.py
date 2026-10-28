@@ -138,7 +138,7 @@ def render_calendar():
 # ---------------------------------------------------------------------------
 BLOG = CONTENT / "blog"
 SITE = "https://www.kirbygateliving.com"
-BLOG_TITLE = "Family Resources"
+BLOG_TITLE = "News & Resources"
 BLOG_INDEX_IMAGE = "/assets/img/exterior-front.webp"
 BLOG_DEFAULT_CARD_IMAGE = "/assets/img/exterior-front.webp"
 ORG = {"@type": "Organization", "name": "The Pointe at Kirby Gate", "url": SITE,
@@ -303,7 +303,7 @@ def render_post(p, posts):
 def render_blog_index(posts):
     import html as _h
     meta = {
-        "title": "Family Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
+        "title": "News & Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
         "description": "Plain-language guides for families comparing assisted living and memory care in East Memphis: paying for care, what to look for on a tour, memory loss, and life at The Pointe at Kirby Gate.",
         "path": "/blog/", "nav": "blog",
     }
