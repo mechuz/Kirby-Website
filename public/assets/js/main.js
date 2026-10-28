@@ -314,4 +314,14 @@ var FORM_CONVERSION_LABEL = "";
     var back = e.target.closest("[data-wiz-back]");
     if (back) show(parseInt(back.dataset.wizBack, 10));
   });
+
+  // Deep link: /reserve/?type=studio|lgstudio|onebed|companion|mc|respite
+  var want = (new URLSearchParams(location.search).get("type") || "").toLowerCase();
+  if (want) {
+    var stay = want === "mc" ? "mc" : (want === "respite" ? "respite" : "al");
+    var stayBtn = root.querySelector('[data-pick-stay="' + stay + '"]');
+    if (stayBtn) stayBtn.click();
+    var target = root.querySelector('#wiz-2 .wiz-card[data-key="' + want + '"]');
+    if (target && target.style.display !== "none") target.click();
+  }
 })();

@@ -492,7 +492,7 @@ def doorloop_tokens():
         img = next((u["photo"] for u in us if u.get("photo")), "") or FP_FALLBACK.get(t, "")
         img_tag = f'<span class="wiz-card-img"><img src="{img}" alt="{DL_TYPES[t]} floor plan" loading="lazy"></span>' if img else ""
         wiz.append(
-            f'<button type="button" class="wiz-card" data-stay="{stay}" data-type="{DL_TYPES[t]}" '
+            f'<button type="button" class="wiz-card" data-stay="{stay}" data-key="{t}" data-type="{DL_TYPES[t]}" '
             f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}" data-img="{img}">'
             + img_tag +
             f'<span class="wiz-card-name">{DL_TYPES[t]}</span>'
@@ -501,7 +501,7 @@ def doorloop_tokens():
             + (" &middot; all care included" if t == "mc" else "") + "</span>"
             "</button>")
     wiz.append(
-        '<button type="button" class="wiz-card" data-stay="respite" data-type="Respite Suite" '
+        '<button type="button" class="wiz-card" data-stay="respite" data-key="respite" data-type="Respite Suite" '
         'data-price="billed daily" data-apply="/respite-care/#book">'
         '<span class="wiz-card-name">Furnished Respite Suite</span>'
         '<span class="wiz-card-price">Daily rate</span>'

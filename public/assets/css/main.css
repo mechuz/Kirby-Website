@@ -525,3 +525,8 @@ body { letter-spacing: -0.005em; }
 /* Plain gradient hero (reserve page) */
 .hero-plain { background: linear-gradient(120deg, #1f4d2b, #35703a 55%, #4e9a51); min-height: 260px; }
 .hero-plain::before { display: none; }
+
+/* Clickable price cards */
+a.price-card { text-decoration: none; color: inherit; cursor: pointer; }
+.price-go { margin-top: 0.6rem; font-weight: 700; color: var(--green); font-size: 0.95rem; }
+a.price-card:hover .price-go { text-decoration: underline; }
