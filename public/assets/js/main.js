@@ -301,6 +301,11 @@ var FORM_CONVERSION_LABEL = "";
       if (state.stay === "respite") { window.location.href = card.dataset.apply; return; }
       document.getElementById("wiz-sum-type").textContent = state.type;
       document.getElementById("wiz-sum-price").textContent = state.price;
+      var plan = document.getElementById("wiz-sum-plan");
+      if (plan) {
+        if (card.dataset.img) { plan.src = card.dataset.img; plan.removeAttribute("hidden"); }
+        else plan.setAttribute("hidden", "");
+      }
       document.getElementById("wiz-checkout").href = state.apply;
       show(3);
       if (typeof gtag === "function") gtag("event", "reserve_step", { event_label: "suite_" + state.type });

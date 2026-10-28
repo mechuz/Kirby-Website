@@ -407,10 +407,14 @@ def fetch_doorloop():
             apply_url = (ils.get("Availability", {}) or {}).get("UnitAvailabilityURL") or ""
             if not name or not rent:
                 continue
+            photo = ""
+            for fl in (ils.get("File") or []):
+                if fl.get("FileType") == "Photo" and fl.get("Caption") == "Unit Photo" and fl.get("Src"):
+                    photo = fl["Src"]; break
             units.append({
                 "room": name.replace(" - Memory Care", ""),
                 "type": _dl_classify(rent, sqft, name),
-                "sqft": sqft, "rent": rent,
+                "sqft": sqft, "rent": rent, "photo": photo,
                 "available": bool(apply_url), "apply_url": apply_url,
             })
         if units:
@@ -464,13 +468,19 @@ def doorloop_tokens():
     tok["dl_updated"] = "Live availability from our resident system &middot; updated " + d.strftime("%B %-d, %Y")
 
     # Reservation wizard step-2 cards: only types with availability, tagged by stay
+    FP_FALLBACK = {"studio": "/assets/img/floorplan-studio.png", "mc": "/assets/img/floorplan-studio.png",
+                   "lgstudio": "/assets/img/floorplan-studio-deluxe.png", "onebed": "/assets/img/floorplan-1bed.png",
+                   "companion": ""}
     wiz = []
     for (t, sqft, rent), us in sorted(groups.items(), key=lambda kv: kv[0][2]):
         stay = "mc" if t == "mc" else "al"
         label = "1 suite open" if len(us) == 1 else f"{len(us)} suites open"
+        img = next((u["photo"] for u in us if u.get("photo")), "") or FP_FALLBACK.get(t, "")
+        img_tag = f'<span class="wiz-card-img"><img src="{img}" alt="{DL_TYPES[t]} floor plan" loading="lazy"></span>' if img else ""
         wiz.append(
             f'<button type="button" class="wiz-card" data-stay="{stay}" data-type="{DL_TYPES[t]}" '
-            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}">'
+            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}" data-img="{img}">'
+            + img_tag +
             f'<span class="wiz-card-name">{DL_TYPES[t]}</span>'
             f'<span class="wiz-card-price">${rent:,.0f}<small>/mo</small></span>'
             f'<span class="wiz-card-meta">{sqft} sq ft &middot; {label}'
