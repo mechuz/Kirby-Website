@@ -361,6 +361,8 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
 .news-month { font-size: 1.4rem; margin: 0 0 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--green-light); }
 .news-group + .news-group .news-month { margin-top: 2.5rem; }
 .news-group[hidden], .news-item[hidden], .news-empty[hidden] { display: none; }
+/* A shared /news/#slug link must land with the headline visible below the sticky header (98px on desktop, 78px on phones). */
+.news-group, .news-item { scroll-margin-top: 7.5rem; }
 .news-item {
   background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); border-left: 6px solid #346E46;
   padding: 1.25rem 1.25rem 1.25rem 1.1rem; margin-bottom: 1.25rem; overflow-wrap: anywhere;

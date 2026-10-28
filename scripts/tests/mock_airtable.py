@@ -5,7 +5,9 @@ Serves the four tables scripts/publish_from_airtable.py touches (Content
 Items, Content Topics, GBP Post Photos, News Items) from in-memory fixtures:
 one due blog article with a photo, one future article, one article that is
 too short, two due news items of different categories, one news item with a
-bad link and one future news item. It answers GET list (filterByFormula,
+bad link, one future news item, one that falls back to the same slug as the
+first due item, and two whose files run.sh puts on disk beforehand (one
+committed, one not). It answers GET list (filterByFormula,
 returnFieldsByFieldId), GET record and PATCH record the way Airtable does,
 appends every PATCH to a JSON-lines log, and serves the fixture photo.
 
@@ -181,6 +183,40 @@ def fixtures(port):
                            "expected in December.",
                 "Status": "Approved", "Added By": "Curator", "Compliance Check": True,
                 "Post Date": (TODAY + timedelta(days=7)).isoformat(),
+            },
+            # Same title and Post Date as recNewsFinance0001 and no Slug, so it falls
+            # back to the same YYYY-MM-DD-<title> slug: the publisher must fail it.
+            "recNewsDupSlug001": {
+                "Title": "Medicare open enrollment runs through December 7",
+                "Source": "KFF Health News", "Source URL": "https://kffhealthnews.org/news/medicare-open-enrollment-2027/",
+                "Article Date": "2026-10-21", "Category": "Paying for care",
+                "Summary": "Medicare's open enrollment window closes on December 7. Counselors with the Tennessee "
+                           "SHIP program offer free, unbiased help comparing Part D and Medicare Advantage plans, "
+                           "and families can book a session by phone or at several Memphis libraries.",
+                "Status": "Approved", "Added By": "Curator", "Compliance Check": True,
+                "Post Date": YESTERDAY.isoformat(),
+            },
+            # run.sh commits content/news/flu-shot-clinic-2026.html before prepare
+            # (a previous run pushed it): the row is only marked Published.
+            "recNewsOnMain0001": {
+                "Title": "Flu shot clinic for residents and families", "Source URL": "/activities-calendar/",
+                "Category": "Community update",
+                "Summary": "Our nursing team hosts a flu shot clinic in the activity room on the second Tuesday "
+                           "of November. Residents, families and staff are welcome; bring an insurance card and "
+                           "plan on about fifteen minutes.",
+                "Status": "Approved", "Added By": "Human", "Compliance Check": True,
+                "Post Date": YESTERDAY.isoformat(), "Slug": "flu-shot-clinic-2026",
+            },
+            # run.sh writes content/news/ask-the-nurse-october-2026.html after that
+            # commit, so the file exists but is not on main: the row must fail.
+            "recNewsOnDisk0001": {
+                "Title": "Ask the nurse: October office hours", "Source URL": "/contact-us/",
+                "Category": "Community update",
+                "Summary": "Our director of nursing keeps open office hours for families every Wednesday afternoon "
+                           "in October. Drop in with questions about medications, care levels or what to expect "
+                           "after a hospital stay; no appointment is needed.",
+                "Status": "Approved", "Added By": "Human", "Compliance Check": True,
+                "Post Date": YESTERDAY.isoformat(), "Slug": "ask-the-nurse-october-2026",
             },
         },
     }

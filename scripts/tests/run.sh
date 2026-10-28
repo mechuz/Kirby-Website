@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # End-to-end test of scripts/publish_from_airtable.py against a fake Airtable.
 #
-# Copies the repository to a temporary directory (without .git), starts
-# scripts/tests/mock_airtable.py on a free port, runs `prepare` and `finalize`
-# with AIRTABLE_API_URL pointing at the mock, and checks the files written,
-# the GITHUB_OUTPUT values and the PATCH calls the mock logged. Prints PASS
-# or FAIL and exits 0 or 1. Needs python3 only; no network.
+# Copies the repository to a temporary directory and commits the copy to a
+# throwaway git repository that stands in for main (with one hand-written news
+# item committed and another left uncommitted, for the slug-collision rows),
+# starts scripts/tests/mock_airtable.py on a free port, runs `prepare` and
+# `finalize` with AIRTABLE_API_URL pointing at the mock, and checks the files
+# written, the GITHUB_OUTPUT values and the PATCH calls the mock logged. Prints
+# PASS or FAIL and exits 0 or 1. Needs python3 and git only; no network.
 #
 #   bash scripts/tests/run.sh            (VERBOSE=1 also prints what the run produced)
 
@@ -50,6 +52,9 @@ ITEMS, TOPICS, NEWS = "tblVtdUcldbtwe50j", "tbl2jfMNcGqANbQ2q", "tblShi8ugFZKwvz
 BLOG_SLUG = "paying-for-assisted-living-in-tennessee"
 NEWS1 = f"{yesterday}-medicare-open-enrollment-runs-through-december-7"
 NEWS2 = "fall-family-night-2026"
+ON_MAIN = "flu-shot-clinic-2026"          # committed by run.sh before prepare: the row is only marked Published
+ON_DISK = "ask-the-nurse-october-2026"    # written by run.sh after that commit: the row must fail
+HANDWRITTEN = os.environ["HANDWRITTEN"]
 problems = []
 
 
@@ -112,33 +117,46 @@ status: published
             problems.append(f"news item {slug} was not written")
         elif read(f"{work}/content/news/{slug}.html") != expected:
             problems.append(f"content/news/{slug}.html differs from the expected format:\n" + read(f"{work}/content/news/{slug}.html"))
+    # the hand-written files (one committed, one not) were left alone
+    for slug, title in ((ON_MAIN, "Flu shot clinic for residents and families"), (ON_DISK, "Ask the nurse: October office hours")):
+        text = read(f"{work}/content/news/{slug}.html") if exists(f"content/news/{slug}.html") else ""
+        check(f"\ntitle: {title}\n" in text and HANDWRITTEN in text, f"hand-written content/news/{slug}.html was changed or removed")
 
     # GITHUB_OUTPUT
     out = dict(line.split("=", 1) for line in read(f"{tmp}/github-output").splitlines() if "=" in line)
-    for k, v in {"count": "3", "finalize": "3", "headlines": "Paying for Assisted Living in Tennessee",
+    for k, v in {"count": "3", "finalize": "4", "headlines": "Paying for Assisted Living in Tennessee",
                  "commit_message": "Blog: Paying for Assisted Living in Tennessee; News: 2 items"}.items():
         check(out.get(k) == v, f"GITHUB_OUTPUT {k}={out.get(k)!r}, expected {v!r}")
 
     # manifest
     check([p["slug"] for p in manifest.get("posts", [])] == [BLOG_SLUG], f"manifest posts: {manifest.get('posts')}")
-    check([n["slug"] for n in manifest.get("news", [])] == [NEWS1, NEWS2], f"manifest news: {manifest.get('news')}")
-    check([n["url"] for n in manifest.get("news", [])] == [f"{SITE}/news/#{NEWS1}", f"{SITE}/news/#{NEWS2}"], "manifest news urls")
+    check([n["slug"] for n in manifest.get("news", [])] == [NEWS1, ON_MAIN, NEWS2], f"manifest news: {manifest.get('news')}")
+    check([n["url"] for n in manifest.get("news", [])] == [f"{SITE}/news/#{s}" for s in (NEWS1, ON_MAIN, NEWS2)], "manifest news urls")
+    on_main = next((n for n in manifest.get("news", []) if n["slug"] == ON_MAIN), {})
+    check(on_main.get("files") == [] and "already on main" in on_main.get("log", ""),
+          f"the committed item was not treated as already on main: {on_main}")
 
     # the rows that failed validation were marked Failed with a reason; nothing else was touched
-    check(len(log) == 2, f"expected 2 PATCH calls after prepare, got {len(log)}: {log}")
-    if len(log) == 2:
-        short, bad = log
+    check(len(log) == 4, f"expected 4 PATCH calls after prepare, got {len(log)}: {log}")
+    if len(log) == 4:
+        short, bad, dup, disk = log
         check(short["table"] == ITEMS and short["id"] == "recBlogShort00001", f"first PATCH is not the short article: {short}")
         check(short["named"].get("Status") == "Failed" and "Copy has" in short["named"].get("Publish Log", "")
               and "minimum is 300" in short["named"].get("Publish Log", ""), f"short article not failed properly: {short}")
         check(bad["table"] == NEWS and bad["id"] == "recNewsBadUrl0001", f"second PATCH is not the bad-URL news item: {bad}")
         check(bad["named"].get("Status") == "Failed" and "Source URL" in bad["named"].get("Publish Log", ""),
               f"bad-URL news item not failed properly: {bad}")
+        check(dup["table"] == NEWS and dup["id"] == "recNewsDupSlug001", f"third PATCH is not the duplicate-slug news item: {dup}")
+        check(dup["named"].get("Status") == "Failed" and NEWS1 in dup["named"].get("Publish Log", "")
+              and "recNewsFinance0001" in dup["named"].get("Publish Log", ""), f"duplicate-slug news item not failed properly: {dup}")
+        check(disk["table"] == NEWS and disk["id"] == "recNewsOnDisk0001", f"fourth PATCH is not the uncommitted-file news item: {disk}")
+        check(disk["named"].get("Status") == "Failed" and f"content/news/{ON_DISK}.html" in disk["named"].get("Publish Log", "")
+              and "not on main" in disk["named"].get("Publish Log", ""), f"uncommitted-file news item not failed properly: {disk}")
 
 elif phase == "finalize":
-    check(len(log) == 6, f"expected 6 PATCH calls in total, got {len(log)}: {log}")
-    if len(log) == 6:
-        blog, topic, news1, news2 = log[2:]
+    check(len(log) == 9, f"expected 9 PATCH calls in total, got {len(log)}: {log}")
+    if len(log) == 9:
+        blog, topic, news1, on_main, news2 = log[4:]
         check(blog["table"] == ITEMS and blog["id"] == "recBlogDue0000001", f"blog row not finalized: {blog}")
         check(blog["named"].get("Status") == "Published", f"blog row status: {blog}")
         check(blog["named"].get("Published URL") == f"{SITE}/blog/{BLOG_SLUG}/", f"blog Published URL: {blog}")
@@ -147,7 +165,9 @@ elif phase == "finalize":
               f"blog Publish Log: {blog}")
         check(topic["table"] == TOPICS and topic["id"] == "recTopicPaying001" and topic["named"].get("Status") == "Published"
               and topic["named"].get("Published URL") == f"{SITE}/blog/{BLOG_SLUG}/", f"topic not finalized: {topic}")
-        for entry, rid, slug in ((news1, "recNewsFinance0001", NEWS1), (news2, "recNewsCommunity01", NEWS2)):
+        check("already on main" in on_main["named"].get("Publish Log", ""), f"committed item's Publish Log: {on_main}")
+        for entry, rid, slug in ((news1, "recNewsFinance0001", NEWS1), (on_main, "recNewsOnMain0001", ON_MAIN),
+                                 (news2, "recNewsCommunity01", NEWS2)):
             check(entry["table"] == NEWS and entry["id"] == rid, f"news row {rid} not finalized: {entry}")
             check(entry["named"].get("Status") == "Published", f"news row {rid} status: {entry}")
             check(entry["named"].get("Published URL") == f"{SITE}/news/#{slug}", f"news row {rid} Published URL: {entry}")
@@ -165,9 +185,23 @@ sys.exit(1 if problems else 0)
 PYEOF
 }
 
-# 1. A throwaway copy of the repository, without .git so nothing here can touch it.
+# 1. A throwaway copy of the repository with its own one-commit git repository
+#    standing in for main (the publisher asks git whether a file is already
+#    there), so nothing here can touch the real one. A hand-written news item
+#    is committed with it and another is written after the commit; the
+#    recNewsOnMain0001 and recNewsOnDisk0001 fixtures reuse their slugs.
 mkdir -p "$WORK"
 tar -C "$REPO" --exclude=.git --exclude=.claude --exclude=__pycache__ -cf - . | tar -C "$WORK" -xf - || fail "could not copy the repository"
+export HANDWRITTEN="Hand-written item; the publisher must leave this file alone."
+news_file() {   # news_file SLUG TITLE: a valid community item at content/news/SLUG.html
+  printf '<!--meta\ntitle: %s\nsource_url: /activities-calendar/\ndate: 2026-10-01\ncategory: community\n-->\n<p>%s</p>\n' \
+    "$2" "$HANDWRITTEN" > "$WORK/content/news/$1.html"
+}
+news_file flu-shot-clinic-2026 "Flu shot clinic for residents and families"
+git -C "$WORK" -c init.defaultBranch=main init -q || fail "could not create the throwaway git repository"
+git -C "$WORK" add -A && git -C "$WORK" -c user.name=test -c user.email=test@example.com -c commit.gpgsign=false commit -q -m "main" \
+  || fail "could not commit the copy"
+news_file ask-the-nurse-october-2026 "Ask the nurse: October office hours"
 
 # 2. The fake Airtable, on a free port it picks itself and reports in the info file.
 python3 "$HERE/mock_airtable.py" --info-file "$TMP/info.json" --log "$TMP/patch.log" > "$TMP/mock.out" 2>&1 &
@@ -191,7 +225,7 @@ export AIRTABLE_TOKEN="test-token"
 export AIRTABLE_API_URL="http://127.0.0.1:$PORT/v0"
 export MANIFEST="$TMP/manifest.json"
 export GITHUB_OUTPUT="$TMP/github-output"
-export MAX_POSTS="2" MAX_NEWS="5"
+export MAX_POSTS="2" MAX_NEWS="8"   # six news rows are due in the fixtures
 export no_proxy="127.0.0.1,localhost" NO_PROXY="127.0.0.1,localhost"
 : > "$GITHUB_OUTPUT"
 

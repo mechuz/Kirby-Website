@@ -16,9 +16,10 @@ Run by .github/workflows/publish-blog.yml in two steps:
             Published in Airtable and update the articles' linked topics.
 
 Rows that cannot be published (bad slug, unsafe HTML, too short, missing
-source, bad link, build failure) are set to Failed with the reason in Publish
-Log, so nothing is retried forever. Rows whose file is already on main are
-only marked Published.
+source, bad link, a slug another row took earlier in the run or that matches
+a file not committed on main, build failure) are set to Failed with the reason
+in Publish Log, so nothing is retried forever. Rows whose file is already
+committed on main are only marked Published.
 
 Environment: AIRTABLE_TOKEN (required; without it the script exits quietly),
 MANIFEST (path, default /tmp/publish-manifest.json), MAX_POSTS (default 2),
@@ -258,6 +259,28 @@ def git(*args):
     return r.stdout.strip()
 
 
+def on_main(target):
+    """True when git tracks the file, i.e. a previous run (or a hand-made
+    commit) already put it on main. A file that merely exists was written by
+    this run or left on disk and must not pass for a published one."""
+    rel = target.relative_to(ROOT).as_posix()
+    return git("ls-files", "--error-unmatch", "--", rel) == rel
+
+
+def slug_conflict(slug, target, entries):
+    """Why this slug cannot be used, or None: another row claimed it earlier in
+    this run (entries are the manifest rows so far), or its file is on disk
+    without being on main. Two rows with the same title and date and no Slug
+    fall back to the same slug, so the second must fail loudly instead of being
+    marked Published with the first one's link and no file of its own."""
+    for e in entries:
+        if e["slug"] == slug:
+            return f"slug {slug!r} is already used by row {e['id']} in this run; set a different Slug"
+    if target.exists() and not on_main(target):
+        return f"slug {slug!r} collides with {target.relative_to(ROOT).as_posix()}, which is not on main; set a different Slug"
+    return None
+
+
 def gh_output(**kv):
     path = os.environ.get("GITHUB_OUTPUT")
     if not path:
@@ -331,6 +354,9 @@ def prepare_one(rec, due_at, manifest):
     target = BLOG_DIR / f"{slug}.html"
     topics = list(f.get(F["topic"]) or [])
 
+    conflict = slug_conflict(slug, target, manifest["posts"])
+    if conflict:
+        return mark_failed(rid, conflict)
     if target.exists():
         print(f"  {target.relative_to(ROOT)} is already on main; the row will be marked Published")
         manifest["posts"].append({"id": rid, "slug": slug, "headline": headline, "url": url, "files": [],
@@ -487,6 +513,9 @@ def prepare_news_one(rec, post_date, manifest):
     url = f"{SITE}/news/#{slug}"
     target = NEWS_DIR / f"{slug}.html"
 
+    conflict = slug_conflict(slug, target, manifest["news"])
+    if conflict:
+        return fail(conflict)
     if target.exists():
         print(f"  {target.relative_to(ROOT)} is already on main; the row will be marked Published")
         manifest["news"].append({"id": rid, "slug": slug, "title": title, "url": url, "files": [],
