@@ -263,3 +263,50 @@ var FORM_CONVERSION_LABEL = "";
   });
   render();
 })();
+
+// Reservation wizard on /rates-floor-plans/#reserve.
+(function () {
+  var root = document.getElementById("reserve");
+  if (!root) return;
+  var state = { stay: null, type: "", price: "", apply: "" };
+  function show(step) {
+    [1, 2, 3].forEach(function (n) {
+      var pane = document.getElementById("wiz-" + n);
+      if (pane) { if (n === step) pane.removeAttribute("hidden"); else pane.setAttribute("hidden", ""); }
+      var dot = root.querySelector('[data-step-dot="' + n + '"]');
+      if (dot) dot.classList.toggle("on", n <= step);
+    });
+  }
+  root.querySelectorAll("[data-pick-stay]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.stay = btn.dataset.pickStay;
+      var any = false;
+      root.querySelectorAll("#wiz-2 .wiz-card").forEach(function (c) {
+        var match = c.dataset.stay === state.stay;
+        c.style.display = match ? "" : "none";
+        if (match) any = true;
+      });
+      show(2);
+      if (!any) {
+        document.getElementById("wiz-2").insertAdjacentHTML("afterbegin",
+          '<p class="center">Every suite of this kind is spoken for right now &mdash; <a href="/contact-us/?interest=apply">join the waitlist</a> or call (901) 247-5835.</p>');
+      }
+      if (typeof gtag === "function") gtag("event", "reserve_step", { event_label: "stay_" + state.stay });
+    });
+  });
+  root.addEventListener("click", function (e) {
+    var card = e.target.closest("#wiz-2 .wiz-card");
+    if (card) {
+      state.type = card.dataset.type; state.price = card.dataset.price; state.apply = card.dataset.apply;
+      if (state.stay === "respite") { window.location.href = card.dataset.apply; return; }
+      document.getElementById("wiz-sum-type").textContent = state.type;
+      document.getElementById("wiz-sum-price").textContent = state.price;
+      document.getElementById("wiz-checkout").href = state.apply;
+      show(3);
+      if (typeof gtag === "function") gtag("event", "reserve_step", { event_label: "suite_" + state.type });
+      return;
+    }
+    var back = e.target.closest("[data-wiz-back]");
+    if (back) show(parseInt(back.dataset.wizBack, 10));
+  });
+})();

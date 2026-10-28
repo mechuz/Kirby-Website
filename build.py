@@ -368,11 +368,131 @@ def build_blog():
     return entries
 
 
+
+
+DOORLOOP_FEED = ("https://kirbygate.app.doorloop.com/api/units/listings/mits/json/no_id/1"
+                 "?partnerKey=doorLoopListingSites&subdomain=kirbygate"
+                 "&filter_rentalAppListed=true&filter_showPropertyList=false")
+DOORLOOP_APPLY = "https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink"
+DL_TYPES = {
+    "companion": "Companion Suite", "studio": "Standard Studio",
+    "lgstudio": "Large Studio", "onebed": "One Bedroom", "mc": "Memory Care Suite",
+}
+
+def _dl_classify(rent, sqft, name):
+    if "memory care" in name.lower() or rent == 5450:
+        return "mc"
+    if sqft >= 420: return "onebed"
+    if sqft >= 350: return "lgstudio"
+    if sqft >= 250: return "studio"
+    return "companion"
+
+def fetch_doorloop():
+    """Refresh content/doorloop.json from the public DoorLoop listings feed.
+    Units with a non-empty Availability.UnitAvailabilityURL are open to apply;
+    everything else is leased. Falls back silently to the cached file."""
+    import json as _json, urllib.request, datetime as _dt
+    cache = CONTENT / "doorloop.json"
+    try:
+        req = urllib.request.Request(DOORLOOP_FEED, headers={"User-Agent": "kirbygateliving-build/1.0"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            data = _json.load(r)
+        units = []
+        for p in data["PhysicalProperty"]["Property"]:
+            name = (p.get("PropertyID", {}).get("unitName") or "").strip()
+            ils = p.get("ILS_Unit", {})
+            u = (ils.get("Units", {}).get("Unit") or [{}])[0]
+            rent = u.get("MarketRent") or u.get("UnitRent") or 0
+            sqft = u.get("MaxSquareFeet") or 0
+            apply_url = (ils.get("Availability", {}) or {}).get("UnitAvailabilityURL") or ""
+            if not name or not rent:
+                continue
+            units.append({
+                "room": name.replace(" - Memory Care", ""),
+                "type": _dl_classify(rent, sqft, name),
+                "sqft": sqft, "rent": rent,
+                "available": bool(apply_url), "apply_url": apply_url,
+            })
+        if units:
+            cache.write_text(_json.dumps({
+                "fetched": _dt.date.today().isoformat(), "units": units}, indent=1))
+            print(f"doorloop: {sum(1 for u in units if u['available'])} of {len(units)} listed units available")
+    except Exception as e:
+        print(f"doorloop fetch skipped ({e}); using cached data")
+
+def doorloop_tokens():
+    import json as _json, datetime as _dt
+    cache = CONTENT / "doorloop.json"
+    tok = {}
+    if not cache.exists():
+        for t in DL_TYPES:
+            tok[f"dl_badge_{t}"] = ""
+        tok["dl_units"] = "<p class=\"center\">Call (901) 247-5835 for today&rsquo;s availability.</p>"
+        tok["dl_updated"] = ""
+        tok["dl_from_companion"] = "$2,800"
+        return tok
+    data = _json.loads(cache.read_text())
+    units = data["units"]
+    for t in DL_TYPES:
+        tu = [u for u in units if u["type"] == t]
+        n = sum(1 for u in tu if u["available"])
+        if n:
+            tok[f"dl_badge_{t}"] = f'<span class="avail-badge">{n} available now</span>'
+        else:
+            tok[f"dl_badge_{t}"] = '<span class="avail-badge off">Currently leased &middot; join the waitlist</span>'
+    comp = [u["rent"] for u in units if u["type"] == "companion" and u["available"]] or            [u["rent"] for u in units if u["type"] == "companion"]
+    tok["dl_from_companion"] = "${:,.0f}".format(min(comp)) if comp else "$2,800"
+    avail = sorted([u for u in units if u["available"]], key=lambda u: (u["rent"], u["room"]))
+    groups = {}
+    for u in avail:
+        groups.setdefault((u["type"], u["sqft"], u["rent"]), []).append(u)
+    cards = []
+    for (t, sqft, rent), us in sorted(groups.items(), key=lambda kv: kv[0][2]):
+        rooms = ", ".join(u["room"].replace("Room ", "") for u in us)
+        label = "1 suite available" if len(us) == 1 else f"{len(us)} suites available"
+        cards.append(
+            '<div class="unit-card">'
+            f'<div class="unit-room">{DL_TYPES[t]}</div>'
+            f'<div class="unit-type">{label} &middot; Room{"s" if len(us) > 1 else ""} {rooms}</div>'
+            f'<div class="unit-meta">{sqft} sq ft &middot; <strong>${rent:,.0f}/mo</strong>'
+            + (" &middot; all care included" if t == "mc" else "")
+            + "</div>"
+            f'<a href="{us[0]["apply_url"] or DOORLOOP_APPLY}" target="_blank" rel="noopener" class="btn btn-primary btn-arrow" data-track="apply" data-plan="{t}">Apply for This Suite</a>'
+            "</div>")
+    tok["dl_units"] = "\n".join(cards) if cards else         '<p class="center">Every suite is spoken for at the moment &mdash; <a href="' + DOORLOOP_APPLY + '" target="_blank" rel="noopener">join the waiting list</a> or call (901) 247-5835.</p>'
+    d = _dt.date.fromisoformat(data["fetched"])
+    tok["dl_updated"] = "Live availability from our resident system &middot; updated " + d.strftime("%B %-d, %Y")
+
+    # Reservation wizard step-2 cards: only types with availability, tagged by stay
+    wiz = []
+    for (t, sqft, rent), us in sorted(groups.items(), key=lambda kv: kv[0][2]):
+        stay = "mc" if t == "mc" else "al"
+        label = "1 suite open" if len(us) == 1 else f"{len(us)} suites open"
+        wiz.append(
+            f'<button type="button" class="wiz-card" data-stay="{stay}" data-type="{DL_TYPES[t]}" '
+            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}">'
+            f'<span class="wiz-card-name">{DL_TYPES[t]}</span>'
+            f'<span class="wiz-card-price">${rent:,.0f}<small>/mo</small></span>'
+            f'<span class="wiz-card-meta">{sqft} sq ft &middot; {label}'
+            + (" &middot; all care included" if t == "mc" else "") + "</span>"
+            "</button>")
+    wiz.append(
+        '<button type="button" class="wiz-card" data-stay="respite" data-type="Respite Suite" '
+        'data-price="billed daily" data-apply="/respite-care/#book">'
+        '<span class="wiz-card-name">Furnished Respite Suite</span>'
+        '<span class="wiz-card-price">Daily rate</span>'
+        '<span class="wiz-card-meta">Cozy furnished suite &middot; 5-night minimum &middot; pick your dates next</span>'
+        "</button>")
+    tok["dl_wizard"] = "\n".join(wiz)
+    return tok
+
 def build():
     check_unique_images()
     year = str(datetime.date.today().year)
     css_v = fhash(PUBLIC / "assets" / "css" / "main.css")
     js_v = fhash(PUBLIC / "assets" / "js" / "main.js")
+    fetch_doorloop()
+    _dl_tokens = doorloop_tokens()
     sitemap_paths = []
     for f in sorted(CONTENT.glob("*.html")):
         if f.stem.endswith(".head"):
@@ -382,6 +502,9 @@ def build():
         body = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), body)
         if "{{calendar}}" in body:
             body = body.replace("{{calendar}}", render_calendar())
+        if "{{dl_" in body:
+            for _k, _v in _dl_tokens.items():
+                body = body.replace("{{%s}}" % _k, _v)
         import html as _html
         main_phone = meta.get("phone") == "main"
         repl = {

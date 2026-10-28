@@ -3,6 +3,10 @@ name: Build and deploy to GitHub Pages
 on:
   push:
     branches: [main, master]
+  schedule:
+    # Rebuild daily at 11:30 UTC (~5:30am Memphis) so suite availability
+    # on /rates-floor-plans/ stays in sync with DoorLoop.
+    - cron: '30 11 * * *'
   workflow_dispatch:
 
 permissions:

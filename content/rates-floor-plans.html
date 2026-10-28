@@ -4,7 +4,7 @@ description: Published assisted living & memory care pricing in East Memphis —
 path: /rates-floor-plans/
 nav: rates
 -->
-<section class="hero hero-page" style="background-image:url('/assets/img/consult-advisor.webp'); background-position:center 22%">
+<section class="hero hero-page" style="background-image:url('/assets/img/lemonade-welcome.webp'); background-position:center 20%">
   <div class="container">
     <h1>Rates &amp; Floor Plans</h1>
     <p class="tagline">Real prices, published for every suite. The most affordable community in its class in Memphis.</p>
@@ -15,34 +15,38 @@ nav: rates
   <div class="container">
     <div class="center narrow">
       <p class="eyebrow">Monthly Rates</p>
-      <h2>Honest, All-In Pricing</h2>
-      <p>No guessing, no &ldquo;call for pricing&rdquo; games. Your total monthly cost is simply your suite rate plus your personal care level &mdash; and Memory Care is one all-inclusive rate. The Pointe is a private-pay community, and the most affordable in its class in the Memphis market.</p>
+      <h2>A Warm, Vibrant Place to Call Home</h2>
+      <p>Under new ownership, we&rsquo;ve renovated the community and hand-picked a care team we believe is the finest in Memphis &mdash; so your loved one is met with warmth, dignity, and truly attentive care, every day. We publish our rates because families deserve to plan with confidence: one monthly rate covers your suite and daily life, assisted living adds the level of personal care your loved one needs, and Memory Care is all-inclusive.</p>
+      <p>The Pointe is a private-pay community &mdash; the most affordable in its class in the Memphis market. These rates are good through December 31, 2026.</p>
     </div>
     <div class="price-cards">
       <div class="price-card">
-        <span class="price-badge alt">Short Waiting List</span>
         <h3>Companion Suite</h3>
-        <div class="price-amount">$2,800</div>
+        <div class="price-amount">from {{dl_from_companion}}</div>
         <div class="price-per">per month</div>
-        <p class="price-note">A shared suite with a built-in neighbor. Ask us about current availability.</p>
+        <p class="price-note">A shared suite with a built-in neighbor.</p>
+        <p>{{dl_badge_companion}}</p>
       </div>
       <div class="price-card">
         <h3>Standard Studio</h3>
         <div class="price-amount">$3,500</div>
         <div class="price-per">per month</div>
         <p class="price-note">298 sq ft of private, newly renovated comfort.</p>
+        <p>{{dl_badge_studio}}</p>
       </div>
       <div class="price-card">
         <h3>Large Studio</h3>
         <div class="price-amount">$3,800</div>
         <div class="price-per">per month</div>
         <p class="price-note">373 sq ft with room for a real sitting area.</p>
+        <p>{{dl_badge_lgstudio}}</p>
       </div>
       <div class="price-card">
         <h3>One Bedroom</h3>
         <div class="price-amount">$4,600</div>
         <div class="price-per">per month</div>
         <p class="price-note">431 sq ft &mdash; a true bedroom plus living space.</p>
+        <p>{{dl_badge_onebed}}</p>
       </div>
       <div class="price-card">
         <span class="price-badge">All-Inclusive</span>
@@ -50,8 +54,66 @@ nav: rates
         <div class="price-amount">$5,450</div>
         <div class="price-per">per month &middot; care included</div>
         <p class="price-note">Private suite in our secure neighborhood &mdash; one rate covers residence and all care.</p>
+        <p>{{dl_badge_mc}}</p>
       </div>
     </div>
+    <div class="special-band">
+      <p class="eyebrow">Limited-Time Move-In Special</p>
+      <h3>Up to $3,800 in savings</h3>
+      <div class="special-chips">
+        <span>Move-in fee waived</span>
+        <span>$500 resident credit</span>
+        <span>$300/mo off for 6 months</span>
+      </div>
+      <p class="special-note">Available for families who join us through December 31, 2026.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="reserve">
+  <div class="container">
+    <div class="center narrow">
+      <p class="eyebrow">Reserve Your Suite</p>
+      <h2>Three Easy Steps, Like Booking a Stay</h2>
+      <p>Pick the care that fits, choose your suite, and check out securely. Only suites that are open today are shown &mdash; when one is leased, it leaves this list.</p>
+    </div>
+    <ol class="wiz-steps" aria-hidden="true">
+      <li class="on" data-step-dot="1">1. Stay type</li>
+      <li data-step-dot="2">2. Choose your suite</li>
+      <li data-step-dot="3">3. Checkout</li>
+    </ol>
+    <div class="wiz-pane" id="wiz-1">
+      <div class="wiz-grid">
+        <button type="button" class="wiz-card wiz-stay" data-pick-stay="al">
+          <span class="wiz-card-name">Assisted Living</span>
+          <span class="wiz-card-meta">Independence with daily support, long-term home</span>
+        </button>
+        <button type="button" class="wiz-card wiz-stay" data-pick-stay="mc">
+          <span class="wiz-card-name">Memory Care</span>
+          <span class="wiz-card-meta">Secure neighborhood, all-inclusive dementia care</span>
+        </button>
+        <button type="button" class="wiz-card wiz-stay" data-pick-stay="respite">
+          <span class="wiz-card-name">Short-Term Respite</span>
+          <span class="wiz-card-meta">A furnished stay from 5 nights &mdash; recover, recharge, or try us out</span>
+        </button>
+      </div>
+    </div>
+    <div class="wiz-pane" id="wiz-2" hidden>
+      <div class="wiz-grid">
+{{dl_wizard}}
+      </div>
+      <p class="center" style="margin-top:1.25rem"><button type="button" class="btn btn-secondary" data-wiz-back="1">&larr; Back</button></p>
+    </div>
+    <div class="wiz-pane" id="wiz-3" hidden>
+      <div class="wiz-summary">
+        <h3>Your reservation</h3>
+        <p class="wiz-sum-line"><span id="wiz-sum-type"></span> &middot; <strong id="wiz-sum-price"></strong></p>
+        <a href="#" id="wiz-checkout" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="wizard">Continue to Secure Checkout</a>
+        <p class="form-note" style="margin-top:1rem">Checkout runs through our secure DoorLoop resident portal, where your application and any reservation deposit are collected. A reservation holds your suite while we complete the required nurse assessment and residency agreement &mdash; it is not a lease, and final move-in is confirmed after assessment, as Tennessee requires of licensed assisted-care communities. Equal Housing Opportunity.</p>
+        <p class="center" style="margin-top:0.5rem"><button type="button" class="btn btn-secondary" data-wiz-back="2">&larr; Back</button></p>
+      </div>
+    </div>
+    <p class="center" style="margin-top:1.5rem; font-size:0.9rem; color:#5f6b60">{{dl_updated}}</p>
   </div>
 </section>
 
@@ -117,7 +179,7 @@ nav: rates
       </div>
       <div>
         <h3>Standard Studio</h3>
-        <div class="fp-price-row"><span class="fp-price">$3,500<small>/mo</small></span><span class="fp-size">298 sq ft</span></div>
+        <div class="fp-price-row"><span class="fp-price">$3,500<small>/mo</small></span><span class="fp-size">298 sq ft</span>{{dl_badge_studio}}</div>
         <p>Efficient and cozy, with everything close at hand. A favorite for residents who spend their days out in the community.</p>
         <ul class="check-list">
           <li>Newly renovated private suite</li>
@@ -137,7 +199,7 @@ nav: rates
       </div>
       <div>
         <h3>Large Studio</h3>
-        <div class="fp-price-row"><span class="fp-price">$3,800<small>/mo</small></span><span class="fp-size">373 sq ft</span></div>
+        <div class="fp-price-row"><span class="fp-price">$3,800<small>/mo</small></span><span class="fp-size">373 sq ft</span>{{dl_badge_lgstudio}}</div>
         <p>Extra breathing room for a sitting area, a reading chair, and the furniture that has stories to tell.</p>
         <ul class="check-list">
           <li>Oversized studio layout</li>
@@ -157,7 +219,7 @@ nav: rates
       </div>
       <div>
         <h3>One Bedroom</h3>
-        <div class="fp-price-row"><span class="fp-price">$4,600<small>/mo</small></span><span class="fp-size">431 sq ft</span></div>
+        <div class="fp-price-row"><span class="fp-price">$4,600<small>/mo</small></span><span class="fp-size">431 sq ft</span>{{dl_badge_onebed}}</div>
         <p>A true bedroom plus living space &mdash; our most spacious residence, ideal for couples or lifelong hosts.</p>
         <ul class="check-list">
           <li>Separate bedroom and living room</li>
@@ -183,6 +245,6 @@ nav: rates
       <a href="https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="general">Start Your Application</a>
       <a href="tel:9012475835" class="btn btn-secondary btn-lg" data-track="phone" style="margin-left:0.5rem">Call (901) 247-5835</a>
     </p>
-    <p class="rate-disclaimer">Rates shown are effective October 2026 and subject to change. The Pointe at Kirby Gate is a private-pay community. An online application is not a lease and does not guarantee availability; residency is confirmed by an individual nurse assessment and a written residency agreement, as required for licensed Assisted Care Living Facilities by the Tennessee Department of Health. Assisted living care-level fees are determined by the assessment. Memory care is a single all-inclusive rate. No payment is collected on this website. Equal Housing Opportunity.</p>
+    <p class="rate-disclaimer">Rates and move-in special shown are good through December 31, 2026, and subject to change after that date. Availability shown is synced from our resident management system and may change at any time. The Pointe at Kirby Gate is a private-pay community. An online application is not a lease and does not guarantee availability; residency is confirmed by an individual nurse assessment and a written residency agreement, as required for licensed Assisted Care Living Facilities by the Tennessee Department of Health. Assisted living care-level fees are determined by the assessment. Memory care is a single all-inclusive rate. No payment is collected on this website. Equal Housing Opportunity.</p>
   </div>
 </section>

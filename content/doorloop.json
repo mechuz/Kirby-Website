@@ -1,0 +1,285 @@
+{
+ "fetched": "2026-10-28",
+ "units": [
+  {
+   "room": "Room 1",
+   "type": "onebed",
+   "sqft": 431,
+   "rent": 4600,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acbf8&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 2",
+   "type": "onebed",
+   "sqft": 431,
+   "rent": 4600,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acbfe&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 3",
+   "type": "studio",
+   "sqft": 298,
+   "rent": 3500,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acbfb&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 4",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 5A",
+   "type": "companion",
+   "sqft": 186,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 5B",
+   "type": "companion",
+   "sqft": 186,
+   "rent": 2800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 6A",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 7",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 8A",
+   "type": "companion",
+   "sqft": 187,
+   "rent": 2195,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc0d&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 12",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 12B",
+   "type": "companion",
+   "sqft": 187,
+   "rent": 2195,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 13",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 20",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 21",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 23",
+   "type": "onebed",
+   "sqft": 431,
+   "rent": 4600,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc40&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 24",
+   "type": "onebed",
+   "sqft": 431,
+   "rent": 4600,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 27",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc4c&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 28",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc4f&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 29",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc52&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 30",
+   "type": "mc",
+   "sqft": 187,
+   "rent": 2195,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 32",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 33",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc5e&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 34",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc61&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 36",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc67&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 38",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc6d&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 40",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc73&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 41",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc76&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 42",
+   "type": "mc",
+   "sqft": 298,
+   "rent": 5450,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc79&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 44B",
+   "type": "companion",
+   "sqft": 187,
+   "rent": 2195,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 46B",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc25&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 47A",
+   "type": "companion",
+   "sqft": 187,
+   "rent": 2395,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 47B",
+   "type": "companion",
+   "sqft": 187,
+   "rent": 2395,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 49",
+   "type": "lgstudio",
+   "sqft": 373,
+   "rent": 3800,
+   "available": false,
+   "apply_url": ""
+  },
+  {
+   "room": "Room 50",
+   "type": "studio",
+   "sqft": 298,
+   "rent": 3500,
+   "available": true,
+   "apply_url": "https://kirbygate.app.doorloop.com/tenant-portal/rental-application?propertyId=68f78e033bf60125105acaf0&unitId=68f78e043bf60125105acc9a&companyId=68f14e7610e58713646e6b4a&source=ListingSyndication&feedVersion=1"
+  },
+  {
+   "room": "Room 53",
+   "type": "studio",
+   "sqft": 298,
+   "rent": 3500,
+   "available": false,
+   "apply_url": ""
+  }
+ ]
+}
