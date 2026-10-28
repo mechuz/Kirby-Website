@@ -17,7 +17,9 @@ top of each content file:
 Usage: python3 build.py
 """
 import datetime
+import email.utils
 import hashlib
+import json
 import pathlib
 import re
 import sys
@@ -27,7 +29,7 @@ TEMPLATE = (ROOT / "templates" / "base.html").read_text()
 CONTENT = ROOT / "content"
 PUBLIC = ROOT / "public"
 
-NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reviews", "shop", "contact"]
+NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reviews", "shop", "contact", "blog"]
 
 ICONS = {
  "dining":   '<path d="M5 3v7a3 3 0 0 0 6 0V3"/><path d="M8 3v18"/><path d="M18 3c-2.2 0-3.5 2.8-3.5 6v4H18v8"/>',
@@ -123,6 +125,249 @@ def render_calendar():
         out.append(f'<p class="form-note center" style="margin-top:1.5rem">{note}</p>')
     return "\n".join(out)
 
+
+# ---------------------------------------------------------------------------
+# Blog ("Family Resources")
+#
+# One file per post in content/blog/<slug>.html, same <!--meta --> block as a
+# page plus: date (YYYY-MM-DD, required), headline, excerpt, image, image_alt,
+# author, tags (comma separated), keyword, updated (YYYY-MM-DD), status
+# (published|draft; drafts are skipped). An optional content/blog/<slug>.head.html
+# is injected into <head> (schema, extra meta). The build writes
+# /blog/<slug>/index.html, /blog/index.html, /feed.xml and sitemap entries.
+# ---------------------------------------------------------------------------
+BLOG = CONTENT / "blog"
+SITE = "https://www.kirbygateliving.com"
+BLOG_TITLE = "Family Resources"
+BLOG_INDEX_IMAGE = "/assets/img/exterior-front.webp"
+BLOG_DEFAULT_CARD_IMAGE = "/assets/img/exterior-front.webp"
+ORG = {"@type": "Organization", "name": "The Pointe at Kirby Gate", "url": SITE,
+       "logo": {"@type": "ImageObject", "url": SITE + "/assets/img/logo.png"}}
+
+
+def render_html(meta, body, head_extra=""):
+    """Wrap a body in templates/base.html. Placeholders inside the body
+    ({{phone_fmt}}, {{icon:...}}) are resolved too."""
+    import html as _html
+    main_phone = meta.get("phone") == "main"
+    html = TEMPLATE.replace("{{content}}", body)
+    repl = {
+        "phone_tel": "9017533449" if main_phone else "9012475835",
+        "phone_fmt": "(901) 753-3449" if main_phone else "(901) 247-5835",
+        "title": _html.escape(meta["title"], quote=False),
+        "description": _html.escape(meta.get("description", ""), quote=True),
+        "path": meta["path"],
+        "year": str(datetime.date.today().year),
+        "css_v": fhash(PUBLIC / "assets" / "css" / "main.css"),
+        "js_v": fhash(PUBLIC / "assets" / "js" / "main.js"),
+        "head_extra": meta.get("head_extra", "") + head_extra,
+        "body_attr": (" " + meta["body_attr"]) if meta.get("body_attr") else "",
+    }
+    for key in NAV_KEYS:
+        repl[f"active_{key}"] = 'aria-current="page"' if meta.get("nav") == key else ""
+    for k, v in repl.items():
+        html = html.replace("{{%s}}" % k, v)
+    html = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), html)
+    return html
+
+
+def _fmt_date(iso):
+    d = datetime.date.fromisoformat(iso)
+    return f"{d.strftime('%B')} {d.day}, {d.year}"
+
+
+def _rfc822(iso):
+    d = datetime.date.fromisoformat(iso)
+    dt = datetime.datetime(d.year, d.month, d.day, 12, 0, tzinfo=datetime.timezone.utc)
+    return email.utils.format_datetime(dt)
+
+
+def load_posts():
+    posts = []
+    if not BLOG.exists():
+        return posts
+    for f in sorted(BLOG.glob("*.html")):
+        if f.stem.endswith(".head"):
+            continue
+        meta, body = parse(f.read_text())
+        if meta.get("status", "published").strip().lower() == "draft":
+            continue
+        slug = meta.get("slug", f.stem).strip()
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
+            sys.exit(f"BUILD FAILED — blog slug {slug!r} must be lowercase letters, digits and hyphens")
+        if "date" not in meta:
+            sys.exit(f"BUILD FAILED — blog post {f.name} has no date")
+        datetime.date.fromisoformat(meta["date"])
+        if meta.get("updated"):
+            datetime.date.fromisoformat(meta["updated"])
+        meta["path"] = f"/blog/{slug}/"
+        meta.setdefault("nav", "blog")
+        headline = meta.get("headline") or meta["title"].split(" | ")[0]
+        words = len(re.sub(r"<[^>]+>", " ", body).split())
+        head_file = BLOG / (f.stem + ".head.html")
+        posts.append({
+            "meta": meta, "body": body, "slug": slug, "path": meta["path"], "headline": headline,
+            "excerpt": meta.get("excerpt") or meta.get("description", ""),
+            "image": meta.get("image", ""), "image_alt": meta.get("image_alt", headline),
+            "author": meta.get("author", "The Pointe at Kirby Gate"),
+            "tags": [t.strip() for t in meta.get("tags", "").split(",") if t.strip()],
+            "minutes": max(1, round(words / 200)),
+            "head_extra": head_file.read_text() if head_file.exists() else "",
+        })
+    posts.sort(key=lambda p: (p["meta"]["date"], p["slug"]), reverse=True)
+    return posts
+
+
+def _post_card(p):
+    import html as _h
+    img = p["image"] or BLOG_DEFAULT_CARD_IMAGE
+    return (
+        f'<article class="card post-card">'
+        f'<a href="{p["path"]}" tabindex="-1" aria-hidden="true"><img src="{img}" alt="" loading="lazy"></a>'
+        f'<div class="card-body">'
+        f'<p class="post-meta"><time datetime="{p["meta"]["date"]}">{_fmt_date(p["meta"]["date"])}</time> &middot; {p["minutes"]} min read</p>'
+        f'<h2 class="post-card-title"><a href="{p["path"]}">{_h.escape(p["headline"])}</a></h2>'
+        f'<p>{_h.escape(p["excerpt"])}</p>'
+        f'<a href="{p["path"]}" class="btn btn-secondary">Read the article</a>'
+        f'</div></article>'
+    )
+
+
+def render_post(p, posts):
+    import html as _h
+    m = p["meta"]
+    hero_style = f' style="background-image:url(\'{p["image"]}\')"' if p["image"] else ""
+    tags = "".join(f'<li>{_h.escape(t)}</li>' for t in p["tags"])
+    tags_html = f'<ul class="post-tags" aria-label="Topics">{tags}</ul>' if tags else ""
+    related = [q for q in posts if q["slug"] != p["slug"]][:3]
+    related_html = ""
+    if related:
+        related_html = (
+            '<section class="section section-alt"><div class="container">'
+            '<p class="eyebrow">Keep reading</p><h2>More family resources</h2>'
+            f'<div class="card-grid post-list">{"".join(_post_card(q) for q in related)}</div>'
+            '<p class="post-all"><a href="/blog/">All articles</a></p></div></section>'
+        )
+    body = f"""<section class="hero hero-page hero-post"{hero_style}>
+  <div class="container">
+    <p class="eyebrow">{BLOG_TITLE}</p>
+    <h1>{_h.escape(p["headline"])}</h1>
+    <p class="tagline">{_h.escape(p["excerpt"])}</p>
+  </div>
+</section>
+<section class="section">
+  <article class="container narrow post">
+    <p class="post-meta"><time datetime="{m["date"]}">{_fmt_date(m["date"])}</time> &middot; {_h.escape(p["author"])} &middot; {p["minutes"]} min read</p>
+    <div class="post-body">
+{p["body"]}
+    </div>
+    {tags_html}
+    <div class="post-cta">
+      <h2>Questions about care in East Memphis?</h2>
+      <p>Our team answers questions like these every day, with no pressure. Call {{{{phone_fmt}}}} or schedule a private tour. Come for the visit, stay for lunch.</p>
+      <p class="cta-actions"><a href="/contact-us/" class="btn btn-primary">Schedule a Tour</a> <a href="tel:{{{{phone_tel}}}}" class="btn btn-secondary" data-track="phone">Call {{{{phone_fmt}}}}</a></p>
+    </div>
+    <p class="post-all"><a href="/blog/">All articles</a></p>
+  </article>
+</section>
+{related_html}"""
+    abs_url = SITE + p["path"]
+    article = {
+        "@context": "https://schema.org", "@type": "Article",
+        "headline": p["headline"], "description": m.get("description", ""),
+        "datePublished": m["date"], "dateModified": m.get("updated", m["date"]),
+        "author": {"@type": "Organization", "name": "The Pointe at Kirby Gate", "url": SITE},
+        "publisher": ORG,
+        "mainEntityOfPage": {"@type": "WebPage", "@id": abs_url},
+    }
+    if p["image"]:
+        article["image"] = [SITE + p["image"]]
+    if p["tags"]:
+        article["keywords"] = ", ".join(p["tags"])
+    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
+        {"@type": "ListItem", "position": 2, "name": BLOG_TITLE, "item": SITE + "/blog/"},
+        {"@type": "ListItem", "position": 3, "name": p["headline"], "item": abs_url},
+    ]}
+    head = (
+        f'<script type="application/ld+json">{json.dumps(article, ensure_ascii=False)}</script>\n'
+        f'<script type="application/ld+json">{json.dumps(crumbs, ensure_ascii=False)}</script>\n'
+        f'<meta property="og:type" content="article">\n'
+        f'<meta property="article:published_time" content="{m["date"]}">\n'
+        + (f'<meta property="og:image" content="{SITE}{p["image"]}">\n' if p["image"] else "")
+        + p["head_extra"]
+    )
+    return render_html(m, body, head)
+
+
+def render_blog_index(posts):
+    import html as _h
+    meta = {
+        "title": "Family Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
+        "description": "Plain-language guides for families comparing assisted living and memory care in East Memphis: paying for care, what to look for on a tour, memory loss, and life at The Pointe at Kirby Gate.",
+        "path": "/blog/", "nav": "blog",
+    }
+    cards = "".join(_post_card(p) for p in posts) or '<p>Articles are on the way. Check back soon.</p>'
+    body = f"""<section class="hero hero-page" style="background-image:url('{BLOG_INDEX_IMAGE}')">
+  <div class="container">
+    <p class="eyebrow">{BLOG_TITLE}</p>
+    <h1>Guidance for families, from people who do this every day</h1>
+    <p class="tagline">Plain answers about assisted living, memory care, paying for care, and daily life in our East Memphis community.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="card-grid post-list">{cards}</div>
+    <p class="post-subscribe">Get new articles by RSS: <a href="/feed.xml">feed.xml</a></p>
+  </div>
+</section>"""
+    head = ('<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "CollectionPage", "name": meta["title"],
+        "url": SITE + "/blog/", "description": meta["description"], "publisher": ORG}, ensure_ascii=False) + '</script>\n')
+    return render_html(meta, body, head)
+
+
+def render_feed(posts):
+    import html as _h
+    items = []
+    for p in posts[:20]:
+        url = SITE + p["path"]
+        items.append(
+            f"  <item>\n    <title>{_h.escape(p['headline'])}</title>\n    <link>{url}</link>\n"
+            f"    <guid isPermaLink=\"true\">{url}</guid>\n    <pubDate>{_rfc822(p['meta']['date'])}</pubDate>\n"
+            f"    <description>{_h.escape(p['excerpt'])}</description>\n  </item>"
+        )
+    last = _rfc822(posts[0]["meta"]["date"]) if posts else _rfc822(datetime.date.today().isoformat())
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n'
+        f'  <title>The Pointe at Kirby Gate: {BLOG_TITLE}</title>\n  <link>{SITE}/blog/</link>\n'
+        '  <description>Guides for families comparing assisted living and memory care in East Memphis.</description>\n'
+        f'  <language>en-us</language>\n  <lastBuildDate>{last}</lastBuildDate>\n'
+        f'  <atom:link href="{SITE}/feed.xml" rel="self" type="application/rss+xml"/>\n'
+        + "\n".join(items) + "\n</channel>\n</rss>\n"
+    )
+
+
+def build_blog():
+    """Write the blog pages and feed. Returns [(path, lastmod)] for the sitemap."""
+    posts = load_posts()
+    entries = []
+    for p in posts:
+        out = PUBLIC / p["path"].strip("/") / "index.html"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(render_post(p, posts))
+        entries.append((p["path"], p["meta"].get("updated", p["meta"]["date"])))
+        print(f"built {out.relative_to(ROOT)}")
+    (PUBLIC / "blog").mkdir(parents=True, exist_ok=True)
+    (PUBLIC / "blog" / "index.html").write_text(render_blog_index(posts))
+    (PUBLIC / "feed.xml").write_text(render_feed(posts))
+    today = datetime.date.today().isoformat()
+    entries.append(("/blog/", posts[0]["meta"]["date"] if posts else today))
+    print(f"built blog index + feed.xml ({len(posts)} posts)")
+    return entries
+
+
 def build():
     check_unique_images()
     year = str(datetime.date.today().year)
@@ -171,10 +416,13 @@ def build():
             sitemap_paths.append(path)
         print(f"built {out.relative_to(ROOT)}")
 
+    blog_entries = build_blog()
     today = datetime.date.today().isoformat()
     urls = "\n".join(
-        f"  <url><loc>https://www.kirbygateliving.com{p}</loc><lastmod>{today}</lastmod></url>"
-        for p in sitemap_paths
+        [f"  <url><loc>https://www.kirbygateliving.com{p}</loc><lastmod>{today}</lastmod></url>"
+         for p in sitemap_paths]
+        + [f"  <url><loc>https://www.kirbygateliving.com{p}</loc><lastmod>{lm}</lastmod></url>"
+           for p, lm in blog_entries]
     )
     (PUBLIC / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -187,7 +435,7 @@ def build():
     # GitHub Pages custom domain
     (PUBLIC / "CNAME").write_text("www.kirbygateliving.com\n")
     build_redirects()
-    print(f"built sitemap.xml ({len(sitemap_paths)} urls) + robots.txt")
+    print(f"built sitemap.xml ({len(sitemap_paths) + len(blog_entries)} urls) + robots.txt")
 
 def build_redirects():
     """GitHub Pages ignores public/_redirects (a Netlify/Cloudflare convention),
