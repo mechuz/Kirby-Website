@@ -139,7 +139,7 @@ def render_calendar():
 # ---------------------------------------------------------------------------
 BLOG = CONTENT / "blog"
 SITE = "https://www.kirbygateliving.com"
-BLOG_TITLE = "Family Resources"
+BLOG_TITLE = "News & Resources"
 BLOG_INDEX_IMAGE = "/assets/img/exterior-front.webp"
 BLOG_DEFAULT_CARD_IMAGE = "/assets/img/exterior-front.webp"
 ORG = {"@type": "Organization", "name": "The Pointe at Kirby Gate", "url": SITE,
@@ -314,7 +314,7 @@ def render_post(p, posts):
 def render_blog_index(posts):
     import html as _h
     meta = {
-        "title": "Family Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
+        "title": "News & Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
         "description": "Plain-language guides for families comparing assisted living and memory care in East Memphis: paying for care, what to look for on a tour, memory loss, and life at The Pointe at Kirby Gate.",
         "path": "/blog/", "nav": "blog",
     }
@@ -694,6 +694,30 @@ DL_TYPES = {
     "lgstudio": "Large Studio", "onebed": "One Bedroom", "mc": "Memory Care Suite",
 }
 
+# Display cap per suite type, applied at build time to the live DoorLoop feed.
+# The site shows at most this many open suites of a type (lowest room numbers
+# first) and leaves the other open ones off the page entirely; DoorLoop itself
+# is not changed. Set by ownership on 2026-10-28 ("only show 3 memory care
+# units available for now"). Delete an entry to show every open suite again.
+DL_SHOW_MAX = {"mc": 3}
+
+
+def _dl_room_no(u):
+    m = re.search(r"\d+", u.get("room", ""))
+    return (int(m.group()) if m else 10 ** 6, u.get("room", ""))
+
+
+def _dl_apply_caps(units):
+    """Keep at most DL_SHOW_MAX[type] open suites per type, in the feed's order."""
+    drop = set()
+    for t, cap in DL_SHOW_MAX.items():
+        open_units = sorted((u for u in units if u["type"] == t and u["available"]), key=_dl_room_no)
+        drop.update((u["type"], u["room"]) for u in open_units[cap:])
+        if len(open_units) > cap:
+            print(f"doorloop: showing {cap} of {len(open_units)} open {t} suites (DL_SHOW_MAX)")
+    return [u for u in units if (u["type"], u["room"]) not in drop]
+
+
 def _dl_classify(rent, sqft, name):
     if "memory care" in name.lower() or rent == 5450:
         return "mc"
@@ -726,10 +750,15 @@ def fetch_doorloop():
             for fl in (ils.get("File") or []):
                 if fl.get("FileType") == "Photo" and fl.get("Caption") == "Unit Photo" and fl.get("Src"):
                     photo = fl["Src"]; break
+            amen_fix = {"Wheel Chair": "Wheelchair Accessible", "WheelChair": "Wheelchair Accessible", "Heat": "Heating"}
+            amen = [amen_fix.get(a.get("Description", ""), a.get("Description", ""))
+                    for a in (ils.get("Amenity") or []) if a.get("Description")]
             units.append({
                 "room": name.replace(" - Memory Care", ""),
                 "type": _dl_classify(rent, sqft, name),
                 "sqft": sqft, "rent": rent, "photo": photo,
+                "desc": (u.get("Description") or "").strip(),
+                "amen": amen,
                 "available": bool(apply_url), "apply_url": apply_url,
             })
         if units:
@@ -751,7 +780,7 @@ def doorloop_tokens():
         tok["dl_from_companion"] = "$2,800"
         return tok
     data = _json.loads(cache.read_text())
-    units = data["units"]
+    units = _dl_apply_caps(data["units"])
     for t in DL_TYPES:
         tu = [u for u in units if u["type"] == t]
         n = sum(1 for u in tu if u["available"])
@@ -782,15 +811,60 @@ def doorloop_tokens():
     d = _dt.date.fromisoformat(data["fetched"])
     tok["dl_updated"] = "Live availability from our resident system &middot; updated " + d.strftime("%B %-d, %Y")
 
+    FP_FB = {"studio": "/assets/img/floorplan-studio.png", "mc": "/assets/img/floorplan-studio.png",
+             "lgstudio": "/assets/img/floorplan-studio-deluxe.png", "onebed": "/assets/img/floorplan-1bed.png",
+             "companion": ""}
+    import html as _h2
+    rows = []
+    by_type = {}
+    for u in units:
+        by_type.setdefault(u["type"], []).append(u)
+    def _disp_rent(tu):
+        return min((u["rent"] for u in tu if u["available"]), default=min(u["rent"] for u in tu))
+    for t, tu in sorted(by_type.items(), key=lambda kv: _disp_rent(kv[1])):
+        n_avail = sum(1 for u in tu if u["available"])
+        rent = _disp_rent(tu)
+        sqft = max(u["sqft"] for u in tu)
+        photo = next((u.get("photo", "") for u in tu if u.get("photo")), "") or FP_FB.get(t, "")
+        desc = next((u.get("desc", "") for u in tu if u.get("desc")), "")
+        teaser = desc.split(". ")[0].strip()
+        if teaser and not teaser.endswith("."): teaser += "."
+        amen = next((u.get("amen", []) for u in tu if u.get("amen")), [])[:5]
+        chips = "".join(f"<li>{_h2.escape(a)}</li>" for a in amen)
+        if n_avail:
+            badge = f'<span class="avail-badge">{n_avail} available now</span>'
+            cta = f'<a href="/reserve/?type={t}" class="btn btn-primary btn-arrow">Reserve</a>'
+        else:
+            badge = '<span class="avail-badge off">Currently leased</span>'
+            cta = '<a href="/contact-us/?interest=apply" class="btn btn-secondary">Join Waitlist</a>'
+        img_html = f'<img src="{photo}" alt="{DL_TYPES[t]} floor plan" loading="lazy">' if photo else ""
+        extra = " &middot; all care included" if t == "mc" else ""
+        rows.append(f"""<div class="room-row">
+  <div class="room-media">{img_html}</div>
+  <div class="room-info">
+    <h3>{DL_TYPES[t]}</h3>
+    <p class="room-meta">{sqft} sq ft{extra}</p>
+    <p class="room-desc">{_h2.escape(teaser)}</p>
+    <ul class="amen-chips room-chips">{chips}</ul>
+  </div>
+  <div class="room-book">
+    <div class="room-price">${rent:,.0f}<small>/mo</small></div>
+    {badge}
+    {cta}
+  </div>
+</div>""")
+    tok["dl_rooms"] = "\n".join(rows)
+
     if STRIPE_DEPOSIT_URL:
         tok["stripe_deposit"] = (
             f'<a href="{STRIPE_DEPOSIT_URL}" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" '
-            f'data-track="deposit">Pay the {STRIPE_DEPOSIT_AMOUNT} Deposit Securely</a>'
+            f'data-track="deposit">Secure Your Suite &mdash; {STRIPE_DEPOSIT_AMOUNT} Deposit</a>'
             '<p class="form-note" style="margin-top:0.6rem">Payment is processed by Stripe on a secure stripe.com page.</p>')
     else:
         tok["stripe_deposit"] = (
             "<p>As soon as your application arrives, our team sends you a secure payment "
-            f"request for the {STRIPE_DEPOSIT_AMOUNT} deposit &mdash; usually the same business day.</p>")
+            f"request for the {STRIPE_DEPOSIT_AMOUNT} deposit &mdash; usually the same business day. "
+            "Once it\u2019s in, your suite comes off the market.</p>")
 
     # Reservation wizard step-2 cards: only types with availability, tagged by stay
     FP_FALLBACK = {"studio": "/assets/img/floorplan-studio.png", "mc": "/assets/img/floorplan-studio.png",
@@ -802,18 +876,27 @@ def doorloop_tokens():
         label = "1 suite open" if len(us) == 1 else f"{len(us)} suites open"
         img = next((u["photo"] for u in us if u.get("photo")), "") or FP_FALLBACK.get(t, "")
         img_tag = f'<span class="wiz-card-img"><img src="{img}" alt="{DL_TYPES[t]} floor plan" loading="lazy"></span>' if img else ""
+        import html as _h
+        desc = next((u.get("desc", "") for u in us if u.get("desc")), "")
+        amen = next((u.get("amen", []) for u in us if u.get("amen")), [])
+        teaser = desc.split(". ")[0].strip()
+        if teaser and not teaser.endswith("."): teaser += "."
         wiz.append(
             f'<button type="button" class="wiz-card" data-stay="{stay}" data-key="{t}" data-type="{DL_TYPES[t]}" '
-            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}" data-img="{img}">'
+            f'data-price="${rent:,.0f}/mo" data-apply="{us[0]["apply_url"] or DOORLOOP_APPLY}" data-img="{img}" '
+            f'data-desc="{_h.escape(desc, quote=True)}" data-amen="{_h.escape("|".join(amen), quote=True)}">'
             + img_tag +
             f'<span class="wiz-card-name">{DL_TYPES[t]}</span>'
             f'<span class="wiz-card-price">${rent:,.0f}<small>/mo</small></span>'
             f'<span class="wiz-card-meta">{sqft} sq ft &middot; {label}'
             + (" &middot; all care included" if t == "mc" else "") + "</span>"
-            "</button>")
+            + (f'<span class="wiz-card-desc">{_h.escape(teaser, quote=False)}</span>' if teaser else "")
+            + "</button>")
     wiz.append(
         '<button type="button" class="wiz-card" data-stay="respite" data-key="respite" data-type="Respite Suite" '
-        'data-price="billed daily" data-apply="/respite-care/#book">'
+        'data-price="billed daily" data-apply="/respite-care/#book" '
+        'data-desc="A cozy, fully furnished suite made up and waiting — warm linens, a comfortable bed, and everything your loved one needs for a short stay." '
+        'data-amen="Fully Furnished|Linens &amp; Housekeeping|Chef-Prepared Meals|Medication Support|24-Hour Care Team|Full Activity Calendar">'
         '<span class="wiz-card-name">Furnished Respite Suite</span>'
         '<span class="wiz-card-price">Daily rate</span>'
         '<span class="wiz-card-meta">Cozy furnished suite &middot; 5-night minimum &middot; pick your dates next</span>'

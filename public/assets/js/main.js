@@ -306,6 +306,24 @@ var FORM_CONVERSION_LABEL = "";
         if (card.dataset.img) { plan.src = card.dataset.img; plan.removeAttribute("hidden"); }
         else plan.setAttribute("hidden", "");
       }
+      var desc = document.getElementById("wiz-sum-desc");
+      if (desc) {
+        if (card.dataset.desc) { desc.textContent = card.dataset.desc; desc.removeAttribute("hidden"); }
+        else desc.setAttribute("hidden", "");
+      }
+      var amen = document.getElementById("wiz-sum-amen");
+      if (amen) {
+        amen.innerHTML = "";
+        var items = (card.dataset.amen || "").split("|").filter(Boolean);
+        if (items.length) {
+          items.forEach(function (a) {
+            var li = document.createElement("li");
+            li.textContent = a;
+            amen.appendChild(li);
+          });
+          amen.removeAttribute("hidden");
+        } else amen.setAttribute("hidden", "");
+      }
       document.getElementById("wiz-checkout").href = state.apply;
       show(3);
       if (typeof gtag === "function") gtag("event", "reserve_step", { event_label: "suite_" + state.type });
