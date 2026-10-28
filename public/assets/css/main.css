@@ -320,3 +320,30 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
   .nav-toggle { padding: 0.35rem; }
   .section { padding: 2.75rem 0; }
 }
+
+/* ---- Blog / Family Resources ---- */
+.hero-post { min-height: 360px; }
+.post-meta { color: var(--blue-deep); font-size: 0.95rem; letter-spacing: 0.02em; margin-bottom: 1.25rem; }
+.post-body { font-size: 1.08rem; line-height: 1.7; }
+.post-body h2 { margin: 2.25rem 0 0.75rem; font-size: 1.55rem; }
+.post-body h3 { margin: 1.75rem 0 0.5rem; font-size: 1.2rem; }
+.post-body p { margin: 0 0 1rem; }
+.post-body ul, .post-body ol { margin: 0 0 1.25rem 1.4rem; }
+.post-body li { margin: 0.4rem 0; }
+.post-body li strong { color: var(--navy); }
+.post-body blockquote { margin: 1.5rem 0; padding: 0.75rem 1.25rem; border-left: 4px solid var(--green-light); background: var(--paper); border-radius: 0 var(--radius) var(--radius) 0; }
+.post-body img { border-radius: var(--radius); box-shadow: var(--shadow); max-width: 100%; height: auto; }
+.post-body .checklist { list-style: none; margin-left: 0; }
+.post-body .checklist li { padding-left: 1.9rem; position: relative; }
+.post-body .checklist li::before { content: ""; position: absolute; left: 0; top: 0.3rem; width: 1.1rem; height: 1.1rem; border: 2px solid var(--green); border-radius: 4px; }
+.post-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 0; padding: 0; }
+.post-tags li { background: var(--ice); color: var(--navy); border-radius: 999px; padding: 0.25rem 0.8rem; font-size: 0.85rem; }
+.post-cta { margin-top: 2.5rem; padding: 1.75rem; background: var(--paper); border-radius: var(--radius); }
+.post-cta h2 { margin-top: 0; font-size: 1.4rem; }
+.post-cta .btn { margin-top: 0.5rem; margin-right: 0.5rem; }
+.post-all { margin-top: 2rem; }
+.post-card-title { font-size: 1.25rem; margin: 0.25rem 0 0.5rem; }
+.post-card-title a { color: var(--navy); text-decoration: none; }
+.post-card-title a:hover { text-decoration: underline; }
+.post-card .post-meta { margin-bottom: 0.25rem; }
+.post-subscribe { margin-top: 2.5rem; color: var(--blue-deep); font-size: 0.95rem; }
