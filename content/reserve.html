@@ -1,0 +1,83 @@
+<!--meta
+title: Reserve a Suite | The Pointe at Kirby Gate | Memphis Senior Living
+description: Reserve your suite at The Pointe at Kirby Gate in three easy steps — choose assisted living, memory care, or a respite stay, pick from suites open today with published all-in rates, and check out securely.
+path: /reserve/
+nav: reserve
+-->
+<section class="hero hero-page hero-plain">
+  <div class="container">
+    <h1>Reserve Your Suite</h1>
+    <p class="tagline">Three easy steps, like booking a stay &mdash; only suites open today are shown.</p>
+  </div>
+</section>
+
+<section class="section" id="reserve">
+  <div class="container">
+    <div class="center narrow">
+      <p class="eyebrow">Start Here</p>
+      <h2>What Kind of Stay Are You Looking For?</h2>
+      <p>Pick the care that fits, choose your suite, and check out securely. When a suite is leased, it leaves this list automatically.</p>
+    </div>
+    <ol class="wiz-steps" aria-hidden="true">
+      <li class="on" data-step-dot="1">1. Stay type</li>
+      <li data-step-dot="2">2. Choose your suite</li>
+      <li data-step-dot="3">3. Checkout</li>
+    </ol>
+    <div class="wiz-pane" id="wiz-1">
+      <div class="wiz-grid">
+        <button type="button" class="wiz-card wiz-stay" data-pick-stay="al">
+          <span class="wiz-card-name">Assisted Living</span>
+          <span class="wiz-card-meta">Independence with daily support, long-term home</span>
+        </button>
+        <button type="button" class="wiz-card wiz-stay" data-pick-stay="mc">
+          <span class="wiz-card-name">Memory Care</span>
+          <span class="wiz-card-meta">Secure neighborhood, all-inclusive dementia care</span>
+        </button>
+        <button type="button" class="wiz-card wiz-stay" data-pick-stay="respite">
+          <span class="wiz-card-name">Short-Term Respite</span>
+          <span class="wiz-card-meta">A furnished stay from 5 nights &mdash; recover, recharge, or try us out</span>
+        </button>
+      </div>
+    </div>
+    <div class="wiz-pane" id="wiz-2" hidden>
+      <div class="wiz-grid">
+{{dl_wizard}}
+      </div>
+      <p class="center" style="margin-top:1.25rem"><button type="button" class="btn btn-secondary" data-wiz-back="1">&larr; Back</button></p>
+    </div>
+    <div class="wiz-pane" id="wiz-3" hidden>
+      <div class="wiz-summary">
+        <h3>Your reservation</h3>
+        <p class="wiz-sum-img"><img id="wiz-sum-plan" src="" alt="Selected floor plan" hidden></p>
+        <p class="wiz-sum-line"><span id="wiz-sum-type"></span> &middot; <strong id="wiz-sum-price"></strong></p>
+        <div class="checkout-steps">
+          <div class="co-step">
+            <div class="co-step-head"><span class="co-num">1</span><strong>Complete your application</strong></div>
+            <p>About ten minutes in our secure DoorLoop resident portal &mdash; your information goes straight to our team.</p>
+            <a href="#" id="wiz-checkout" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="wizard">Start the Application</a>
+          </div>
+          <div class="co-step">
+            <div class="co-step-head"><span class="co-num">2</span><strong>Leave your deposit to finalize</strong></div>
+            <p>As soon as your application arrives, our team sends you a secure deposit request &mdash; usually the same business day. Your suite is reserved once the deposit is received.</p>
+          </div>
+        </div>
+        <p class="form-note" style="margin-top:1rem">Your application and deposit hold the suite while we complete the required nurse assessment and residency agreement &mdash; they are not a lease, and final move-in is confirmed after assessment, as Tennessee requires of licensed assisted-care communities. Deposit terms are provided with the deposit request. No payment is collected on this website. Equal Housing Opportunity.</p>
+        <p class="center" style="margin-top:0.5rem"><button type="button" class="btn btn-secondary" data-wiz-back="2">&larr; Back</button></p>
+      </div>
+    </div>
+    <p class="center" style="margin-top:1.5rem; font-size:0.9rem; color:#5f6b60">{{dl_updated}}</p>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container narrow center">
+    <p class="eyebrow">Questions First?</p>
+    <h2>We&rsquo;re Happy to Walk You Through It</h2>
+    <p>Prefer to talk it over, or want to see the community before reserving? Call our reservations line or come for a private tour &mdash; the best visits end in the dining room.</p>
+    <p style="margin-top:1rem">
+      <a href="tel:9012475835" class="btn btn-primary btn-lg" data-track="phone">Call (901) 247-5835</a>
+      <a href="/contact-us/?interest=tour" class="btn btn-secondary btn-lg" style="margin-left:0.5rem">Schedule a Tour</a>
+      <a href="/rates-floor-plans/" class="btn btn-secondary btn-lg" style="margin-left:0.5rem">See Rates &amp; Floor Plans</a>
+    </p>
+  </div>
+</section>

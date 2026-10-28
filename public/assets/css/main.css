@@ -513,3 +513,15 @@ body { letter-spacing: -0.005em; }
 .wiz-card-img { display: block; background: var(--paper); border-radius: 12px; padding: 0.6rem; margin-bottom: 0.4rem; }
 .wiz-card-img img { max-height: 180px; width: 100%; object-fit: contain; margin: 0 auto; }
 .wiz-sum-img img { max-height: 260px; width: auto; max-width: 100%; margin: 0.5rem auto 0; object-fit: contain; }
+
+/* Two-step checkout */
+.checkout-steps { display: grid; gap: 1rem; text-align: left; margin-top: 1.25rem; }
+.co-step { background: var(--paper); border-radius: 14px; padding: 1.3rem 1.4rem; }
+.co-step-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.4rem; color: var(--navy); font-size: 1.05rem; }
+.co-num { background: var(--green); color: #fff; font-weight: 800; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.co-step p { font-size: 0.95rem; color: #4f5c50; line-height: 1.55; }
+.co-step .btn { margin-top: 0.9rem; }
+
+/* Plain gradient hero (reserve page) */
+.hero-plain { background: linear-gradient(120deg, #1f4d2b, #35703a 55%, #4e9a51); min-height: 260px; }
+.hero-plain::before { display: none; }

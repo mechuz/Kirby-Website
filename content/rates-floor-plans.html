@@ -16,7 +16,7 @@ nav: rates
     <div class="center narrow">
       <p class="eyebrow">Monthly Rates</p>
       <h2>A Warm, Vibrant Place to Call Home</h2>
-      <p>Under new ownership, we&rsquo;ve renovated the community and hand-picked a care team we believe is the finest in Memphis &mdash; so your loved one is met with warmth, dignity, and truly attentive care, every day. We publish our rates because families deserve to plan with confidence: one monthly rate covers your suite and daily life, assisted living adds the level of personal care your loved one needs, and Memory Care is all-inclusive.</p>
+      <p>Under new ownership, we&rsquo;ve renovated the community and hand-picked a care team we believe is the finest in Memphis &mdash; so your loved one is met with warmth, dignity, and truly attentive care, every day. We publish our rates because families deserve to plan with confidence: one all-in monthly rate covers your suite, meals, housekeeping, activities, and around-the-clock care access &mdash; and Memory Care is all-inclusive of care.</p>
       <p>The Pointe is a private-pay community &mdash; the most affordable in its class in the Memphis market. These rates are good through December 31, 2026.</p>
     </div>
     <div class="price-cards">
@@ -70,78 +70,12 @@ nav: rates
   </div>
 </section>
 
-<section class="section" id="reserve">
-  <div class="container">
-    <div class="center narrow">
-      <p class="eyebrow">Reserve Your Suite</p>
-      <h2>Three Easy Steps, Like Booking a Stay</h2>
-      <p>Pick the care that fits, choose your suite, and check out securely. Only suites that are open today are shown &mdash; when one is leased, it leaves this list.</p>
-    </div>
-    <ol class="wiz-steps" aria-hidden="true">
-      <li class="on" data-step-dot="1">1. Stay type</li>
-      <li data-step-dot="2">2. Choose your suite</li>
-      <li data-step-dot="3">3. Checkout</li>
-    </ol>
-    <div class="wiz-pane" id="wiz-1">
-      <div class="wiz-grid">
-        <button type="button" class="wiz-card wiz-stay" data-pick-stay="al">
-          <span class="wiz-card-name">Assisted Living</span>
-          <span class="wiz-card-meta">Independence with daily support, long-term home</span>
-        </button>
-        <button type="button" class="wiz-card wiz-stay" data-pick-stay="mc">
-          <span class="wiz-card-name">Memory Care</span>
-          <span class="wiz-card-meta">Secure neighborhood, all-inclusive dementia care</span>
-        </button>
-        <button type="button" class="wiz-card wiz-stay" data-pick-stay="respite">
-          <span class="wiz-card-name">Short-Term Respite</span>
-          <span class="wiz-card-meta">A furnished stay from 5 nights &mdash; recover, recharge, or try us out</span>
-        </button>
-      </div>
-    </div>
-    <div class="wiz-pane" id="wiz-2" hidden>
-      <div class="wiz-grid">
-{{dl_wizard}}
-      </div>
-      <p class="center" style="margin-top:1.25rem"><button type="button" class="btn btn-secondary" data-wiz-back="1">&larr; Back</button></p>
-    </div>
-    <div class="wiz-pane" id="wiz-3" hidden>
-      <div class="wiz-summary">
-        <h3>Your reservation</h3>
-        <p class="wiz-sum-img"><img id="wiz-sum-plan" src="" alt="Selected floor plan" hidden></p>
-        <p class="wiz-sum-line"><span id="wiz-sum-type"></span> &middot; <strong id="wiz-sum-price"></strong></p>
-        <a href="#" id="wiz-checkout" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="wizard">Continue to Secure Checkout</a>
-        <p class="form-note" style="margin-top:1rem">Checkout runs through our secure DoorLoop resident portal, where your application and any reservation deposit are collected. A reservation holds your suite while we complete the required nurse assessment and residency agreement &mdash; it is not a lease, and final move-in is confirmed after assessment, as Tennessee requires of licensed assisted-care communities. Equal Housing Opportunity.</p>
-        <p class="center" style="margin-top:0.5rem"><button type="button" class="btn btn-secondary" data-wiz-back="2">&larr; Back</button></p>
-      </div>
-    </div>
-    <p class="center" style="margin-top:1.5rem; font-size:0.9rem; color:#5f6b60">{{dl_updated}}</p>
-  </div>
-</section>
-
-<section class="section section-alt">
-  <div class="container narrow">
-    <div class="center">
-      <p class="eyebrow">Assisted Living Care Levels</p>
-      <h2>Your Suite Rate + One Care Level = Your Whole Bill</h2>
-      <p>After a nurse assessment, each assisted living resident is matched to one of three care levels. Add it to your suite rate and that&rsquo;s your total monthly cost &mdash; meals, housekeeping, activities, and 24-hour staffing already included.</p>
-    </div>
-    <div class="care-levels">
-      <div class="care-level">
-        <div class="lvl">Level 1</div>
-        <div class="amt">+ $525<span style="font-size:0.95rem">/mo</span></div>
-        <p>A light touch &mdash; reminders, stand-by help, and a watchful eye.</p>
-      </div>
-      <div class="care-level">
-        <div class="lvl">Level 2</div>
-        <div class="amt">+ $990<span style="font-size:0.95rem">/mo</span></div>
-        <p>Hands-on help with daily routines like bathing and dressing.</p>
-      </div>
-      <div class="care-level">
-        <div class="lvl">Level 3</div>
-        <div class="amt">+ $1,335<span style="font-size:0.95rem">/mo</span></div>
-        <p>Our fullest level of daily support, for residents who need more.</p>
-      </div>
-    </div>
+<section class="section section-ice">
+  <div class="container narrow center">
+    <p class="eyebrow">Ready When You Are</p>
+    <h2>Reserve Your Suite Online</h2>
+    <p>Three easy steps, like booking a stay: pick the care that fits, choose from the suites open today, and check out securely.</p>
+    <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow" style="font-size:1.2rem; padding:1.2rem 2.6rem">Start Your Reservation</a>
   </div>
 </section>
 
@@ -157,7 +91,7 @@ nav: rates
       <li><span class="icon" aria-hidden="true">{{icon:sparkle}}</span><strong>Housekeeping &amp; Laundry</strong><span>Weekly cleaning, linens, and personal laundry</span></li>
       <li><span class="icon" aria-hidden="true">{{icon:calendar}}</span><strong>Activities &amp; Outings</strong><span>Full monthly calendar and scheduled transportation</span></li>
       <li><span class="icon" aria-hidden="true">{{icon:clock}}</span><strong>24-Hour Care Access</strong><span>Licensed staff on site around the clock</span></li>
-      <li><span class="icon" aria-hidden="true">{{icon:heart}}</span><strong>Personalized Care Plan</strong><span>Care level assessed individually and reviewed regularly</span></li>
+      <li><span class="icon" aria-hidden="true">{{icon:heart}}</span><strong>Personalized Care Plan</strong><span>Tailored to each resident and reviewed regularly</span></li>
     </ul>
   </div>
 </section>
@@ -189,7 +123,7 @@ nav: rates
           <li>All utilities and Wi-Fi included</li>
         </ul>
         <div class="fp-ctas">
-          <a href="https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="iris">Apply Now &mdash; Reserve This Suite</a>
+          <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow">Reserve This Suite</a>
           <a href="/contact-us/?interest=tour" class="btn btn-secondary">Schedule a Tour</a>
         </div>
       </div>
@@ -209,7 +143,7 @@ nav: rates
           <li>All utilities and Wi-Fi included</li>
         </ul>
         <div class="fp-ctas">
-          <a href="https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="azalea">Apply Now &mdash; Reserve This Suite</a>
+          <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow">Reserve This Suite</a>
           <a href="/contact-us/?interest=tour" class="btn btn-secondary">Schedule a Tour</a>
         </div>
       </div>
@@ -229,7 +163,7 @@ nav: rates
           <li>All utilities and Wi-Fi included</li>
         </ul>
         <div class="fp-ctas">
-          <a href="https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="magnolia">Apply Now &mdash; Reserve This Suite</a>
+          <a href="/reserve/" class="btn btn-primary btn-lg btn-arrow">Reserve This Suite</a>
           <a href="/contact-us/?interest=tour" class="btn btn-secondary">Schedule a Tour</a>
         </div>
       </div>
@@ -241,11 +175,11 @@ nav: rates
   <div class="container narrow center">
     <p class="eyebrow">Ready When You Are</p>
     <h2>Apply Online in About Ten Minutes</h2>
-    <p>Found the right suite? Start your application through our secure resident portal. Submit it online, and our team will call you the same business day to confirm availability and schedule the nurse assessment that finalizes your rate.</p>
+    <p>Found the right suite? Checkout is two simple steps: complete the application through our secure resident portal, then leave your deposit to finalize the reservation &mdash; we send the secure deposit request as soon as your application arrives, usually the same business day. Your suite is held from the moment the deposit is received.</p>
     <p style="margin-top:1rem">
       <a href="https://kirbygate.app.doorloop.com/tenant-portal/rental-applications/listing?source=CompanyLink" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-arrow" data-track="apply" data-plan="general">Start Your Application</a>
       <a href="tel:9012475835" class="btn btn-secondary btn-lg" data-track="phone" style="margin-left:0.5rem">Call (901) 247-5835</a>
     </p>
-    <p class="rate-disclaimer">Rates and move-in special shown are good through December 31, 2026, and subject to change after that date. Availability shown is synced from our resident management system and may change at any time. The Pointe at Kirby Gate is a private-pay community. An online application is not a lease and does not guarantee availability; residency is confirmed by an individual nurse assessment and a written residency agreement, as required for licensed Assisted Care Living Facilities by the Tennessee Department of Health. Assisted living care-level fees are determined by the assessment. Memory care is a single all-inclusive rate. No payment is collected on this website. Equal Housing Opportunity.</p>
+    <p class="rate-disclaimer">Rates and move-in special shown are good through December 31, 2026, and subject to change after that date. Availability shown is synced from our resident management system and may change at any time. The Pointe at Kirby Gate is a private-pay community. An online application is not a lease and does not guarantee availability; residency is confirmed by an individual nurse assessment and a written residency agreement, as required for licensed Assisted Care Living Facilities by the Tennessee Department of Health. Memory care is a single all-inclusive rate. No payment is collected on this website. Equal Housing Opportunity.</p>
   </div>
 </section>
