@@ -347,3 +347,49 @@ body { font-size: 1.0625rem; letter-spacing: -0.005em; }
 .post-card-title a:hover { text-decoration: underline; }
 .post-card .post-meta { margin-bottom: 0.25rem; }
 .post-subscribe { margin-top: 2.5rem; color: var(--blue-deep); font-size: 0.95rem; }
+
+/* ---- Senior Care News ---- */
+.news-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.75rem; }
+.news-chips[hidden] { display: none; }
+.news-chips button {
+  font: inherit; font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--navy);
+  background: var(--ice); border: 2px solid transparent; border-radius: 999px; padding: 0.4rem 1rem; cursor: pointer;
+}
+.news-chips button:hover { border-color: #346E46; }
+.news-chips button[aria-pressed="true"] { background: #346E46; color: #fff; }
+.news-chips button:focus-visible { outline: 2px solid var(--green-light); outline-offset: 2px; }
+.news-month { font-size: 1.4rem; margin: 0 0 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--green-light); }
+.news-group + .news-group .news-month { margin-top: 2.5rem; }
+.news-group[hidden], .news-item[hidden], .news-empty[hidden] { display: none; }
+.news-item {
+  background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); border-left: 6px solid #346E46;
+  padding: 1.25rem 1.25rem 1.25rem 1.1rem; margin-bottom: 1.25rem; overflow-wrap: anywhere;
+}
+.news-badge {
+  display: inline-block; background: #346E46; color: #fff; font-size: 0.74rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; border-radius: 999px; padding: 0.2rem 0.7rem; margin-bottom: 0.6rem;
+}
+.news-health { border-left-color: #72ADD3; }
+.news-health .news-badge { background: #72ADD3; color: #0b2a3c; }
+.news-caregiving { border-left-color: #A8D05B; }
+.news-caregiving .news-badge { background: #A8D05B; color: var(--navy); }
+.news-policy { border-left-color: #5AA055; }
+.news-policy .news-badge { background: #5AA055; color: #0f2a16; }
+.news-local { border-left-color: #FDF286; }
+.news-local .news-badge { background: #FDF286; color: var(--navy); }
+.news-title { font-size: 1.2rem; line-height: 1.3; margin: 0 0 0.4rem; }
+.news-title a { color: var(--navy); text-decoration: none; }
+.news-title a:hover { color: var(--blue-deep); text-decoration: underline; }
+.news-meta { color: var(--blue-deep); font-size: 0.9rem; letter-spacing: 0.02em; margin: 0 0 0.75rem; }
+.news-body p { margin: 0 0 0.75rem; }
+.news-body ul, .news-body ol { margin: 0 0 0.75rem 1.4rem; }
+.news-body .why, .news-why { background: var(--paper); color: var(--navy); font-size: 0.95rem; padding: 0.6rem 0.9rem; border-radius: 8px; }
+.news-more { margin: 0; font-size: 0.95rem; font-weight: 600; }
+.news-more a[target="_blank"]::after { content: " \2197"; }
+.news-empty, .news-archive { color: var(--blue-deep); font-size: 0.95rem; margin: 0 0 1.5rem; }
+.news-disclaimer { font-size: 0.85rem; color: #5f6b60; margin-top: 2rem; }
+@media (max-width: 520px) {
+  .container.news { padding-left: 1rem; padding-right: 1rem; }
+  .news-item { padding: 1rem 1rem 1rem 0.9rem; }
+  .news-title { font-size: 1.1rem; }
+}
