@@ -57,3 +57,9 @@ DNS and the domain stay fully in GoDaddy; the files are hosted free on GitHub Pa
 ## Old site mirror
 
 The full WordPress site (HTML + extracted text + images) was mirrored before rebuild; content was carried over verbatim. Legacy URLs preserved: `/about-us/`, `/assisted-living/`, `/memory-care/`, `/amenities/`, `/rates-floor-plans/`, `/contact-us/`, `/privacy-policy/`, `/terms-of-service/`, `/ada-compliance/`.
+
+## Automated publishing from Airtable
+
+`.github/workflows/publish-blog.yml` runs on weekdays at 15:30 UTC and on demand from the Actions tab ("Publish approved blog posts", Run workflow). It calls `scripts/publish_from_airtable.py prepare`, which reads the Content Items table of the Kirby Gate Lead Engine base (Channel = Blog, Status = Approved, Compliance Check ticked, Publish Date in the past), writes each article as `content/blog/<slug>.html`, downloads the linked approved photo into `public/assets/img/blog/`, and runs `build.py` to make sure the site still builds. The workflow then commits those files to `main`, marks the rows Published in Airtable (`finalize`) and starts the deploy workflow.
+
+Requirements: a repository secret named `AIRTABLE_TOKEN` holding an Airtable personal access token with `data.records:read`, `data.records:write` and `schema.bases:read` on that base. Without it the workflow exits quietly. Rows that cannot be published are set to Failed with the reason in Publish Log. At most two articles are published per run.

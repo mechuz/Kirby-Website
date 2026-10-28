@@ -1,0 +1,62 @@
+name: Publish approved blog posts
+
+# Reads approved, due articles from the Airtable content calendar, commits them
+# to main and redeploys the site. Needs the AIRTABLE_TOKEN repository secret;
+# without it the run exits quietly. Rows are marked Published only after the
+# push succeeded, so a failed run is retried on the next schedule.
+
+on:
+  schedule:
+    - cron: '30 15 * * 1-5'   # weekdays, 10:30 AM Central in summer, 9:30 AM in winter
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: publish-blog
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Prepare approved articles from Airtable
+        id: prepare
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          MANIFEST: ${{ runner.temp }}/publish-manifest.json
+          MAX_POSTS: "2"
+        run: python3 scripts/publish_from_airtable.py prepare
+
+      - name: Commit and push to main
+        if: steps.prepare.outputs.count != '0'
+        env:
+          MSG: ${{ steps.prepare.outputs.commit_message }}
+        run: |
+          git config user.name "Kirby Gate Marketing Agent"
+          git config user.email "community@kirbygateliving.com"
+          git add content/blog
+          if [ -d public/assets/img/blog ]; then git add public/assets/img/blog; fi
+          git commit -m "$MSG"
+          git stash push --include-untracked --quiet || true
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Mark the rows published in Airtable
+        if: steps.prepare.outputs.finalize != '0'
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          MANIFEST: ${{ runner.temp }}/publish-manifest.json
+        run: python3 scripts/publish_from_airtable.py finalize
+
+      - name: Deploy the site
+        if: steps.prepare.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main
