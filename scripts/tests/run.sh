@@ -95,7 +95,7 @@ published: 2026-10-20
 category: finance
 status: published
 -->
-<p>Medicare's annual open enrollment period lets people with Medicare review and change their Part D & Medicare Advantage plans. Premiums, drug lists and provider networks change every year, so a plan that fit last year may not fit now. Free one-on-one help is available through the Tennessee SHIP counselors.</p>
+<p>Medicare's annual open enrollment period lets people with Medicare review and change their Part D &amp; Medicare Advantage plans. Premiums, drug lists and provider networks change every year, so a plan that fit last year may not fit now. Free one-on-one help is available through the Tennessee SHIP counselors.</p>
 <p class="why">Why it matters: Plan changes made now take effect in January.</p>
 """
     expected2 = f"""<!--meta

@@ -118,7 +118,7 @@ SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 UNSAFE_RE = re.compile(r"<\s*(script|iframe|object|embed|form|style|link|meta)\b|javascript\s*:|\son[a-z]+\s*=", re.I)
 TAG_RE = re.compile(r"<[^>]+>")
 URL_RE = re.compile(r"^https?://[^\s<>\"'`]+$", re.I)
-PATH_RE = re.compile(r"^/(?!/)[^\s<>\"'`]*$")          # site-relative; never protocol-relative (//host)
+PATH_RE = re.compile(r"^/(?!/)[^\s<>\"'`\\]*$")        # site-relative; never protocol-relative (//host)
 MIN_WORDS = 300
 NEWS_TITLE_MAX = 160
 NEWS_MIN_WORDS, NEWS_MAX_WORDS = 20, 160
@@ -187,6 +187,15 @@ def plain_text(s):
     stripped again so an entity-encoded tag cannot survive the decoding.
     The news page renderer escapes it."""
     return one_line(TAG_RE.sub(" ", text_of(str(s or ""))))
+
+
+def is_http_url(url):
+    """A full http(s) link with a host: the test build.py applies to a news source_url."""
+    try:
+        parts = urllib.parse.urlsplit(url)
+    except ValueError:
+        return False
+    return bool(URL_RE.match(url)) and parts.scheme in ("http", "https") and bool(parts.netloc)
 
 
 def select_name(v):
@@ -434,8 +443,11 @@ def prepare_news_one(rec, post_date, manifest):
         category: finance | health | caregiving | policy | local | community
         status: published
         -->
-        <p>Summary</p>
-        <p class="why">Why it matters: ...</p>   (only when set)
+        <p>Summary</p>                           plain text, HTML-escaped here
+        <p class="why">Why it matters: ...</p>   (only when set, escaped too)
+
+    build.py escapes the meta values itself but renders the body as HTML (a few
+    tags are allowed in hand-written items), so the body text is escaped here.
     """
     rid, f = rec["id"], rec.get("fields", {})
     fail = lambda reason: mark_failed(rid, reason, NEWS, NF)  # noqa: E731
@@ -455,8 +467,8 @@ def prepare_news_one(rec, post_date, manifest):
     if not source and category != "community":
         return fail("Source is required (only a Community update may leave it blank)")
     source_url = one_line(f.get(NF["source_url"]))
-    if not (URL_RE.match(source_url) or (category == "community" and PATH_RE.match(source_url))):
-        return fail(f"Source URL {source_url!r} must start with http:// or https://"
+    if not (is_http_url(source_url) or (category == "community" and PATH_RE.match(source_url))):
+        return fail(f"Source URL {source_url!r} must be a full http:// or https:// link"
                     + (" (or / for a page on this site)" if category == "community" else ""))
     summary = plain_text(f.get(NF["summary"]))
     words = len(summary.split())
@@ -490,9 +502,9 @@ def prepare_news_one(rec, post_date, manifest):
         ("category", category),
         ("status", "published"),
     ]
-    body = f"<p>{summary}</p>"
+    body = f"<p>{html.escape(summary, quote=False)}</p>"
     if why:
-        body += f'\n<p class="why">Why it matters: {why}</p>'
+        body += f'\n<p class="why">Why it matters: {html.escape(why, quote=False)}</p>'
     NEWS_DIR.mkdir(parents=True, exist_ok=True)
     target.write_text("\n".join(["<!--meta"] + [f"{k}: {v}" for k, v in meta if v] + ["-->", body, ""]), encoding="utf-8")
 
