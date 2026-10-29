@@ -393,7 +393,7 @@ body { letter-spacing: -0.005em; }
   }
   .nav-toggle span { display: block; width: 24px; height: 3px; background: var(--navy); margin: 5px 0; border-radius: 2px; }
   .main-nav ul { display: none; order: 4; flex-basis: 100%; flex-direction: column; gap: 0; padding-bottom: 1rem; }
-  .main-nav.open > ul { display: flex; }
+  .main-nav.open > ul { display: flex; max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
   .main-nav .has-sub > button { display: block; width: 100%; text-align: center; padding: 0.65rem 0 0.2rem; color: var(--green); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; pointer-events: none; }
   .main-nav .caret { display: none; }
   .main-nav .sub { display: flex !important; position: static; transform: none; box-shadow: none; background: none; min-width: 0; padding: 0; }
