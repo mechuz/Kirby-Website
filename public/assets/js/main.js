@@ -1,8 +1,9 @@
 // The Pointe at Kirby Gate — site JS
 
 // Google Ads conversion label for form submissions.
-// Create a "Submit lead form" conversion action in Google Ads (Goals > Conversions),
-// copy its label, and paste it here (format: "AbC-D3fGhIjKlMnOp").
+// Label of the "Website form lead (thank-you page)" conversion action (ID 7881846459):
+// Google Ads > Goals > Conversions > that action > Tag setup > Install the tag yourself,
+// then copy the part after "AW-18300279647/" in send_to (format: "AbC-D3fGhIjKlMnOp").
 var FORM_CONVERSION_LABEL = "";
 
 // Mobile nav toggle
@@ -46,10 +47,17 @@ var FORM_CONVERSION_LABEL = "";
   });
 })();
 
-// Fire the form-lead conversion on the thank-you page.
+// Count a form lead on the thank-you page, once per browser session (window.kgLead
+// is set by the head script in base.html). FormSubmit only sends visitors here after
+// a message actually goes through, unlike GA4's form_submit, which counts every click
+// of the submit button.
 (function () {
-  if (document.body.dataset.page === "thank-you" && FORM_CONVERSION_LABEL && typeof gtag === "function") {
-    gtag("event", "conversion", { send_to: "AW-18300279647/" + FORM_CONVERSION_LABEL });
+  if (document.body.dataset.page === "thank-you" && window.kgLead && typeof gtag === "function") {
+    gtag("event", "generate_lead", { event_category: "lead", lead_source: "website_form" });
+    // Google Ads conversion "Website form lead (thank-you page)" (ID 7881846459).
+    if (FORM_CONVERSION_LABEL) {
+      gtag("event", "conversion", { send_to: "AW-18300279647/" + FORM_CONVERSION_LABEL });
+    }
   }
 })();
 

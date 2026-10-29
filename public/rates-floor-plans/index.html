@@ -23,8 +23,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/main.css?v=b6158d51">
   <!-- Google tag: Ads conversion tracking (AW-18300279647) + GA4 analytics (G-1X0LL0YDPZ) -->
-  <!-- Thank-you page: count one form lead per browser session; a reload/revisit goes home instead of re-firing the conversion -->
-  <script>if(location.pathname==="/thank-you/"){try{if(sessionStorage.getItem("kg_ty")){location.replace("/");}else{sessionStorage.setItem("kg_ty","1");}}catch(e){}}</script>
+  <!-- Thank-you page: count one form lead per browser session (window.kgLead); a reload/revisit goes home instead of re-firing the conversion -->
+  <script>if(location.pathname==="/thank-you/"){try{if(sessionStorage.getItem("kg_ty")){location.replace("/");}else{sessionStorage.setItem("kg_ty","1");window.kgLead=1;}}catch(e){window.kgLead=1;}}</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18300279647"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -348,6 +348,7 @@
         <li><a href="/blog/">Guides &amp; Resources</a></li>
         <li><a href="/paying-for-senior-living/">Paying for Senior Living</a></li>
         <li><a href="/contact-us/">Contact</a></li>
+        <li><a href="/careers/">Careers</a></li>
         <li><a href="https://app.doorloop.com/tenant-portal/login" target="_blank" rel="noopener">Resident Portal</a></li>
       </ul>
     </div>
@@ -387,6 +388,6 @@
     <p>&copy; 2026 The Pointe at Kirby Gate &middot; 6480 Quince Rd, Memphis, TN 38119 &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/terms-of-service/">Terms</a> &middot; <a href="/ada-compliance/">Accessibility</a> &middot; <a href="/nondiscrimination/">Nondiscrimination</a></p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=ec2ec61b" defer></script>
+<script src="/assets/js/main.js?v=c7473458" defer></script>
 </body>
 </html>
