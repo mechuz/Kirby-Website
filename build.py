@@ -192,6 +192,50 @@ def _fmt_date(iso):
     return f"{d.strftime('%B')} {d.day}, {d.year}"
 
 
+# Headlines from other publishers' feeds, collected by scripts/fetch_news_feeds.py
+# (GitHub Actions, every few hours) into content/news_feeds.json.
+NEWS_FEEDS = CONTENT / "news_feeds.json"
+
+
+def load_feed_headlines():
+    import json as _json
+    if not NEWS_FEEDS.exists():
+        return [], ""
+    try:
+        data = _json.loads(NEWS_FEEDS.read_text())
+    except ValueError:
+        print("news feeds: content/news_feeds.json is not valid JSON; skipped")
+        return [], ""
+    items = [i for i in data.get("items", []) if str(i.get("link", "")).startswith(("https://", "http://"))]
+    return items, data.get("fetched_at", "")
+
+
+def _headline_li(i):
+    import html as _h
+    day = i["published"][:10]
+    return (f'<li><a href="{_h.escape(i["link"])}" target="_blank" rel="noopener">{_h.escape(i["title"])}</a>'
+            f'<span class="headline-meta">{_h.escape(i["source"])} &middot; <time datetime="{day}">{_fmt_date(day)}</time></span></li>')
+
+
+def render_feed_headlines(items, fetched_at, limit=30):
+    if not items:
+        return ""
+    updated = f' <span class="headlines-updated">Updated {_fmt_date(fetched_at[:10])}</span>' if fetched_at else ""
+    sources = sorted({i["source"] for i in items})
+    return (f'<section class="headlines" aria-labelledby="headlines-h"><h2 id="headlines-h">Headlines from across senior living{updated}</h2>'
+            f'<p class="headlines-intro">The latest stories from {len(sources)} senior living, aging and benefits publishers. Each headline opens the original article.</p>'
+            '<ol class="headline-list">' + "".join(_headline_li(i) for i in items[:limit]) + "</ol></section>")
+
+
+def render_home_headlines(items, limit=4):
+    if not items:
+        return ""
+    return ('<section class="section section-alt home-news"><div class="container"><p class="eyebrow">Senior Living News</p>'
+            '<h2>What families are reading this week</h2><ol class="headline-list headline-cards">'
+            + "".join(_headline_li(i) for i in items[:limit])
+            + '</ol><p class="center"><a href="/news/" class="btn btn-secondary btn-arrow">All senior living news</a></p></div></section>')
+
+
 def _rfc822(iso):
     d = datetime.date.fromisoformat(iso)
     dt = datetime.datetime(d.year, d.month, d.day, 12, 0, tzinfo=datetime.timezone.utc)
@@ -596,6 +640,8 @@ def render_news_index(items, archive_years):
 </section>
 <section class="section">
   <div class="container narrow news">
+    {render_feed_headlines(*load_feed_headlines())}
+    <h2 class="news-picks-h">Our picks, summarized by our team</h2>
     {_news_chips()}
     <p class="news-empty" hidden>Nothing in this topic yet. Check back soon.</p>
     {listing}
@@ -935,6 +981,8 @@ def build():
         body = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), body)
         if "{{calendar}}" in body:
             body = body.replace("{{calendar}}", render_calendar())
+        if "{{news_headlines}}" in body:
+            body = body.replace("{{news_headlines}}", render_home_headlines(load_feed_headlines()[0]))
         if "{{dl_" in body:
             for _k, _v in _dl_tokens.items():
                 body = body.replace("{{%s}}" % _k, _v)

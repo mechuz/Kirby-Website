@@ -1,0 +1,6 @@
+<?xml version="1.0"?><rss version="2.0"><channel><title>Test</title>
+<item><title>Assisted living occupancy keeps climbing as supply stays tight</title><link>https://example.org/a</link><pubDate>NOW_RFC</pubDate></item>
+<item><title>Operator acquires 12-community portfolio in Ohio</title><link>https://example.org/b</link><pubDate>NOW_RFC</pubDate></item>
+<item><title>Old story about caregiving costs from last year</title><link>https://example.org/c</link><pubDate>Mon, 01 Jan 2024 10:00:00 GMT</pubDate></item>
+<item><title>Assisted living occupancy keeps climbing as supply stays tight</title><link>https://example.org/dup</link><pubDate>NOW_RFC</pubDate></item>
+</channel></rss>

@@ -1,0 +1,45 @@
+name: Refresh senior living headlines
+
+# Collects the latest headlines from senior living, aging and benefits
+# publishers' RSS feeds into content/news_feeds.json (scripts/fetch_news_feeds.py),
+# commits the file when it changed and redeploys the site, so /news/ and the
+# home page always show the newest stories. A feed that fails is skipped.
+
+on:
+  schedule:
+    - cron: '17 */4 * * *'   # every four hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: refresh-news-feeds
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Collect headlines
+        run: python3 scripts/fetch_news_feeds.py
+
+      - name: Commit and redeploy when the headlines changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- content/news_feeds.json && git ls-files --error-unmatch content/news_feeds.json >/dev/null 2>&1; then
+            echo "no new headlines"; exit 0
+          fi
+          git config user.name "Kirby Gate Marketing Agent"
+          git config user.email "community@kirbygateliving.com"
+          git add content/news_feeds.json
+          git commit -m "News: refresh senior living headlines"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          gh workflow run deploy.yml --ref main
