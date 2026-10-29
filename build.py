@@ -762,6 +762,10 @@ DL_TYPES = {
 # is not changed. Set by ownership on 2026-10-28 ("only show 3 memory care
 # units available for now"). Delete an entry to show every open suite again.
 DL_SHOW_MAX = {"mc": 3}
+# Suite types shown as waiting list only, with none available, whatever DoorLoop
+# says. Set by ownership on 2026-10-29 for the shared (companion) suites.
+# Remove a type to show its live availability again.
+DL_WAITLIST_ONLY = {"companion"}
 
 
 def _dl_room_no(u):
@@ -777,7 +781,8 @@ def _dl_apply_caps(units):
         drop.update((u["type"], u["room"]) for u in open_units[cap:])
         if len(open_units) > cap:
             print(f"doorloop: showing {cap} of {len(open_units)} open {t} suites (DL_SHOW_MAX)")
-    return [u for u in units if (u["type"], u["room"]) not in drop]
+    kept = [u for u in units if (u["type"], u["room"]) not in drop]
+    return [dict(u, available=False) if u["type"] in DL_WAITLIST_ONLY else u for u in kept]
 
 
 def _dl_classify(rent, sqft, name):
@@ -849,7 +854,8 @@ def doorloop_tokens():
         if n:
             tok[f"dl_badge_{t}"] = f'<span class="avail-badge">{n} available now</span>'
         else:
-            tok[f"dl_badge_{t}"] = '<span class="avail-badge off">Currently leased &middot; join the waitlist</span>'
+            tok[f"dl_badge_{t}"] = ('<span class="avail-badge off">Waiting list &middot; none available</span>' if t in DL_WAITLIST_ONLY
+                                    else '<span class="avail-badge off">Currently leased &middot; join the waitlist</span>')
     comp = [u["rent"] for u in units if u["type"] == "companion" and u["available"]] or            [u["rent"] for u in units if u["type"] == "companion"]
     tok["dl_from_companion"] = "${:,.0f}".format(min(comp)) if comp else "$2,800"
     avail = sorted([u for u in units if u["available"]], key=lambda u: (u["rent"], u["room"]))
@@ -897,8 +903,9 @@ def doorloop_tokens():
             badge = f'<span class="avail-badge">{n_avail} available now</span>'
             cta = f'<a href="/reserve/?type={t}" class="btn btn-primary btn-arrow">Reserve</a>'
         else:
-            badge = '<span class="avail-badge off">Currently leased</span>'
-            cta = '<a href="/contact-us/?interest=apply" class="btn btn-secondary">Join Waitlist</a>'
+            badge = ('<span class="avail-badge off">Waiting list &middot; none available</span>' if t in DL_WAITLIST_ONLY
+                     else '<span class="avail-badge off">Currently leased</span>')
+            cta = '<a href="/contact-us/?interest=apply" class="btn btn-secondary">Join the Waiting List</a>'
         img_html = f'<img src="{photo}" alt="{DL_TYPES[t]} floor plan" loading="lazy">' if photo else ""
         extra = " &middot; all care included" if t == "mc" else ""
         rows.append(f"""<div class="room-row">

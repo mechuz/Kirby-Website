@@ -7,6 +7,9 @@ on:
     # Rebuild daily at 11:30 UTC (~5:30am Memphis) so suite availability
     # on /rates-floor-plans/ stays in sync with DoorLoop.
     - cron: '30 11 * * *'
+    # Every 30 minutes, so /news/ and the home page pick up new senior living
+    # headlines from the publishers' RSS feeds soon after they are posted.
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -26,6 +29,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Collect the latest senior living headlines
+        continue-on-error: true
+        run: python3 scripts/fetch_news_feeds.py
       - name: Build site
         run: python3 build.py
       - uses: actions/configure-pages@v5

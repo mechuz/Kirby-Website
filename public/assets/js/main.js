@@ -343,13 +343,3 @@ var FORM_CONVERSION_LABEL = "";
     if (target && target.style.display !== "none") target.click();
   }
 })();
-
-// Gentle reveal on scroll for sections and cards (skipped when the visitor prefers reduced motion).
-(function () {
-  if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var els = document.querySelectorAll(".section h2, .card, .icon-grid li, .testimonial, .two-col > *, .news-item, .cta-band");
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
-  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-  els.forEach(function (el) { if (el.getBoundingClientRect().top > window.innerHeight) { el.classList.add("reveal"); io.observe(el); } });
-})();
