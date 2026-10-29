@@ -139,7 +139,7 @@ def render_calendar():
 # ---------------------------------------------------------------------------
 BLOG = CONTENT / "blog"
 SITE = "https://www.kirbygateliving.com"
-BLOG_TITLE = "News & Resources"
+BLOG_TITLE = "Guides & Resources"
 BLOG_INDEX_IMAGE = "/assets/img/exterior-front.webp"
 BLOG_DEFAULT_CARD_IMAGE = "/assets/img/exterior-front.webp"
 ORG = {"@type": "Organization", "name": "The Pointe at Kirby Gate", "url": SITE,
@@ -314,7 +314,7 @@ def render_post(p, posts):
 def render_blog_index(posts):
     import html as _h
     meta = {
-        "title": "News & Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
+        "title": "Guides & Resources: Assisted Living & Memory Care Guides | The Pointe at Kirby Gate",
         "description": "Plain-language guides for families comparing assisted living and memory care in East Memphis: paying for care, what to look for on a tour, memory loss, and life at The Pointe at Kirby Gate.",
         "path": "/blog/", "nav": "blog",
     }
@@ -380,7 +380,7 @@ def build_blog():
 
 
 # ---------------------------------------------------------------------------
-# Senior Care News
+# Senior Living News
 #
 # A curated page of short summaries that link out to other publishers'
 # articles, plus our own updates. One file per item in content/news/<slug>.html
@@ -394,9 +394,9 @@ def build_blog():
 # older, /news/feed.xml and sitemap entries.
 # ---------------------------------------------------------------------------
 NEWS = CONTENT / "news"
-NEWS_TITLE = "Senior Care News"
+NEWS_TITLE = "Senior Living News"
 NEWS_INDEX_IMAGE = "/assets/img/exterior-front.webp"
-NEWS_INTRO = ("Articles and news we think families should see, gathered by our team. "
+NEWS_INTRO = ("Senior housing, senior care and caregiving news from trusted publishers, gathered every day by our team. "
               "The summaries are ours; the full stories belong to their publishers.")
 NEWS_DISCLAIMER = ("We share these links for information only. They are not medical, legal or financial "
                    "advice, and we are not responsible for the content of other websites.")
@@ -405,6 +405,7 @@ NEWS_CATEGORIES = {      # meta category -> label on the badge and the filter ch
     "health": "Health & research",
     "caregiving": "Caregiving & family",
     "policy": "Policy & benefits",
+    "industry": "Senior housing",
     "local": "Memphis & Mid-South",
     "community": "Community update",
 }
@@ -539,11 +540,24 @@ def _news_groups(items):
     return groups
 
 
-def _news_list(items):
-    return "\n".join(
-        f'<div class="news-group"><h2 class="news-month">{month}</h2>\n'
-        + "\n".join(_news_item(i) for i in group) + "\n</div>"
-        for month, group in _news_groups(items))
+NEWS_INLINE_CTA = ('<aside class="news-cta"><p class="news-cta-title">Looking at assisted living or memory care for a parent?</p>'
+                   '<p>See our suites and today&rsquo;s availability, or come for a visit and stay for lunch.</p>'
+                   '<p class="cta-actions"><a href="/contact-us/" class="btn btn-primary" data-track="news-tour">Schedule a Tour</a> '
+                   '<a href="/rates-floor-plans/" class="btn btn-secondary" data-track="news-rates">See Rates &amp; Availability</a></p></aside>')
+NEWS_INLINE_AFTER = 3    # the inline tour card follows this many items on /news/
+
+
+def _news_list(items, inline_cta=False):
+    out, n = [], 0
+    for month, group in _news_groups(items):
+        parts = []
+        for i in group:
+            parts.append(_news_item(i))
+            n += 1
+            if inline_cta and n == NEWS_INLINE_AFTER:
+                parts.append(NEWS_INLINE_CTA)
+        out.append(f'<div class="news-group"><h2 class="news-month">{month}</h2>\n' + "\n".join(parts) + "\n</div>")
+    return "\n".join(out)
 
 
 def _news_chips():
@@ -564,11 +578,11 @@ def _news_crumbs(*extra):
 
 def render_news_index(items, archive_years):
     meta = {
-        "title": "Senior Care News: Articles Families Should See | The Pointe at Kirby Gate",
-        "description": "Short summaries of news families should see about paying for care, health research, caregiving, benefits and the Mid-South, gathered by the team at The Pointe at Kirby Gate in East Memphis.",
+        "title": "Senior Living News: Senior Housing & Senior Care News | The Pointe at Kirby Gate",
+        "description": "Daily senior housing and senior care news: assisted living trends, paying for care, health research, caregiving, benefits and the Mid-South, summarized by The Pointe at Kirby Gate in East Memphis.",
         "path": "/news/", "nav": "news",
     }
-    listing = _news_list(items) or "<p>News items are on the way. Check back soon.</p>"
+    listing = _news_list(items, inline_cta=True) or "<p>News items are on the way. Check back soon.</p>"
     archive = ""
     if archive_years:
         links = " &middot; ".join(f'<a href="/news/archive/{y}/">{y}</a>' for y in archive_years)
@@ -586,6 +600,7 @@ def render_news_index(items, archive_years):
     <p class="news-empty" hidden>Nothing in this topic yet. Check back soon.</p>
     {listing}
     {archive}
+    {TOUR_CTA}
     <p class="post-subscribe">Get new items by RSS: <a href="/news/feed.xml">news/feed.xml</a></p>
     <p class="news-disclaimer">{NEWS_DISCLAIMER}</p>
   </div>
@@ -606,8 +621,8 @@ def render_news_index(items, archive_years):
 
 def render_news_archive(year, items, archive_years):
     meta = {
-        "title": f"Senior Care News from {year} | The Pointe at Kirby Gate",
-        "description": f"Older Senior Care News items from {year}: short summaries of articles about paying for care, health research, caregiving and benefits, gathered for families by The Pointe at Kirby Gate.",
+        "title": f"Senior Living News from {year} | The Pointe at Kirby Gate",
+        "description": f"Older Senior Living News items from {year}: short summaries of articles about senior housing, paying for care, health research, caregiving and benefits, gathered for families by The Pointe at Kirby Gate.",
         "path": f"/news/archive/{year}/", "nav": "news",
     }
     others = " &middot; ".join(f"<strong>{y}</strong>" if y == year else f'<a href="/news/archive/{y}/">{y}</a>'

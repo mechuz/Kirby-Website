@@ -11,7 +11,7 @@ Run by .github/workflows/publish-blog.yml in two steps:
             Then do the same for News Items rows with Status = Approved,
             Compliance Check ticked and a Post Date that is blank or has
             arrived (America/Chicago): each becomes content/news/<slug>.html
-            for the Senior Care News page, oldest Post Date first.
+            for the Senior Living News page, oldest Post Date first.
   finalize  After the workflow has pushed the commit, mark those rows
             Published in Airtable and update the articles' linked topics.
 
@@ -102,6 +102,7 @@ NEWS_CATEGORIES = {
     "Health & research": "health",
     "Caregiving & family": "caregiving",
     "Policy & benefits": "policy",
+    "Senior housing": "industry",
     "Memphis & Mid-South": "local",
     "Community update": "community",
 }
@@ -466,7 +467,7 @@ def prepare_news_one(rec, post_date, manifest):
         source_url: ...       http(s), or a site path for community updates
         date: YYYY-MM-DD      Post Date, or today in America/Chicago
         published: YYYY-MM-DD Article Date, omitted when blank
-        category: finance | health | caregiving | policy | local | community
+        category: finance | health | caregiving | policy | industry | local | community
         status: published
         -->
         <p>Summary</p>                           plain text, HTML-escaped here

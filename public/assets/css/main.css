@@ -621,3 +621,10 @@ a.price-card:hover .price-go { text-decoration: underline; }
   #wiz-2 .wiz-card .wiz-card-img { grid-row: 1 / span 3; grid-column: 1; }
   #wiz-2 .wiz-card .wiz-card-price { grid-column: 3; grid-row: 1 / span 3; text-align: center; }
 }
+
+.news-cta { margin: 0 0 1.75rem; padding: 1.25rem 1.5rem; border-radius: 10px; background: var(--green); color: #fff; }
+.news-cta p { margin: 0 0 0.6rem; }
+.news-cta .news-cta-title { font-size: 1.15rem; font-weight: 700; }
+.news-cta .cta-actions { margin: 0.9rem 0 0; }
+.news-cta .btn-secondary { background: #fff; color: var(--green); border-color: #fff; }
+.news-cta .btn-primary { background: #2f5e33; border-color: #2f5e33; color: #fff; }
