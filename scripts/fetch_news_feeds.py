@@ -35,21 +35,20 @@ PER_SOURCE = 8           # keeps one busy publisher from filling the list
 # the feed is about older adults or senior living, False when items must match TOPIC_RE.
 SOURCES = [
     ("Senior Housing News", ["https://seniorhousingnews.com/feed/"], True),
-    ("McKnight's Senior Living", ["https://www.mcknightsseniorliving.com/feed/", "https://www.mcknightsseniorliving.com/home/feed/"], True),
-    ("McKnight's Long-Term Care News", ["https://www.mcknights.com/feed/"], True),
     ("NIC MAP", ["https://www.nicmap.com/feed/"], True),
-    ("NIC", ["https://www.nic.org/feed/"], True),
     ("Argentum", ["https://www.argentum.org/feed/"], True),
+    ("LeadingAge", ["https://leadingage.org/feed/"], True),
     ("KFF Health News", ["https://kffhealthnews.org/topics/aging/feed/"], True),
+    ("KFF Health News", ["https://kffhealthnews.org/topics/long-term-care/feed/"], True),
     ("Next Avenue", ["https://www.nextavenue.org/feed/"], True),
-    ("NCOA", ["https://www.ncoa.org/feed/", "https://www.ncoa.org/rss.xml"], True),
-    ("National Institute on Aging", ["https://www.nia.nih.gov/news/rss.xml", "https://www.nia.nih.gov/rss.xml"], True),
+    ("Being Patient", ["https://www.beingpatient.com/feed/"], True),
+    ("Alzheimer's News Today", ["https://alzheimersnewstoday.com/feed/"], True),
+    ("ScienceDaily", ["https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml"], True),
+    ("ScienceDaily", ["https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml"], True),
     ("NIH News", ["https://www.nih.gov/news-releases/feed.xml"], False),
-    ("ScienceDaily", ["https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
-                      "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml"], True),
-    ("Alzheimer's Association", ["https://www.alz.org/news/rss", "https://www.alz.org/rss/news.xml"], True),
-    ("CMS Newsroom", ["https://www.cms.gov/newsroom/rss-feeds/press-releases.xml", "https://www.cms.gov/newsroom/rss"], False),
-    ("Kiplinger Retirement", ["https://www.kiplinger.com/feeds/retirement"], False),
+    ("NPR Health", ["https://feeds.npr.org/1128/rss.xml"], False),
+    ("McKnight's Senior Living", ["https://www.mcknightsseniorliving.com/feed/"], True),
+    ("NIC", ["https://www.nic.org/feed/"], True),
 ]
 
 TOPIC_RE = re.compile(
@@ -63,7 +62,17 @@ EXCLUDE_RE = re.compile(
     r"fraud|bankrupt|acqui(re|res|red|sition)|sells|sold|buys|purchase[sd]?|merger|layoffs?|"
     r"transactions?|refinanc\w*|financing for|loan for|people in the news|business briefs|"
     r"webinar|sponsored|podcast|grand opening|breaks ground|groundbreaking|appoint(s|ed|ment)|"
-    r"names .{0,40}(ceo|president|director|officer)|hires|earnings|quarterly results|REIT)\b", re.I)
+    r"names .{0,40}(ceo|president|director|officer)|hires|earnings|quarterly results|REIT|dealbook|awards?|"
+    r"deadline|president|ceo|partners? (with|on)|official .{0,40}partner|welcomes|buying spree|"
+    r"largest .{0,30}operator|operators? (enters|expands)|readers|letters)\b", re.I)
+# Names of senior living operators and REITs: stories about one company are not shown.
+OPERATOR_RE = re.compile(
+    r"\b(Welltower|Ventas|Brookdale|Discovery|Belmont Village|Sunrise|Atria|Cogir|LCS|Watermark|Kaplan|"
+    r"Erickson|Holiday Retirement|Benchmark|Senior Lifestyle|Sonida|Capital Senior|Five Star|AlerisLife|"
+    r"Morning Pointe|Allegro|Trilogy|Arbor Company|Integral|Silverado|Sagora|Solera|Life Care Services|"
+    r"Civitas|Priority Life Care|Legend|Avamere|Frontier|Spring Hills|Charter Senior|Thrive|Merrill Gardens|"
+    r"Pacifica|American House|StoryPoint|Elegance|Inspired Healthcare|Revelle|Omega|Sabra|NHI|CareTrust|"
+    r"Harrison Street|Blackstone|Kayne|Grace Management|Senior Resource Group|Vi Living|Acts Retirement)\b")
 
 ATOM = "{http://www.w3.org/2005/Atom}"
 DC = "{http://purl.org/dc/elements/1.1/}"
@@ -149,7 +158,7 @@ def collect(now, overrides=None):
                 break
             if when is None or when < cutoff or when > now + dt.timedelta(days=1):
                 continue
-            if EXCLUDE_RE.search(title) or (not topical and not TOPIC_RE.search(title)):
+            if EXCLUDE_RE.search(title) or OPERATOR_RE.search(title) or (not topical and not TOPIC_RE.search(title)):
                 continue
             key = norm_title(title)
             if key in seen or len(title) < 20:
