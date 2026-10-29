@@ -759,3 +759,37 @@ h2 { text-wrap: balance; }
 .home-news h2 { margin-bottom: 1.75rem; }
 .headline-cards { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
 .headline-cards li { padding: 1.4rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 150px; box-shadow: var(--shadow); }
+/* Paying for Senior Living guide */
+.finance-toc { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem; margin-top: 2rem; }
+.finance-toc a { display: block; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.2rem; font-weight: 600; color: var(--forest); text-decoration: none; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; }
+.finance-toc a:hover { transform: translateY(-2px); border-color: rgba(78,154,81,0.5); }
+.finance-toc a::after { content: " \2192"; color: var(--green); }
+.finance-guide { display: grid; gap: 1.5rem; }
+.finance-option { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(1.5rem, 3vw, 2.25rem); box-shadow: var(--shadow); scroll-margin-top: 7rem; }
+.finance-option h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+.finance-option ul { margin: 0.75rem 0 0 1.2rem; display: grid; gap: 0.6rem; }
+.finance-option p + ul, .finance-option ul + p { margin-top: 0.9rem; }
+.finance-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #2f6b33; background: rgba(78,154,81,0.12); padding: 0.25rem 0.7rem; border-radius: 999px; margin-bottom: 0.6rem; }
+.finance-here { margin-top: 1.1rem !important; padding: 0.9rem 1.1rem; border-radius: 14px; background: #f3f8ef; border-left: 4px solid var(--green); }
+.finance-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 1rem; }
+.finance-table caption { text-align: left; font-size: 0.9rem; color: #5c6a5e; margin-bottom: 0.5rem; }
+.finance-table th, .finance-table td { padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); text-align: left; }
+.finance-table td { font-weight: 700; color: var(--forest); white-space: nowrap; }
+.finance-help { background: linear-gradient(180deg, #fff, #f6faf3); }
+.finance-contacts { list-style: none; margin-left: 0 !important; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.finance-contacts li { padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.finance-contacts strong { display: block; color: var(--forest); }
+.finance-contacts span { font-size: 0.95rem; }
+.finance-disclaimer { font-size: 0.9rem; color: #5c6a5e; }
+.faq { display: grid; gap: 0.75rem; margin-top: 2rem; }
+.faq details { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: var(--shadow); }
+.faq summary { cursor: pointer; font-weight: 700; color: var(--forest); list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-size: 1.4rem; line-height: 1; color: var(--green); }
+.faq details[open] summary::after { content: "\2212"; }
+.faq details p { margin-top: 0.75rem; }
+.finance-feature { display: flex; gap: 2rem; align-items: center; justify-content: space-between; flex-wrap: wrap; background: radial-gradient(700px 300px at 0% 0%, rgba(142,191,94,0.25), transparent 60%), #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.75rem, 4vw, 2.75rem); box-shadow: var(--shadow); margin-bottom: 2.5rem; }
+.finance-feature > div { flex: 1 1 420px; }
+.finance-feature h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
+.finance-feature .btn { margin-top: 0; }
+.finance-link { margin-top: 0.75rem; font-size: 1rem; }

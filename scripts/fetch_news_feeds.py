@@ -43,8 +43,8 @@ SOURCES = [
     ("Next Avenue", ["https://www.nextavenue.org/feed/"], True),
     ("Being Patient", ["https://www.beingpatient.com/feed/"], True),
     ("Alzheimer's News Today", ["https://alzheimersnewstoday.com/feed/"], True),
-    ("ScienceDaily", ["https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml"], True),
-    ("ScienceDaily", ["https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml"], True),
+    ("ScienceDaily", ["https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml"], False),
+    ("ScienceDaily", ["https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml"], False),
     ("NIH News", ["https://www.nih.gov/news-releases/feed.xml"], False),
     ("NPR Health", ["https://feeds.npr.org/1128/rss.xml"], False),
     ("McKnight's Senior Living", ["https://www.mcknightsseniorliving.com/feed/"], True),
@@ -64,7 +64,7 @@ EXCLUDE_RE = re.compile(
     r"webinar|sponsored|podcast|grand opening|breaks ground|groundbreaking|appoint(s|ed|ment)|"
     r"names .{0,40}(ceo|president|director|officer)|hires|earnings|quarterly results|REIT|dealbook|awards?|"
     r"deadline|president|ceo|partners? (with|on)|official .{0,40}partner|welcomes|buying spree|"
-    r"largest .{0,30}operator|operators? (enters|expands)|readers|letters)\b", re.I)
+    r"largest .{0,30}operator|operators? (enters|expands)|readers|letters|refugees?|immigra\w*)\b", re.I)
 # Names of senior living operators and REITs: stories about one company are not shown.
 OPERATOR_RE = re.compile(
     r"\b(Welltower|Ventas|Brookdale|Discovery|Belmont Village|Sunrise|Atria|Cogir|LCS|Watermark|Kaplan|"

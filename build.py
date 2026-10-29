@@ -30,7 +30,7 @@ TEMPLATE = (ROOT / "templates" / "base.html").read_text()
 CONTENT = ROOT / "content"
 PUBLIC = ROOT / "public"
 
-NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reserve", "reviews", "shop", "contact", "blog", "news"]
+NAV_KEYS = ["home", "about", "al", "mc", "respite", "amenities", "cal", "rates", "reserve", "reviews", "shop", "contact", "blog", "news", "paying"]
 
 ICONS = {
  "dining":   '<path d="M5 3v7a3 3 0 0 0 6 0V3"/><path d="M8 3v18"/><path d="M18 3c-2.2 0-3.5 2.8-3.5 6v4H18v8"/>',
@@ -372,6 +372,7 @@ def render_blog_index(posts):
 </section>
 <section class="section">
   <div class="container">
+    <aside class="finance-feature"><div><p class="eyebrow">Paying for Care</p><h2>How to pay for assisted living &amp; memory care</h2><p>Savings, the family home, VA Aid &amp; Attendance, long-term care insurance, life insurance, tax breaks and free local help: every option Memphis families use, with current figures.</p></div><a href="/paying-for-senior-living/" class="btn btn-primary btn-arrow">Read the Financing Guide</a></aside>
     <div class="card-grid post-list">{cards}</div>
     <p class="post-subscribe">Get new articles by RSS: <a href="/feed.xml">feed.xml</a></p>
   </div>
