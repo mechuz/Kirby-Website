@@ -694,3 +694,16 @@ a.price-card:hover .price-go { text-decoration: underline; }
   .main-nav a, .main-nav .has-sub > button { font-size: 0.9rem; }
   .header-cta .btn-tour { padding-left: 1rem; padding-right: 1rem; }
 }
+
+/* Follow Us (home page) */
+.follow-list { list-style: none; padding: 0; margin: 1.75rem 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 1.5rem; }
+.follow-list a { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--navy); font-weight: 600; font-size: 0.92rem; }
+.follow-list svg { width: 26px; height: 26px; fill: #fff; box-sizing: content-box; padding: 17px; border-radius: 50%; background: var(--navy); transition: background 0.2s, transform 0.2s; }
+.follow-list a:hover svg, .follow-list a:focus-visible svg { transform: translateY(-2px); }
+.follow-facebook:hover svg { background: #0866ff; }
+.follow-instagram:hover svg { background: #e4405f; }
+.follow-tiktok:hover svg { background: #000; }
+.follow-youtube:hover svg { background: #ff0000; }
+.follow-google:hover svg { background: #4285f4; }
+.follow-yelp:hover svg { background: #d32323; }
+@media (max-width: 480px) { .follow-list { gap: 1rem; } .follow-list svg { width: 22px; height: 22px; padding: 14px; } }
