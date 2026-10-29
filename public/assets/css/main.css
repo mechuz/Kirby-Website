@@ -87,7 +87,7 @@ body { letter-spacing: -0.005em; }
 .main-nav .has-sub { position: relative; }
 .main-nav .has-sub > button {
   background: none; border: none; cursor: pointer; font: inherit; font-weight: 600;
-  font-size: 0.98rem; color: var(--navy); padding: 0.35rem 0; font-family: var(--font-body);
+  font-size: 0.92rem; color: var(--navy); padding: 0.35rem 0; font-family: var(--font-body);
   display: inline-flex; align-items: center; gap: 0.25rem;
 }
 .main-nav .has-sub > button:hover { color: var(--green); }
@@ -685,14 +685,17 @@ a.price-card:hover .price-go { text-decoration: underline; }
 .cta-note { margin: 1.25rem auto 0 !important; max-width: 640px; font-size: 0.95rem; color: var(--ice); }
 .main-nav a.nav-portal { color: var(--green); font-weight: 700; }
 .brand { flex-shrink: 0; }
-@media (min-width: 1021px) and (max-width: 1240px) {
+@media (min-width: 1021px) and (max-width: 1560px) {
   .header-cta .phone-link { display: none; }
-  .main-nav ul { gap: 0.95rem; }
 }
-@media (min-width: 1021px) and (max-width: 1120px) {
+@media (min-width: 1021px) and (max-width: 1360px) {
+  .main-nav ul { gap: 1rem; }
+}
+@media (min-width: 1021px) and (max-width: 1200px) {
   .main-nav ul { gap: 0.7rem; }
-  .main-nav a, .main-nav .has-sub > button { font-size: 0.9rem; }
-  .header-cta .btn-tour { padding-left: 1rem; padding-right: 1rem; }
+  .main-nav a, .main-nav .has-sub > button { font-size: 0.86rem; }
+  .brand img { width: 128px; }
+  .header-cta .btn-tour { padding-left: 0.9rem; padding-right: 0.9rem; font-size: 0.88rem; }
 }
 
 /* Follow Us (home page) */
