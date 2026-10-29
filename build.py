@@ -168,8 +168,8 @@ def render_html(meta, body, head_extra=""):
     main_phone = meta.get("phone") == "main"
     html = TEMPLATE.replace("{{content}}", body)
     repl = {
-        "phone_tel": "9017533449" if main_phone else "9012475835",
-        "phone_fmt": "(901) 753-3449" if main_phone else "(901) 247-5835",
+        "phone_tel": "9017533449",
+        "phone_fmt": "(901) 753-3449",
         "title": _html.escape(meta["title"], quote=False),
         "description": _html.escape(meta.get("description", ""), quote=True),
         "path": meta["path"],
@@ -775,7 +775,7 @@ def doorloop_tokens():
     if not cache.exists():
         for t in DL_TYPES:
             tok[f"dl_badge_{t}"] = ""
-        tok["dl_units"] = "<p class=\"center\">Call (901) 247-5835 for today&rsquo;s availability.</p>"
+        tok["dl_units"] = "<p class=\"center\">Call reservations at (901) 247-5835 for today&rsquo;s availability.</p>"
         tok["dl_updated"] = ""
         tok["dl_from_companion"] = "$2,800"
         return tok
@@ -926,8 +926,8 @@ def build():
         import html as _html
         main_phone = meta.get("phone") == "main"
         repl = {
-            "phone_tel": "9017533449" if main_phone else "9012475835",
-            "phone_fmt": "(901) 753-3449" if main_phone else "(901) 247-5835",
+            "phone_tel": "9017533449",
+            "phone_fmt": "(901) 753-3449",
             "title": _html.escape(meta["title"], quote=False),
             "description": _html.escape(meta.get("description", ""), quote=True),
             "path": meta["path"],

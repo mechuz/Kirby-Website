@@ -289,7 +289,7 @@ var FORM_CONVERSION_LABEL = "";
       show(2);
       if (!any) {
         document.getElementById("wiz-2").insertAdjacentHTML("afterbegin",
-          '<p class="center">Every suite of this kind is spoken for right now &mdash; <a href="/contact-us/?interest=apply">join the waitlist</a> or call (901) 247-5835.</p>');
+          '<p class="center">Every suite of this kind is spoken for right now &mdash; <a href="/contact-us/?interest=apply">join the waitlist</a> or call reservations at (901) 247-5835.</p>');
       }
       if (typeof gtag === "function") gtag("event", "reserve_step", { event_label: "stay_" + state.stay });
     });
