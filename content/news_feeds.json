@@ -1,0 +1,256 @@
+{
+ "fetched_at": "2026-10-29T15:35:36Z",
+ "sources": [
+  {
+   "name": "Senior Housing News",
+   "url": "https://seniorhousingnews.com/feed/",
+   "ok": true,
+   "count": 8,
+   "error": ""
+  },
+  {
+   "name": "McKnight's Senior Living",
+   "url": "https://www.mcknightsseniorliving.com/feed/",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+   "name": "McKnight's Long-Term Care News",
+   "url": "https://www.mcknights.com/feed/",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+   "name": "NIC MAP",
+   "url": "https://www.nicmap.com/feed/",
+   "ok": true,
+   "count": 1,
+   "error": ""
+  },
+  {
+   "name": "NIC",
+   "url": "https://www.nic.org/feed/",
+   "ok": false,
+   "count": 0,
+   "error": "ParseError: not well-formed (invalid token): line 6, column 71"
+  },
+  {
+   "name": "Argentum",
+   "url": "https://www.argentum.org/feed/",
+   "ok": true,
+   "count": 8,
+   "error": ""
+  },
+  {
+   "name": "KFF Health News",
+   "url": "https://kffhealthnews.org/topics/aging/feed/",
+   "ok": true,
+   "count": 2,
+   "error": ""
+  },
+  {
+   "name": "Next Avenue",
+   "url": "https://www.nextavenue.org/feed/",
+   "ok": true,
+   "count": 0,
+   "error": ""
+  },
+  {
+   "name": "NCOA",
+   "url": "https://www.ncoa.org/feed/",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  {
+   "name": "National Institute on Aging",
+   "url": "https://www.nia.nih.gov/news/rss.xml",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 405: Not Allowed"
+  },
+  {
+   "name": "NIH News",
+   "url": "https://www.nih.gov/news-releases/feed.xml",
+   "ok": true,
+   "count": 0,
+   "error": ""
+  },
+  {
+   "name": "ScienceDaily",
+   "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
+   "ok": true,
+   "count": 5,
+   "error": ""
+  },
+  {
+   "name": "Alzheimer's Association",
+   "url": "https://www.alz.org/news/rss",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  {
+   "name": "CMS Newsroom",
+   "url": "https://www.cms.gov/newsroom/rss-feeds/press-releases.xml",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  {
+   "name": "Kiplinger Retirement",
+   "url": "https://www.kiplinger.com/feeds/retirement",
+   "ok": false,
+   "count": 0,
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  }
+ ],
+ "items": [
+  {
+   "title": "Final Deadline for the 2026 Aspect Marketing & Advertising Awards Is October 31",
+   "link": "https://seniorhousingnews.com/2026/10/28/final-deadline-for-the-2026-aspect-marketing-advertising-awards-is-october-31/",
+   "source": "Senior Housing News",
+   "published": "2026-10-28T20:24:03Z"
+  },
+  {
+   "title": "LCS launches new personalized wellness experience that emphasizes ‘the quality of years we live’",
+   "link": "https://www.argentum.org/lcs-launches-new-personalized-wellness-experience-that-emphasizes-the-quality-of-years-we-live/",
+   "source": "Argentum",
+   "published": "2026-10-28T17:58:10Z"
+  },
+  {
+   "title": "A Night at the Ballpark for Marvin Wiggins",
+   "link": "https://www.argentum.org/a-night-at-the-ballpark-for-marvin-wiggins/",
+   "source": "Argentum",
+   "published": "2026-10-28T17:40:12Z"
+  },
+  {
+   "title": "Using tech tools and hard data to tackle isolation and loneliness risks in senior living",
+   "link": "https://www.argentum.org/using-tech-tools-and-hard-data-to-tackle-isolation-and-loneliness-risks-in-senior-living/",
+   "source": "Argentum",
+   "published": "2026-10-28T17:14:26Z"
+  },
+  {
+   "title": "Belmont Village President: ‘Wind in Our Sails’ for 2027, With New University Partnerships in Tow",
+   "link": "https://seniorhousingnews.com/2026/10/27/belmont-village-president-wind-in-our-sails-for-2027-with-new-university-partnerships-in-tow/",
+   "source": "Senior Housing News",
+   "published": "2026-10-27T20:46:55Z"
+  },
+  {
+   "title": "Senior Living Dealbook: Watermark Partners on New Development; Kaplan Senior Living Enters Maryland",
+   "link": "https://seniorhousingnews.com/2026/10/27/senior-living-dealbook-watermark-partners-for-development-opportunity-kaplan-senior-living-enters-maryland/",
+   "source": "Senior Housing News",
+   "published": "2026-10-27T20:43:59Z"
+  },
+  {
+   "title": "‘Opportunity Is the Constraint’: Welltower Continues Senior Living Buying Spree in 3Q",
+   "link": "https://seniorhousingnews.com/2026/10/27/opportunity-is-the-constraint-welltower-continues-senior-living-buying-spree-in-3q/",
+   "source": "Senior Housing News",
+   "published": "2026-10-27T20:40:19Z"
+  },
+  {
+   "title": "Welltower Reports $2.7B in Senior Housing Acquisitions in Third Quarter",
+   "link": "https://seniorhousingnews.com/2026/10/26/welltower-reports-2-7b-in-senior-housing-acquisitions-in-third-quarter/",
+   "source": "Senior Housing News",
+   "published": "2026-10-26T21:14:51Z"
+  },
+  {
+   "title": "Now the Largest U.S. Senior Living Operator, Discovery Makes Good on Growth Thesis",
+   "link": "https://seniorhousingnews.com/2026/10/26/now-the-largest-u-s-senior-living-operator-discovery-makes-good-on-growth-thesis/",
+   "source": "Senior Housing News",
+   "published": "2026-10-26T20:07:51Z"
+  },
+  {
+   "title": "Not a Full Wave: Inside Green Street’s Senior Living Development Forecast",
+   "link": "https://seniorhousingnews.com/2026/10/26/not-a-full-wave-inside-green-streets-senior-living-development-forecast/",
+   "source": "Senior Housing News",
+   "published": "2026-10-26T20:04:15Z"
+  },
+  {
+   "title": "Revelle Senior Living of Bucks County Welcomes Congressman Brian Fitzpatrick for Community Visit",
+   "link": "https://www.argentum.org/revelle-senior-living-of-bucks-county-welcomes-congressman-brian-fitzpatrick-for-community-visit/",
+   "source": "Argentum",
+   "published": "2026-10-26T18:45:55Z"
+  },
+  {
+   "title": "When People Become the Bridge of Hope",
+   "link": "https://www.argentum.org/when-people-become-the-bridge-of-hope/",
+   "source": "Argentum",
+   "published": "2026-10-26T18:12:23Z"
+  },
+  {
+   "title": "Rulemaking Begins on ROAD to Housing Act, Argentum Plans Comments to Protect Senior Living",
+   "link": "https://www.argentum.org/rulemaking-begins-on-road-to-housing-act-argentum-plans-comments-to-protect-senior-living/",
+   "source": "Argentum",
+   "published": "2026-10-26T17:55:52Z"
+  },
+  {
+   "title": "A Gift, a Visit, a Connection: Bringing Adopt-a-Senior to More Communities",
+   "link": "https://www.argentum.org/a-gift-a-visit-a-connection-bringing-adopt-a-senior-to-more-communities/",
+   "source": "Argentum",
+   "published": "2026-10-26T17:03:27Z"
+  },
+  {
+   "title": "Low-dose aspirin linked to 70% lower dementia risk, but there's a catch",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261024222026.htm",
+   "source": "ScienceDaily",
+   "published": "2026-10-25T10:21:48Z"
+  },
+  {
+   "title": "Popular cannabis sleep gummies may have a hidden dark side",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261024221952.htm",
+   "source": "ScienceDaily",
+   "published": "2026-10-25T05:08:39Z"
+  },
+  {
+   "title": "High-End Senior Living Development Gains Steam as Middle-Market Growth Remains Elusive",
+   "link": "https://seniorhousingnews.com/2026/10/23/high-end-senior-living-development-gains-steam-as-middle-market-growth-remains-elusive/",
+   "source": "Senior Housing News",
+   "published": "2026-10-23T19:23:15Z"
+  },
+  {
+   "title": "USA Pickleball Announces Cogir Senior Living as Official Senior Living Partner",
+   "link": "https://www.argentum.org/usa-pickleball-announces-cogir-senior-living-as-official-senior-living-partner/",
+   "source": "Argentum",
+   "published": "2026-10-23T15:43:50Z"
+  },
+  {
+   "title": "Scientists find a way to fight Alzheimer’s brain damage without removing toxic tau",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261019093355.htm",
+   "source": "ScienceDaily",
+   "published": "2026-10-20T09:52:35Z"
+  },
+  {
+   "title": "More Medications, More Risks. If You’re Worried, Start a Deprescribing Discussion.",
+   "link": "https://kffhealthnews.org/aging/healthq-deprescribing-medication-mix-drug-risks-polypharmacy-talk-to-doctor/",
+   "source": "KFF Health News",
+   "published": "2026-10-20T09:00:00Z"
+  },
+  {
+   "title": "Just 3,000 steps a day may help slow Alzheimer's, scientists find",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261018205058.htm",
+   "source": "ScienceDaily",
+   "published": "2026-10-19T11:23:26Z"
+  },
+  {
+   "title": "\"Mind-blowing\" Alzheimer’s breakthrough: Two hours of sleep restored without clearing brain plaques",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261018084421.htm",
+   "source": "ScienceDaily",
+   "published": "2026-10-19T09:19:45Z"
+  },
+  {
+   "title": "Readers Are Pleading To Make American Healthcare Greater",
+   "link": "https://kffhealthnews.org/letter-to-the-editor/readers-plead-make-american-healthcare-greater-dementia-care-sedation-er-triage-upcoding-october-2026/",
+   "source": "KFF Health News",
+   "published": "2026-10-19T09:00:00Z"
+  },
+  {
+   "title": "Senior Housing Market Metrics Show Record Deal Pricing Above $200K",
+   "link": "https://www.nicmap.com/blog/senior-housing-market-metrics/",
+   "source": "NIC MAP",
+   "published": "2026-10-15T21:11:30Z"
+  }
+ ]
+}
