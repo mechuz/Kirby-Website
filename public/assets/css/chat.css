@@ -1,0 +1,42 @@
+/* "Ask us" chat assistant (public/assets/js/chat.js) */
+.kgc-launch {
+  position: fixed; right: 18px; bottom: 18px; z-index: 900;
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.8rem 1.15rem; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--navy, #1f4d2b); color: #fff; font: 600 0.95rem/1.2 var(--font-body, sans-serif);
+  box-shadow: 0 6px 22px rgba(31, 77, 43, 0.28);
+}
+.kgc-launch:hover, .kgc-launch:focus-visible { background: var(--green, #4e9a51); }
+.kgc-launch.kgc-open { display: none; }
+.kgc-panel {
+  position: fixed; right: 18px; bottom: 18px; z-index: 901;
+  width: min(380px, calc(100vw - 24px)); height: min(560px, calc(100vh - 110px)); height: min(560px, calc(100dvh - 110px));
+  display: flex; flex-direction: column; overflow: hidden;
+  background: #fff; border-radius: 16px; box-shadow: 0 12px 40px rgba(31, 77, 43, 0.25);
+  font: 0.95rem/1.45 var(--font-body, sans-serif); color: var(--ink, #2d3a2f);
+}
+.kgc-panel[hidden] { display: none; }
+.kgc-head { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; background: var(--navy, #1f4d2b); color: #fff; }
+.kgc-close { background: none; border: 0; color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 0 0.25rem; }
+.kgc-log { flex: 1; overflow-y: auto; padding: 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; background: var(--paper, #f6f9f5); overscroll-behavior: contain; }
+.kgc-msg { max-width: 88%; padding: 0.6rem 0.8rem; border-radius: 12px; }
+.kgc-bot { align-self: flex-start; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.kgc-user { align-self: flex-end; background: var(--ice, #e9f3e6); }
+.kgc-msg a { color: var(--blue, #35703a); }
+.kgc-chips, .kgc-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.kgc-chip { border: 1px solid var(--green, #4e9a51); background: #fff; color: var(--navy, #1f4d2b); border-radius: 999px; padding: 0.35rem 0.75rem; font: inherit; font-size: 0.88rem; cursor: pointer; }
+.kgc-chip:hover { background: var(--ice, #e9f3e6); }
+.kgc-btn { display: inline-block; border: 0; border-radius: 999px; padding: 0.5rem 0.95rem; background: var(--green, #4e9a51); color: #fff; font-family: inherit; font-weight: 600; font-size: 0.88rem; line-height: 1.2; text-decoration: none; cursor: pointer; }
+.kgc-btn:hover { background: var(--navy, #1f4d2b); color: #fff; }
+.kgc-form { display: flex; flex-direction: column; gap: 0.45rem; background: #fff; padding: 0.75rem; border-radius: 12px; }
+.kgc-form input, .kgc-form select { font: inherit; padding: 0.55rem 0.65rem; border: 1px solid #cfdccf; border-radius: 8px; }
+.kgc-input { display: flex; gap: 0.4rem; padding: 0.6rem; border-top: 1px solid #e3ece3; }
+.kgc-input input { flex: 1; min-width: 0; font: inherit; padding: 0.55rem 0.7rem; border: 1px solid #cfdccf; border-radius: 999px; }
+.kgc-input button { border: 0; border-radius: 999px; padding: 0 1rem; background: var(--navy, #1f4d2b); color: #fff; font-family: inherit; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+.kgc-note { margin: 0; padding: 0 0.9rem 0.6rem; font-size: 0.75rem; color: #5f6b60; }
+.kgc-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 520px) {
+  .kgc-launch { right: 12px; bottom: 12px; padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .kgc-panel { right: 8px; left: 8px; bottom: 8px; width: auto; }
+}
+@media print { .kgc-launch, .kgc-panel { display: none !important; } }
