@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-10-30T15:56:26Z",
+ "fetched_at": "2026-10-31T15:20:10Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 2,
+   "count": 4,
    "error": ""
   },
   {
@@ -68,7 +68,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 4,
+   "count": 5,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 2,
+   "count": 1,
    "error": ""
   },
   {
@@ -108,6 +108,30 @@
   }
  ],
  "items": [
+  {
+   "title": "A simple blood test could reveal Alzheimer’s risk 10 years before symptoms",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261029072142.htm",
+   "source": "ScienceDaily",
+   "published": "2026-10-31T00:59:52Z"
+  },
+  {
+   "title": "Movers and Shakers: Brightview Bolsters Leadership with Two Partners; ASHA Announces Executive Board, Directors",
+   "link": "https://seniorhousingnews.com/2026/10/30/movers-and-shakers-brightview-bolsters-leadership-with-two-partners-asha-announces-executive-board-directors/",
+   "source": "Senior Housing News",
+   "published": "2026-10-30T20:20:39Z"
+  },
+  {
+   "title": "Adding Life to Years: Senior Living Providers Reorient Operations Around Healthspan",
+   "link": "https://seniorhousingnews.com/2026/10/30/adding-life-to-years-senior-living-providers-reorient-operations-around-healthspan/",
+   "source": "Senior Housing News",
+   "published": "2026-10-30T18:25:17Z"
+  },
+  {
+   "title": "She Started as an Intern. Now She’s Helping Build the Team at Monarch Landing",
+   "link": "https://www.argentum.org/she-started-as-an-intern-now-shes-helping-build-the-team-at-monarch-landing/",
+   "source": "Argentum",
+   "published": "2026-10-30T16:03:03Z"
+  },
   {
    "title": "Six Beacon Hill Residents Take On High-Speed Adventure in Dodge Hellcats",
    "link": "https://www.argentum.org/six-beacon-hill-residents-take-on-high-speed-adventure-in-dodge-hellcats/",
@@ -163,12 +187,6 @@
    "published": "2026-10-28T17:14:26Z"
   },
   {
-   "title": "What's gone up even faster than gas or rent? The cost of caregiving",
-   "link": "https://www.npr.org/2026/10/28/nx-s1-6019319/caregiving-costs-aarp-affordability",
-   "source": "NPR Health",
-   "published": "2026-10-28T13:05:33Z"
-  },
-  {
    "title": "Scientists discover a surprising clue to why some brains resist Alzheimer’s",
    "link": "https://www.sciencedaily.com/releases/2026/10/261025222538.htm",
    "source": "ScienceDaily",
@@ -197,12 +215,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261024222026.htm",
    "source": "ScienceDaily",
    "published": "2026-10-25T10:21:48Z"
-  },
-  {
-   "title": "340 Home Care, Home Health, and Hospice Providers Earn Inaugural Trusted & Transparent™ Recognition from Accushield",
-   "link": "https://www.argentum.org/340-home-care-home-health-and-hospice-providers-earn-inaugural-trusted-transparent-recognition-from-accushield/",
-   "source": "Argentum",
-   "published": "2026-10-21T17:05:25Z"
   },
   {
    "title": "Scientists find 10 different diets linked to slower aging",
