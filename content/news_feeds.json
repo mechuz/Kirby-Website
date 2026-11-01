@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-10-31T15:20:10Z",
+ "fetched_at": "2026-11-01T16:02:09Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 1,
+   "count": 0,
    "error": ""
   },
   {
@@ -167,12 +167,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261028232707.htm",
    "source": "ScienceDaily",
    "published": "2026-10-29T11:30:32Z"
-  },
-  {
-   "title": "New blood test can detect changes associated with Alzheimer's disease",
-   "link": "https://www.npr.org/2026/10/29/nx-s1-6019546/new-blood-test-can-detect-changes-associated-with-alzheimers-disease",
-   "source": "NPR Health",
-   "published": "2026-10-29T08:45:32Z"
   },
   {
    "title": "A Night at the Ballpark for Marvin Wiggins",
