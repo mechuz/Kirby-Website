@@ -76,7 +76,7 @@
     { k: ["where", "address", "location", "located", "directions", "parking", "germantown", "east memphis"],
       a: 'We are at 6480 Quince Rd, Memphis, TN 38119, in an established East Memphis neighborhood minutes from the Baptist and Methodist medical campuses. <a href="https://www.google.com/maps/dir/?api=1&amp;destination=6480+Quince+Rd+Memphis+TN+38119" target="_blank" rel="noopener">Get directions</a>.',
       b: [TOUR, RESERVE] },
-    { k: ["job", "jobs", "career", "careers", "hiring", "employment", "work there", "apply for a job", "vendor"],
+    { k: ["job", "jobs", "career", "careers", "hiring", "employment", "work there", "apply for a job", "vendor", "caregiver job", "caregiver position", "cna", "looking for work", "hire", "hiring now", "resume", "work for you", "caregiver jobs"],
       a: 'For employment, vendor and current-resident questions, please call our main line at ' + MAIN + '.',
       b: [] },
     { k: ["portal", "rent", "pay my", "resident account", "doorloop", "maintenance"],
@@ -195,11 +195,13 @@
       '<input type="hidden" name="_template" value="table">' +
       '<input type="hidden" name="_next" value="https://www.kirbygateliving.com/thank-you/">' +
       '<input type="hidden" name="_captcha" value="false">' +
+      '<input type="hidden" name="_blacklist" value="seeking employment, job opportunity, employment opportunities, my resume, backlinks, seo services, guest post, web design, tourist.com, bitcoin, crypto, casino">' +
       '<input type="text" name="_honey" class="kgc-sr" tabindex="-1" autocomplete="off" aria-hidden="true">' +
       '<input type="hidden" name="page" value="' + location.pathname.replace(/"/g, "") + '">' +
       '<input type="hidden" name="chat_question" value="">' +
       '<label class="kgc-sr" for="kgc-name">Name</label><input id="kgc-name" name="name" required autocomplete="name" placeholder="Your name">' +
       '<label class="kgc-sr" for="kgc-phone">Phone</label><input id="kgc-phone" name="phone" type="tel" required autocomplete="tel" placeholder="Phone number">' +
+      '<select name="inquiry_from" required data-screen-who aria-label="I am"><option value="">I am&hellip;</option><option>Looking for care for a family member</option><option>Looking for care for myself</option><option>A hospital, doctor or care professional</option><option value="job">Looking for a job</option><option value="vendor">A vendor or business</option></select>' +
       '<select name="interest" aria-label="Interested in"><option>Assisted Living</option><option>Memory Care</option><option>Respite Care (Short-Term Stay)</option><option>Rates &amp; Availability</option><option>Scheduling a Tour</option></select>' +
       '<button type="submit" class="kgc-btn">Request a call</button>';
     f.addEventListener("submit", function () {
@@ -208,6 +210,7 @@
       track("chat_callback_submit", location.pathname);
     });
     log.appendChild(f);
+    if (window.kgScreenForm) window.kgScreenForm(f);
     log.scrollTop = log.scrollHeight;
     f.querySelector("#kgc-name").focus();
   }

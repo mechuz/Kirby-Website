@@ -52,13 +52,85 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
 // a message actually goes through, unlike GA4's form_submit, which counts every click
 // of the submit button.
 (function () {
-  if (document.body.dataset.page === "thank-you" && window.kgLead && typeof gtag === "function") {
+  var screened = false;
+  try { screened = sessionStorage.getItem("kg_lead_ok") === "1"; sessionStorage.removeItem("kg_lead_ok"); } catch (e) {}
+  // Only count visitors who came through a screened form on this site (bots that post
+  // straight to FormSubmit, job seekers and vendors never get the flag).
+  if (document.body.dataset.page === "thank-you" && window.kgLead && screened && typeof gtag === "function") {
     gtag("event", "generate_lead", { event_category: "lead", lead_source: "website_form" });
     // Google Ads conversion "Website form lead (thank-you page)" (ID 7881846459).
     if (FORM_CONVERSION_LABEL) {
       gtag("event", "conversion", { send_to: "AW-18300279647/" + FORM_CONVERSION_LABEL });
     }
   }
+})();
+
+// Lead screening for every FormSubmit form on the site (contact, respite booking, chat
+// callback). Job seekers and vendors are pointed to the main line instead of sending,
+// sales pitches, links, fake phone numbers and instant bot submissions are stopped,
+// and only screened submissions set the flag the thank-you page needs to count a lead.
+(function () {
+  var MAIN = '<a href="tel:9017533449">(901) 753-3449</a>';
+  var loaded = Date.now();
+  var JOB = /\b(employment|job|jobs|hiring|hire me|resume|career|careers|looking for work|seeking work|work for you|work with your company|working with your company|job position|open position|positions? available|cna position|caregiver position|apply for (a|the) (job|position)|years of experience)\b/i;
+  var SPAM = /(https?:\/\/|www\.|\bseo\b|backlink|guest post|web ?design|marketing services|free listing|your listing|tourist\.com|crypto|bitcoin|casino|loan offer|investment opportunity)/i;
+  function badPhone(p) {
+    var d = String(p || "").replace(/\D/g, "");
+    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    if (d.length !== 10) return true;
+    if (/^(\d)\1+$/.test(d)) return true;
+    if (/[01]/.test(d.charAt(0)) || /[01]/.test(d.charAt(3))) return true;
+    if (d.slice(3, 6) === "555") return true;
+    return false;
+  }
+  function note(form, html) {
+    var n = form.querySelector(".form-screen-note");
+    if (!n) {
+      n = document.createElement("p");
+      n.className = "form-screen-note"; n.setAttribute("role", "alert");
+      var btn = form.querySelector('[type="submit"]');
+      if (btn) btn.parentNode.insertBefore(n, btn); else form.appendChild(n);
+    }
+    n.innerHTML = html;
+    n.hidden = !html;
+  }
+  var JOB_NOTE = "We don&rsquo;t take job applications or business inquiries through this form. Please call our main line, " + MAIN + ".";
+  function check(form) {
+    var who = form.querySelector("[data-screen-who]");
+    if (who && (who.value === "job" || who.value === "vendor")) return { ok: false, msg: JOB_NOTE, why: who.value };
+    var text = Array.prototype.map.call(form.querySelectorAll("textarea, [name='chat_question']"), function (el) { return el.value; }).join(" ");
+    if (JOB.test(text)) return { ok: false, msg: JOB_NOTE, why: "job_text" };
+    if (SPAM.test(text)) return { ok: false, msg: "Please remove any links or sales offers from your message, or call us at " + MAIN + ".", why: "spam_text" };
+    var phone = form.querySelector('[name="phone"]');
+    if (phone && badPhone(phone.value)) return { ok: false, msg: "Please enter a 10-digit phone number so our team can call you back.", why: "phone" };
+    if (Date.now() - loaded < 2500) return { ok: false, msg: "Please check your details and press the button again.", why: "fast" };
+    return { ok: true };
+  }
+  function attach(form) {
+    if (form.dataset.screened) return;
+    form.dataset.screened = "1";
+    var who = form.querySelector("[data-screen-who]");
+    if (who) who.addEventListener("change", function () {
+      var stop = who.value === "job" || who.value === "vendor";
+      note(form, stop ? JOB_NOTE : "");
+      var btn = form.querySelector('[type="submit"]');
+      if (btn && !form.querySelector("#bk-submit")) btn.disabled = stop;
+    });
+    form.addEventListener("submit", function (e) {
+      if (e.defaultPrevented) return;
+      var r = check(form);
+      if (!r.ok) {
+        e.preventDefault();
+        note(form, r.msg);
+        if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why });
+        return;
+      }
+      note(form, "");
+      try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
+    });
+  }
+  window.kgScreenForm = attach;
+  document.querySelectorAll('form[action*="formsubmit.co"]').forEach(attach);
 })();
 
 // Dropdown toggle for touch devices (hover handles pointer devices)
