@@ -128,13 +128,41 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
     if (btn) { btn.disabled = true; btn.textContent = "Sending\u2026"; }
     var next = form.querySelector('[name="_next"]');
     var done = false;
-    function fail(why) {
-      if (done) return; done = true;
+    function success(via) {
+      done = true;
+      try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
+      if (via !== "formsubmit" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead" });
+      location.href = next && next.value ? next.value : "/thank-you/";
+    }
+    function giveUp(why) {
+      done = true;
       if (btn) { btn.disabled = false; btn.textContent = label; }
       note(form, FAIL_NOTE);
       if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: why });
     }
-    var timer = setTimeout(function () { fail("timeout"); }, 20000);
+    // Backup receiver: Zapier workflow "Kirby website lead backup" (catch hook), which
+    // emails the lead from the community Gmail to the same team inboxes.
+    var BACKUP_HOOK = "https://hooks.zapier.com/hooks/catch/27563206/EsZUwGqBy3rIA0Lc/";
+    function fail(why) {
+      if (done) return; done = true;
+      if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why });
+      var fd = new URLSearchParams();
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name || el.name.charAt(0) === "_" || el.type === "submit") return;
+        if ((el.type === "checkbox" || el.type === "radio") && !el.checked) return;
+        fd.append(el.name, el.value);
+      });
+      var subj = form.querySelector('[name="_subject"]');
+      fd.append("source", subj ? subj.value : "website form");
+      fd.append("page", location.pathname);
+      fd.append("reason", why);
+      fd.append("kg_src", "kirbygateliving");
+      var t2 = setTimeout(function () { giveUp("backup_timeout"); }, 15000);
+      fetch(BACKUP_HOOK, { method: "POST", mode: "no-cors", body: fd })
+        .then(function () { clearTimeout(t2); success("zapier"); })
+        .catch(function () { clearTimeout(t2); giveUp("backup_network"); });
+    }
+    var timer = setTimeout(function () { fail("timeout"); }, 12000);
     fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
       method: "POST", body: new FormData(form), headers: { Accept: "application/json" }
     }).then(function (res) {
@@ -143,9 +171,7 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
       clearTimeout(timer);
       if (done) return;
       if (r.ok && String(r.j.success) === "true") {
-        done = true;
-        try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
-        location.href = next && next.value ? next.value : "/thank-you/";
+        success("formsubmit");
       } else {
         fail("status");
       }
