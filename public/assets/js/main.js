@@ -116,19 +116,59 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
       var btn = form.querySelector('[type="submit"]');
       if (btn && !form.querySelector("#bk-submit")) btn.disabled = stop;
     });
-    form.addEventListener("submit", function (e) {
-      if (e.defaultPrevented) return;
-      var r = check(form);
-      if (!r.ok) {
-        e.preventDefault();
-        note(form, r.msg);
-        if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why });
-        return;
-      }
-      note(form, "");
-      try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
-    });
   }
+  // Send screened submissions in the background so a FormSubmit outage (for example a
+  // Cloudflare 522) never strands a family on an error page: on failure the visitor
+  // sees the main line instead. Listening on document lets form-specific checks
+  // (such as the respite calendar's date check) run and cancel first.
+  var FAIL_NOTE = "Sorry, our message system isn&rsquo;t responding right now. Please call us at " + MAIN + " and we&rsquo;ll help you right away.";
+  function send(form) {
+    var btn = form.querySelector('[type="submit"]');
+    var label = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = "Sending\u2026"; }
+    var next = form.querySelector('[name="_next"]');
+    var done = false;
+    function fail(why) {
+      if (done) return; done = true;
+      if (btn) { btn.disabled = false; btn.textContent = label; }
+      note(form, FAIL_NOTE);
+      if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: why });
+    }
+    var timer = setTimeout(function () { fail("timeout"); }, 20000);
+    fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
+      method: "POST", body: new FormData(form), headers: { Accept: "application/json" }
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
+    }).then(function (r) {
+      clearTimeout(timer);
+      if (done) return;
+      if (r.ok && String(r.j.success) === "true") {
+        done = true;
+        try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
+        location.href = next && next.value ? next.value : "/thank-you/";
+      } else {
+        fail("status");
+      }
+    }).catch(function () { clearTimeout(timer); fail("network"); });
+  }
+  document.addEventListener("submit", function (e) {
+    var form = e.target;
+    if (!form || !form.dataset || !form.dataset.screened || e.defaultPrevented) return;
+    e.preventDefault();
+    var r = check(form);
+    if (!r.ok) {
+      note(form, r.msg);
+      if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why });
+      return;
+    }
+    note(form, "");
+    if (!window.fetch || !window.FormData) {
+      try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
+      form.submit();
+      return;
+    }
+    send(form);
+  });
   window.kgScreenForm = attach;
   document.querySelectorAll('form[action*="formsubmit.co"]').forEach(attach);
 })();
