@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-02T19:29:37Z",
+ "fetched_at": "2026-11-03T17:03:58Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -33,7 +33,7 @@
    "name": "KFF Health News",
    "url": "https://kffhealthnews.org/topics/aging/feed/",
    "ok": true,
-   "count": 2,
+   "count": 1,
    "error": ""
   },
   {
@@ -68,14 +68,14 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 3,
+   "count": 4,
    "error": ""
   },
   {
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 5,
+   "count": 4,
    "error": ""
   },
   {
@@ -108,6 +108,18 @@
   }
  ],
  "items": [
+  {
+   "title": "Scientists discover new Alzheimer’s drug that repairs DNA damage and reduces brain inflammation",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261102075806.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-03T04:11:58Z"
+  },
+  {
+   "title": "Scientists reverse liver cell aging and cut Alzheimer’s-linked protein in half",
+   "link": "https://www.sciencedaily.com/releases/2026/10/261031221155.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-03T00:34:59Z"
+  },
   {
    "title": "Beyond Coastal Markets: Inside Alliance Residential’s $3B Senior Living Development Plan",
    "link": "https://seniorhousingnews.com/2026/11/02/beyond-coastal-markets-inside-alliance-residentials-3b-senior-living-development-plan/",
@@ -233,24 +245,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261019093439.htm",
    "source": "ScienceDaily",
    "published": "2026-10-21T01:58:07Z"
-  },
-  {
-   "title": "Your aging brain may be trading memory for something more valuable",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261019093357.htm",
-   "source": "ScienceDaily",
-   "published": "2026-10-20T11:31:22Z"
-  },
-  {
-   "title": "Scientists find a way to fight Alzheimer’s brain damage without removing toxic tau",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261019093355.htm",
-   "source": "ScienceDaily",
-   "published": "2026-10-20T09:52:35Z"
-  },
-  {
-   "title": "More Medications, More Risks. If You’re Worried, Start a Deprescribing Discussion.",
-   "link": "https://kffhealthnews.org/aging/healthq-deprescribing-medication-mix-drug-risks-polypharmacy-talk-to-doctor/",
-   "source": "KFF Health News",
-   "published": "2026-10-20T09:00:00Z"
   }
  ]
 }
