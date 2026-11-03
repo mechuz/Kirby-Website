@@ -128,44 +128,13 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
     if (btn) { btn.disabled = true; btn.textContent = "Sending\u2026"; }
     var next = form.querySelector('[name="_next"]');
     var done = false;
-    function success(via) {
-      done = true;
-      try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
-      if (via !== "formsubmit" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead" });
-      location.href = next && next.value ? next.value : "/thank-you/";
-    }
-    function giveUp(why) {
-      done = true;
+    function fail(why) {
+      if (done) return; done = true;
       if (btn) { btn.disabled = false; btn.textContent = label; }
       note(form, FAIL_NOTE);
       if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: why });
     }
-    // Backup receiver: Jotform form "Kirby Gate Website Lead (Backup)" (ID 263065647983066),
-    // which emails every submission to the same team inboxes.
-    function backup(why) {
-      if (done) return; done = true;
-      if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why });
-      var v = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value : ""; };
-      var dates = [v("check_in"), v("check_out")].filter(Boolean).join(" to ") + (v("nights") ? " (" + v("nights") + " nights)" : "");
-      var fd = new URLSearchParams();
-      fd.append("formID", "263065647983066");
-      fd.append("q2_fullname0[first]", v("name"));
-      fd.append("q3_textbox1", v("phone"));
-      fd.append("q4_textbox2", v("email"));
-      fd.append("q5_textbox3", v("inquiry_from") || v("stay_type"));
-      fd.append("q6_textbox4", v("interest") || v("suite_preference"));
-      fd.append("q7_textarea5", v("message") || v("notes"));
-      fd.append("q8_textbox6", dates);
-      fd.append("q9_textbox7", location.pathname);
-      fd.append("q10_textbox8", v("_subject"));
-      fd.append("q11_textarea9", v("chat_question"));
-      var t2 = setTimeout(function () { giveUp("backup_timeout"); }, 15000);
-      fetch("https://submit.jotform.com/submit/263065647983066", { method: "POST", mode: "no-cors", body: fd })
-        .then(function () { clearTimeout(t2); success("jotform"); })
-        .catch(function () { clearTimeout(t2); giveUp("backup_network"); });
-    }
-    function fail(why) { backup(why); }
-    var timer = setTimeout(function () { fail("timeout"); }, 12000);
+    var timer = setTimeout(function () { fail("timeout"); }, 20000);
     fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
       method: "POST", body: new FormData(form), headers: { Accept: "application/json" }
     }).then(function (res) {
@@ -174,7 +143,9 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
       clearTimeout(timer);
       if (done) return;
       if (r.ok && String(r.j.success) === "true") {
-        success("formsubmit");
+        done = true;
+        try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
+        location.href = next && next.value ? next.value : "/thank-you/";
       } else {
         fail("status");
       }
