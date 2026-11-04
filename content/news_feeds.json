@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-03T17:03:58Z",
+ "fetched_at": "2026-11-04T17:15:17Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
@@ -75,7 +75,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 4,
+   "count": 3,
    "error": ""
   },
   {
@@ -108,6 +108,18 @@
   }
  ],
  "items": [
+  {
+   "title": "Diversified Healthcare Trust Ups Senior Housing Guidance With SHOP Leading the Way",
+   "link": "https://seniorhousingnews.com/2026/11/03/diversified-healthcare-trust-ups-senior-housing-guidance-with-shop-leading-the-way/",
+   "source": "Senior Housing News",
+   "published": "2026-11-03T21:26:56Z"
+  },
+  {
+   "title": "Janus Living More Than Doubles Senior Housing Portfolio with More Acquisitions to Come",
+   "link": "https://seniorhousingnews.com/2026/11/03/janus-living-more-than-doubles-senior-housing-portfolio-with-more-acquisitions-to-come/",
+   "source": "Senior Housing News",
+   "published": "2026-11-03T21:14:00Z"
+  },
   {
    "title": "Scientists discover new Alzheimer’s drug that repairs DNA damage and reduces brain inflammation",
    "link": "https://www.sciencedaily.com/releases/2026/11/261102075806.htm",
@@ -211,12 +223,6 @@
    "published": "2026-10-29T20:32:28Z"
   },
   {
-   "title": "In the Pipeline: Galerie Advances Next Corso Community; Evergreen Completes Latest Affordable Project",
-   "link": "https://seniorhousingnews.com/2026/10/29/in-the-pipeline-galerie-advances-next-corso-community-evergreen-completes-latest-affordable-project/",
-   "source": "Senior Housing News",
-   "published": "2026-10-29T17:52:46Z"
-  },
-  {
    "title": "Less than 42 minutes of bright daylight linked to higher dementia risk",
    "link": "https://www.sciencedaily.com/releases/2026/10/261028232707.htm",
    "source": "ScienceDaily",
@@ -239,12 +245,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261024222026.htm",
    "source": "ScienceDaily",
    "published": "2026-10-25T10:21:48Z"
-  },
-  {
-   "title": "Scientists find 10 different diets linked to slower aging",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261019093439.htm",
-   "source": "ScienceDaily",
-   "published": "2026-10-21T01:58:07Z"
   }
  ]
 }
