@@ -117,11 +117,14 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
       if (btn && !form.querySelector("#bk-submit")) btn.disabled = stop;
     });
   }
-  // Send screened submissions in the background so a FormSubmit outage (for example a
-  // Cloudflare 522) never strands a family on an error page: on failure the visitor
-  // sees the main line instead. Listening on document lets form-specific checks
+  // Send screened submissions in the background. Primary receiver (since 2026-11-05,
+  // after repeated FormSubmit Cloudflare 522 outages): the Zapier workflow "Kirby website
+  // lead backup" (catch hook), which emails the lead from the community Gmail to the same
+  // team inboxes. If Zapier cannot be reached, FormSubmit is tried; if both fail, the
+  // visitor sees the main line instead. Listening on document lets form-specific checks
   // (such as the respite calendar's date check) run and cancel first.
   var FAIL_NOTE = "Sorry, our message system isn&rsquo;t responding right now. Please call us at " + MAIN + " and we&rsquo;ll help you right away.";
+  var LEAD_HOOK = "https://hooks.zapier.com/hooks/catch/27563206/EsZUwGqBy3rIA0Lc/";
   function send(form) {
     var btn = form.querySelector('[type="submit"]');
     var label = btn ? btn.textContent : "";
@@ -129,53 +132,47 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
     var next = form.querySelector('[name="_next"]');
     var done = false;
     function success(via) {
-      done = true;
+      if (done) return; done = true;
       try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
-      if (via !== "formsubmit" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead" });
+      if (via !== "zapier" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead", via: via });
       location.href = next && next.value ? next.value : "/thank-you/";
     }
     function giveUp(why) {
-      done = true;
+      if (done) return; done = true;
       if (btn) { btn.disabled = false; btn.textContent = label; }
       note(form, FAIL_NOTE);
       if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: why });
     }
-    // Backup receiver: Zapier workflow "Kirby website lead backup" (catch hook), which
-    // emails the lead from the community Gmail to the same team inboxes.
-    var BACKUP_HOOK = "https://hooks.zapier.com/hooks/catch/27563206/EsZUwGqBy3rIA0Lc/";
-    function fail(why) {
-      if (done) return; done = true;
+    // Fallback: FormSubmit (AJAX endpoint of the form's own action).
+    var tried = false;
+    function fallback(why) {
+      if (done || tried) return; tried = true;
       if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why });
-      var fd = new URLSearchParams();
-      Array.prototype.forEach.call(form.elements, function (el) {
-        if (!el.name || el.name.charAt(0) === "_" || el.type === "submit") return;
-        if ((el.type === "checkbox" || el.type === "radio") && !el.checked) return;
-        fd.append(el.name, el.value);
-      });
-      var subj = form.querySelector('[name="_subject"]');
-      fd.append("source", subj ? subj.value : "website form");
-      fd.append("page", location.pathname);
-      fd.append("reason", why);
-      fd.append("kg_src", "kirbygateliving");
-      var t2 = setTimeout(function () { giveUp("backup_timeout"); }, 15000);
-      fetch(BACKUP_HOOK, { method: "POST", mode: "no-cors", body: fd })
-        .then(function () { clearTimeout(t2); success("zapier"); })
-        .catch(function () { clearTimeout(t2); giveUp("backup_network"); });
+      var t2 = setTimeout(function () { giveUp("fallback_timeout"); }, 12000);
+      fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
+        method: "POST", body: new FormData(form), headers: { Accept: "application/json" }
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
+      }).then(function (r) {
+        clearTimeout(t2);
+        if (r.ok && String(r.j.success) === "true") success("formsubmit"); else giveUp("fallback_status");
+      }).catch(function () { clearTimeout(t2); giveUp("fallback_network"); });
     }
-    var timer = setTimeout(function () { fail("timeout"); }, 12000);
-    fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
-      method: "POST", body: new FormData(form), headers: { Accept: "application/json" }
-    }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
-    }).then(function (r) {
-      clearTimeout(timer);
-      if (done) return;
-      if (r.ok && String(r.j.success) === "true") {
-        success("formsubmit");
-      } else {
-        fail("status");
-      }
-    }).catch(function () { clearTimeout(timer); fail("network"); });
+    var fd = new URLSearchParams();
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || el.name.charAt(0) === "_" || el.type === "submit") return;
+      if ((el.type === "checkbox" || el.type === "radio") && !el.checked) return;
+      fd.append(el.name, el.value);
+    });
+    var subj = form.querySelector('[name="_subject"]');
+    fd.append("source", subj ? subj.value : "website form");
+    fd.append("page", location.pathname);
+    fd.append("reason", "primary");
+    fd.append("kg_src", "kirbygateliving");
+    var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
+    fetch(LEAD_HOOK, { method: "POST", mode: "no-cors", body: fd })
+      .then(function () { clearTimeout(t1); success("zapier"); })
+      .catch(function () { clearTimeout(t1); fallback("network"); });
   }
   document.addEventListener("submit", function (e) {
     var form = e.target;
