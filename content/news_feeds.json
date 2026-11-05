@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-04T17:15:17Z",
+ "fetched_at": "2026-11-05T17:24:20Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
@@ -109,6 +109,30 @@
  ],
  "items": [
   {
+   "title": "For Better or Worse, Midterm Political Sea Change Means More Eyes on Senior Living, Long-Term Care",
+   "link": "https://seniorhousingnews.com/2026/11/04/for-better-or-worse-midterm-political-sea-change-means-more-eyes-on-senior-living-long-term-care/",
+   "source": "Senior Housing News",
+   "published": "2026-11-04T22:26:32Z"
+  },
+  {
+   "title": "LTC Properties ‘Buying Future Growth’ With Nearly $1B in Senior Housing Deals This Year",
+   "link": "https://seniorhousingnews.com/2026/11/04/ltc-properties-buying-future-growth-with-nearly-1b-in-senior-housing-deals-this-year/",
+   "source": "Senior Housing News",
+   "published": "2026-11-04T21:36:06Z"
+  },
+  {
+   "title": "The Commons in Lincoln Residents Bring Team Spirit to Scarecrow Classic 5K",
+   "link": "https://www.argentum.org/the-commons-in-lincoln-residents-bring-team-spirit-to-scarecrow-classic-5k/",
+   "source": "Argentum",
+   "published": "2026-11-04T18:19:07Z"
+  },
+  {
+   "title": "What the 2026 Midterm Elections Mean for Senior Living",
+   "link": "https://www.argentum.org/what-the-2026-midterm-elections-mean-for-senior-living/",
+   "source": "Argentum",
+   "published": "2026-11-04T18:06:35Z"
+  },
+  {
    "title": "Diversified Healthcare Trust Ups Senior Housing Guidance With SHOP Leading the Way",
    "link": "https://seniorhousingnews.com/2026/11/03/diversified-healthcare-trust-ups-senior-housing-guidance-with-shop-leading-the-way/",
    "source": "Senior Housing News",
@@ -181,18 +205,6 @@
    "published": "2026-10-31T00:59:52Z"
   },
   {
-   "title": "Movers and Shakers: Brightview Bolsters Leadership with Two Partners; ASHA Announces Executive Board, Directors",
-   "link": "https://seniorhousingnews.com/2026/10/30/movers-and-shakers-brightview-bolsters-leadership-with-two-partners-asha-announces-executive-board-directors/",
-   "source": "Senior Housing News",
-   "published": "2026-10-30T20:20:39Z"
-  },
-  {
-   "title": "Adding Life to Years: Senior Living Providers Reorient Operations Around Healthspan",
-   "link": "https://seniorhousingnews.com/2026/10/30/adding-life-to-years-senior-living-providers-reorient-operations-around-healthspan/",
-   "source": "Senior Housing News",
-   "published": "2026-10-30T18:25:17Z"
-  },
-  {
    "title": "She Started as an Intern. Now She’s Helping Build the Team at Monarch Landing",
    "link": "https://www.argentum.org/she-started-as-an-intern-now-shes-helping-build-the-team-at-monarch-landing/",
    "source": "Argentum",
@@ -205,34 +217,16 @@
    "published": "2026-10-30T15:52:47Z"
   },
   {
-   "title": "Senate Finance Report Raises Long-Term Care Policy Concerns",
-   "link": "https://www.argentum.org/senate-finance-report-raises-long-term-care-policy-concerns/",
-   "source": "Argentum",
-   "published": "2026-10-30T15:22:38Z"
-  },
-  {
    "title": "Medicare Drug Plans Are Hiking Premiums While Trump Claims Victory on Medicine Prices",
    "link": "https://kffhealthnews.org/medicare/medicare-drug-plans-premium-hikes-affordability-trump-cms/",
    "source": "KFF Health News",
    "published": "2026-10-30T09:01:00Z"
   },
   {
-   "title": "Family Caregivers Spend Almost One-Third of Annual Household Costs Caring for Loved Ones",
-   "link": "https://seniorhousingnews.com/2026/10/29/family-caregivers-spend-almost-one-third-of-annual-household-costs-caring-for-loved-ones/",
-   "source": "Senior Housing News",
-   "published": "2026-10-29T20:32:28Z"
-  },
-  {
    "title": "Less than 42 minutes of bright daylight linked to higher dementia risk",
    "link": "https://www.sciencedaily.com/releases/2026/10/261028232707.htm",
    "source": "ScienceDaily",
    "published": "2026-10-29T11:30:32Z"
-  },
-  {
-   "title": "A Night at the Ballpark for Marvin Wiggins",
-   "link": "https://www.argentum.org/a-night-at-the-ballpark-for-marvin-wiggins/",
-   "source": "Argentum",
-   "published": "2026-10-28T17:40:12Z"
   },
   {
    "title": "Scientists discover a surprising clue to why some brains resist Alzheimer’s",
