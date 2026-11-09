@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-08T15:58:15Z",
+ "fetched_at": "2026-11-09T19:49:36Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -68,7 +68,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 4,
+   "count": 5,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 0,
+   "count": 1,
    "error": ""
   },
   {
@@ -108,6 +108,42 @@
   }
  ],
  "items": [
+  {
+   "title": "Make Connection a Priority This Holiday Season",
+   "link": "https://www.argentum.org/make-connection-a-priority-this-holiday-season/",
+   "source": "Argentum",
+   "published": "2026-11-09T18:10:15Z"
+  },
+  {
+   "title": "Last Chance to Join Senior Living Leaders in Austin",
+   "link": "https://www.argentum.org/last-chance-to-join-senior-living-leaders-in-austin/",
+   "source": "Argentum",
+   "published": "2026-11-09T17:10:52Z"
+  },
+  {
+   "title": "I Love Senior Living: Honoring Service, Sharing Gratitude",
+   "link": "https://www.argentum.org/i-love-senior-living-honoring-service-sharing-gratitude/",
+   "source": "Argentum",
+   "published": "2026-11-09T17:04:45Z"
+  },
+  {
+   "title": "Assessing the State of Technology Adoption in Senior Living",
+   "link": "https://www.argentum.org/assessing-the-state-of-technology-adoption-in-senior-living/",
+   "source": "Argentum",
+   "published": "2026-11-09T16:55:25Z"
+  },
+  {
+   "title": "He was diagnosed with cancer. Then he was told he lost his Medicaid",
+   "link": "https://www.npr.org/2026/11/09/nx-s1-6032732/trump-medicaid-health-nebraska-work-insurance",
+   "source": "NPR Health",
+   "published": "2026-11-09T10:00:00Z"
+  },
+  {
+   "title": "Common osteoporosis drugs linked to 24% lower dementia risk in major study",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261108233037.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-09T07:36:14Z"
+  },
   {
    "title": "Stronger flu shot linked to nearly 55% lower Alzheimer's risk",
    "link": "https://www.sciencedaily.com/releases/2026/11/261105224609.htm",
@@ -187,12 +223,6 @@
    "published": "2026-11-04T18:19:07Z"
   },
   {
-   "title": "What the 2026 Midterm Elections Mean for Senior Living",
-   "link": "https://www.argentum.org/what-the-2026-midterm-elections-mean-for-senior-living/",
-   "source": "Argentum",
-   "published": "2026-11-04T18:06:35Z"
-  },
-  {
    "title": "Diversified Healthcare Trust Ups Senior Housing Guidance With SHOP Leading the Way",
    "link": "https://seniorhousingnews.com/2026/11/03/diversified-healthcare-trust-ups-senior-housing-guidance-with-shop-leading-the-way/",
    "source": "Senior Housing News",
@@ -209,24 +239,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261031221155.htm",
    "source": "ScienceDaily",
    "published": "2026-11-03T00:34:59Z"
-  },
-  {
-   "title": "Ready for What’s Next: Senior Living Leaders Gather in Austin",
-   "link": "https://www.argentum.org/ready-for-whats-next-senior-living-leaders-gather-in-austin/",
-   "source": "Argentum",
-   "published": "2026-11-02T16:59:53Z"
-  },
-  {
-   "title": "Argentum Urges Congress to Restore Workforce Tax Credit",
-   "link": "https://www.argentum.org/argentum-urges-congress-to-restore-workforce-tax-credit/",
-   "source": "Argentum",
-   "published": "2026-11-02T16:26:31Z"
-  },
-  {
-   "title": "Register Now for our Post-Election Debrief on November 10",
-   "link": "https://www.argentum.org/register-now-for-our-post-election-debrief-on-november-10/",
-   "source": "Argentum",
-   "published": "2026-11-02T16:15:18Z"
   },
   {
    "title": "Extra weight may be aging your brain faster than you think",
