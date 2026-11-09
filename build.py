@@ -12,6 +12,7 @@ top of each content file:
     nav: about        (which nav item gets aria-current)
     body_attr:  data-page="thank-you"   (optional)
     sitemap: yes|no   (default yes)
+    robots: noindex, follow   (optional robots meta)
     -->
 
 Usage: python3 build.py
@@ -1006,7 +1007,7 @@ def build():
             "year": year,
             "css_v": css_v,
             "js_v": js_v,
-            "head_extra": meta.get("head_extra", ""),
+            "head_extra": (('<meta name="robots" content="%s">\n  ' % _html.escape(meta["robots"].strip(), quote=True)) if meta.get("robots") else "") + meta.get("head_extra", ""),
             "body_attr": (" " + meta["body_attr"]) if meta.get("body_attr") else "",
         }
         for key in NAV_KEYS:
