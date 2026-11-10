@@ -47,6 +47,32 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
   });
 })();
 
+// Lead source (2026-11-10): remember how this visit arrived (Google Ads click IDs and
+// UTM tags from the landing URL, or the referring site) for the browser session, so
+// every lead the team receives says whether it came from ads, the Business Profile,
+// search or elsewhere. First touch in the session wins. Nothing personal is stored.
+(function () {
+  try {
+    if (sessionStorage.getItem("kg_attr")) return;
+    var q = new URLSearchParams(location.search);
+    var got = {};
+    ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].forEach(function (k) {
+      var v = q.get(k);
+      if (v) got[k] = v.slice(0, 200);
+    });
+    if (!Object.keys(got).length && document.referrer) {
+      var ref = new URL(document.referrer);
+      if (ref.hostname && ref.hostname !== location.hostname) got.referrer = ref.hostname;
+    }
+    if (!Object.keys(got).length) return;
+    got.landing_page = location.pathname;
+    sessionStorage.setItem("kg_attr", JSON.stringify(got));
+  } catch (e) {}
+})();
+function kgLeadSource() {
+  try { return JSON.parse(sessionStorage.getItem("kg_attr") || "{}") || {}; } catch (e) { return {}; }
+}
+
 // Count a form lead on the thank-you page, once per browser session (window.kgLead
 // is set by the head script in base.html). FormSubmit only sends visitors here after
 // a message actually goes through, unlike GA4's form_submit, which counts every click
@@ -159,6 +185,8 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
       var t2 = setTimeout(function () { giveUp("fallback_timeout"); }, 12000);
       var fsd = new FormData(form);
       fsd.set("_subject", (fsd.get("_subject") || "Website lead") + FS_MARK);
+      var fsSrc = kgLeadSource();
+      Object.keys(fsSrc).forEach(function (k) { fsd.set(k, String(fsSrc[k]).slice(0, 200)); });
       fetch(FS_AJAX, {
         method: "POST", body: fsd, headers: { Accept: "application/json" }
       }).then(function (res) {
@@ -182,6 +210,8 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
     var hp = form.querySelector('[name="_honey"]');
     fd.append("hp", hp ? hp.value : "");
     fd.append("el", String(Date.now() - loaded));
+    var src = kgLeadSource();
+    Object.keys(src).forEach(function (k) { fd.append(k, String(src[k]).slice(0, 200)); });
     var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
     fetch(LEAD_HOOK, { method: "POST", mode: "no-cors", body: fd })
       .then(function () { clearTimeout(t1); success("zapier"); })
