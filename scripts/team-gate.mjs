@@ -88,7 +88,7 @@ robots: noindex, nofollow
             <input type="password" id="kg-pass" name="password" required autocomplete="current-password">
           </div>
           <div class="form-row">
-            <label style="font-weight:normal"><input type="checkbox" id="kg-remember" checked> Keep me signed in on this device</label>
+            <label for="kg-remember" style="font-weight:normal;display:flex;align-items:center;gap:0.6rem;cursor:pointer"><input type="checkbox" id="kg-remember" checked style="width:1.35rem;height:1.35rem;margin:0;flex:none"> Keep me signed in on this device</label>
           </div>
           <button type="submit" id="kg-submit" class="btn btn-primary btn-lg" style="width:100%">Sign in</button>
           <p id="kg-gate-msg" role="alert" aria-live="polite" style="margin:1rem 0 0;min-height:1.5em"></p>
