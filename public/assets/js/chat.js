@@ -6,6 +6,7 @@
 // form leads and land on /thank-you/ (one Google Ads form conversion).
 (function () {
   if (window.kgChat) return;
+  if (document.body && document.body.getAttribute("data-page") === "team") return; // staff page: no family chat
   window.kgChat = true;
 
   var MAIN = '<a href="tel:9017533449" data-track="phone">(901) 753-3449</a>';

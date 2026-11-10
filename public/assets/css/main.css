@@ -733,3 +733,6 @@ a.price-card:hover .price-go { text-decoration: underline; }
 .merch-points { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
 .merch-points div { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
 .merch-points h3 { margin: 0 0 0.4rem; color: var(--navy); font-size: 1.05rem; }
+
+/* Staff team login page: hide the family tour band */
+body[data-page="team"] .cta-band{display:none}
