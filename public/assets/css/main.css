@@ -720,3 +720,16 @@ a.price-card:hover .price-go { text-decoration: underline; }
 
 .form-screen-note { margin: 0.5rem 0 1rem; padding: 0.7rem 0.9rem; background: #fff6e5; border-left: 4px solid #c98a1b; border-radius: 6px; font-size: 0.95rem; color: var(--ink, #2d3a2f); }
 .form-screen-note[hidden] { display: none; }
+
+/* Merch shop (Fourthwall) */
+.merch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.merch-card { display: flex; flex-direction: column; gap: 0.35rem; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 0.9rem 0.9rem 1.1rem; color: var(--ink); text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
+.merch-card:hover, .merch-card:focus-visible { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(31, 77, 43, 0.16); }
+.merch-card img, .merch-noimg { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: calc(var(--radius) - 4px); background: var(--ice); }
+.merch-name { font-weight: 700; color: var(--navy); margin-top: 0.4rem; }
+.merch-price { color: var(--ink); }
+.merch-cta { color: var(--green); font-weight: 600; margin-top: auto; padding-top: 0.4rem; }
+.merch-soon { margin-top: 1rem; }
+.merch-points { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+.merch-points div { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
+.merch-points h3 { margin: 0 0 0.4rem; color: var(--navy); font-size: 1.05rem; }

@@ -794,6 +794,86 @@ def _dl_classify(rent, sqft, name):
     if sqft >= 250: return "studio"
     return "companion"
 
+# --- Fourthwall merch shop -------------------------------------------------
+# /merch/ shows the live Fourthwall catalog. The build pulls every public
+# product from the Storefront API "all" collection using the storefront token
+# in the FOURTHWALL_STOREFRONT_TOKEN environment variable (a GitHub Actions
+# secret), caches it in content/fourthwall.json, and renders {{merch_products}}.
+# No token, an API error or an empty shop falls back to the cache, then to a
+# "launching soon" message, so the build never fails because of the shop.
+FOURTHWALL_SHOP = "https://the-pointe-kirby-gate-shop.fourthwall.com"
+FOURTHWALL_API = "https://storefront-api.fourthwall.com/v1"
+
+def _fw_price(v):
+    p = (v or {}).get("unitPrice") or {}
+    try:
+        return float(p.get("value")), (p.get("currency") or "USD")
+    except (TypeError, ValueError):
+        return None, "USD"
+
+def fetch_fourthwall():
+    import json as _json, os, urllib.request
+    cache = CONTENT / "fourthwall.json"
+    token = os.environ.get("FOURTHWALL_STOREFRONT_TOKEN", "").strip()
+    if token:
+        try:
+            products, page = [], 0
+            while page < 20:
+                q = urllib.parse.urlencode({"storefront_token": token, "currency": "USD", "size": 50, "page": page})
+                req = urllib.request.Request(f"{FOURTHWALL_API}/collections/all/products?{q}",
+                                             headers={"User-Agent": "kirbygateliving-build/1.0"})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    data = _json.load(r)
+                items = data.get("results") or data.get("products") or data.get("data") or []
+                for p in items:
+                    slug = (p.get("slug") or "").strip()
+                    name = (p.get("name") or "").strip()
+                    if not slug or not name:
+                        continue
+                    st = p.get("state") or {}
+                    st = st.get("type", "") if isinstance(st, dict) else st
+                    if str(st).upper() in ("HIDDEN", "ARCHIVED", "UNAVAILABLE", "DRAFT"):
+                        continue
+                    imgs = [i.get("url") for i in (p.get("images") or []) if isinstance(i, dict) and i.get("url")]
+                    prices = [pr for pr, _ in (_fw_price(v) for v in (p.get("variants") or [])) if pr is not None]
+                    products.append({"name": name, "slug": slug, "image": imgs[0] if imgs else "",
+                                     "price_from": min(prices) if prices else None,
+                                     "price_varies": len(set(prices)) > 1,
+                                     "url": f"{FOURTHWALL_SHOP}/products/{slug}"})
+                if not (data.get("paging") or {}).get("hasNextPage"):
+                    break
+                page += 1
+            cache.write_text(_json.dumps(products, indent=1))
+            print(f"fourthwall: {len(products)} products")
+            return products
+        except Exception as e:  # keep building with the cached catalog
+            print(f"fourthwall: fetch failed ({e}); using cache", file=sys.stderr)
+    try:
+        return _json.loads(cache.read_text())
+    except Exception:
+        return []
+
+def render_merch_products(products):
+    import html as _h
+    if not products:
+        return ('<div class="merch-soon center narrow"><p class="eyebrow">Launching Soon</p>'
+                '<h2>The First Collection Is on Its Way</h2>'
+                '<p>We&rsquo;re putting the finishing touches on our first shirts, mugs and totes. '
+                'Check back soon, or visit the shop to see what&rsquo;s new.</p>'
+                f'<a href="{FOURTHWALL_SHOP}" target="_blank" rel="noopener" class="btn btn-primary">Visit the Shop</a></div>')
+    cards = []
+    for p in products:
+        price = ""
+        if p.get("price_from") is not None:
+            price = ("From " if p.get("price_varies") else "") + f"${p['price_from']:,.2f}"
+        img = (f'<img src="{_h.escape(p["image"], quote=True)}" alt="{_h.escape(p["name"], quote=True)}" loading="lazy" width="600" height="600">'
+               if p.get("image") else '<div class="merch-noimg" aria-hidden="true"></div>')
+        cards.append(
+            f'<a class="merch-card" href="{_h.escape(p["url"], quote=True)}" target="_blank" rel="noopener" data-track="merch">'
+            f'{img}<span class="merch-name">{_h.escape(p["name"])}</span>'
+            f'<span class="merch-price">{price}</span><span class="merch-cta">Shop now &rarr;</span></a>')
+    return '<div class="merch-grid">' + "".join(cards) + "</div>"
+
 def fetch_doorloop():
     """Refresh content/doorloop.json from the public DoorLoop listings feed.
     Units with a non-empty Availability.UnitAvailabilityURL are open to apply;
@@ -990,6 +1070,8 @@ def build():
         body = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), body)
         if "{{calendar}}" in body:
             body = body.replace("{{calendar}}", render_calendar())
+        if "{{merch_products}}" in body:
+            body = body.replace("{{merch_products}}", render_merch_products(fetch_fourthwall()))
         if "{{news_headlines}}" in body:
             body = body.replace("{{news_headlines}}", render_home_headlines(load_feed_headlines()[0]))
         if "{{dl_" in body:
