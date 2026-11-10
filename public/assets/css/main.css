@@ -736,3 +736,6 @@ a.price-card:hover .price-go { text-decoration: underline; }
 
 /* Staff team login page: hide the family tour band */
 body[data-page="team"] .cta-band{display:none}
+
+/* Header "Team Login" menu: same green as the Resident Portal link */
+.main-nav .nav-team > button { color: var(--green); font-weight: 700; white-space: nowrap; }
