@@ -13,6 +13,7 @@ top of each content file:
     body_attr:  data-page="thank-you"   (optional)
     sitemap: yes|no   (default yes)
     robots: noindex, follow   (optional robots meta)
+    analytics: no   (optional: drop the Google tag and lock scripts to this site)
     -->
 
 Usage: python3 build.py
@@ -1067,6 +1068,13 @@ def build():
             continue
         meta, body = parse(f.read_text(), f.name)
         html = TEMPLATE
+        if meta.get("analytics", "yes").strip() == "no":
+            # Staff/private pages: no Google tag, and only our own scripts may run.
+            html = re.sub(r"\s*<!--analytics-->.*?<!--/analytics-->", "", html, flags=re.S)
+            html = re.sub(r"script-src [^;]*;", "script-src 'self';", html, count=1)
+            html = re.sub(r"connect-src [^;]*;", "connect-src 'self';", html, count=1)
+            html = re.sub(r"frame-src [^;]*;", "frame-src 'none';", html, count=1)
+            html = re.sub(r"form-action [^;]*;", "form-action 'none';", html, count=1)
         body = re.sub(r"\{\{icon:([a-z]+)\}\}", lambda m: icon(m.group(1)), body)
         if "{{calendar}}" in body:
             body = body.replace("{{calendar}}", render_calendar())

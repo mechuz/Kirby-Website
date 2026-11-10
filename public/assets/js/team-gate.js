@@ -3,6 +3,7 @@
 // nothing readable is published until the right username and password are given.
 (function () {
   "use strict";
+  if (location.protocol === "http:" && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { location.replace("https://" + location.host + location.pathname); return; }
   var dataEl = document.getElementById("kg-gate-data");
   var form = document.getElementById("kg-gate-form");
   if (!dataEl || !form) return;
@@ -27,11 +28,17 @@
   }
 
   var STORE = "kg_team_" + D.id;
+  var REMEMBER_DAYS = 14;
   function store(get, val) {
     try {
-      if (get) return window.localStorage.getItem(STORE);
+      if (get) {
+        var s = JSON.parse(window.localStorage.getItem(STORE) || "null");
+        if (s && typeof s.k === "string" && typeof s.exp === "number" && s.exp > Date.now()) return s.k;
+        window.localStorage.removeItem(STORE);
+        return null;
+      }
       if (val === null) window.localStorage.removeItem(STORE);
-      else window.localStorage.setItem(STORE, val);
+      else window.localStorage.setItem(STORE, JSON.stringify({ k: val, exp: Date.now() + REMEMBER_DAYS * 864e5 }));
     } catch (e) { /* private mode or storage blocked: stay signed in for this visit only */ }
     return null;
   }
@@ -46,8 +53,8 @@
   function b64d(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
   function b64e(u) { var s = ""; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); }
   // Must match scripts/team-gate.mjs. Passwords ignore case, spaces and dashes.
-  function normUser(u) { return String(u).trim().toLowerCase(); }
-  function normPass(p) { return String(p).toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+  function normUser(u) { return String(u).normalize("NFKC").replace(/\p{Cf}/gu, "").trim().toLowerCase(); }
+  function normPass(p) { return String(p).normalize("NFKC").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
 
   function openWith(raw) {
     return subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]).then(function (key) {
@@ -57,7 +64,13 @@
       gate.hidden = true;
       team.hidden = false;
       var out = document.getElementById("kg-signout");
-      if (out) out.addEventListener("click", function () {
+      if (!out) {
+        out = document.createElement("button");
+        out.type = "button"; out.id = "kg-signout"; out.className = "btn btn-secondary"; out.textContent = "Sign out";
+        var wrap = document.createElement("p"); wrap.className = "center"; wrap.style.marginTop = "1.5rem";
+        wrap.appendChild(out); team.appendChild(wrap);
+      }
+      out.addEventListener("click", function () {
         store(false, null);
         team.innerHTML = "";
         location.replace(location.pathname);
