@@ -339,7 +339,7 @@ function kgLeadSource() {
 (function () {
   var root = document.getElementById("book-cal");
   if (!root) return;
-  var MIN_NIGHTS = 5;
+  var MIN_NIGHTS = 7;
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var WDS = ["Su","Mo","Tu","We","Th","Fr","Sa"];
   var today = new Date(); today.setHours(0,0,0,0);
@@ -405,7 +405,7 @@ function kgLeadSource() {
     if (btn) btn.disabled = !(start && end);
     if (hint) {
       if (!start) hint.textContent = "Select your check-in date.";
-      else if (!end) hint.textContent = "Now select a check-out date at least " + MIN_NIGHTS + " nights later.";
+      else if (!end) hint.textContent = "Now select a check-out date at least " + MIN_NIGHTS + " days later.";
       else hint.textContent = "Dates look good — fill in your details below and send the request.";
     }
   }
@@ -429,7 +429,7 @@ function kgLeadSource() {
         start = dt; end = null;
         var hint = document.getElementById("bk-hint");
         render();
-        if (hint) hint.textContent = "Respite stays start at " + MIN_NIGHTS + " nights — check-in moved to the date you tapped; now pick a check-out at least " + MIN_NIGHTS + " nights later.";
+        if (hint) hint.textContent = "Respite stays have a " + MIN_NIGHTS + "-day minimum — check-in moved to the date you tapped; now pick a check-out at least " + MIN_NIGHTS + " days later.";
         return;
       }
       end = dt;

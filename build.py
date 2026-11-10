@@ -1050,7 +1050,7 @@ def doorloop_tokens():
         'data-amen="Fully Furnished|Linens &amp; Housekeeping|Chef-Prepared Meals|Medication Support|24-Hour Care Team|Full Activity Calendar">'
         '<span class="wiz-card-name">Furnished Respite Suite</span>'
         '<span class="wiz-card-price">Daily rate</span>'
-        '<span class="wiz-card-meta">Cozy furnished suite &middot; 5-night minimum &middot; pick your dates next</span>'
+        '<span class="wiz-card-meta">Cozy furnished suite &middot; 7-day minimum &middot; pick your dates next</span>'
         "</button>")
     tok["dl_wizard"] = "\n".join(wiz)
     return tok

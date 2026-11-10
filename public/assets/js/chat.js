@@ -42,7 +42,7 @@
       a: '<a href="/assisted-living/">Assisted living</a> here is for seniors who want their independence plus daily support: medications managed, help with personal care when needed, and a care team on site 24 hours a day.',
       b: [RESERVE, TOUR] },
     { k: ["respite", "short term", "short-term", "short stay", "temporary", "trial", "after surgery", "after a hospital", "recover", "caregiver break", "vacation"],
-      a: '<a href="/respite-care/">Respite stays</a> run from a 5-night minimum up to about 30 days (longer by arrangement) in a furnished suite, with meals, housekeeping and 24-hour care. They are billed by the day with no long-term contract, and a short nurse assessment comes first.',
+      a: '<a href="/respite-care/">Respite stays</a> run from a 7-day minimum up to about 30 days (longer by arrangement) in a furnished suite, with meals, housekeeping and 24-hour care. They are billed by the day with no long-term contract, and a short nurse assessment comes first.',
       b: [{ label: "Pick respite dates", href: "/respite-care/#book" }, CALLBACK] },
     { k: ["assessment", "qualify", "eligible", "eligibility", "approved", "approval", "requirements", "accept my"],
       a: 'Before anyone is approved for residency or a respite stay, they complete a health assessment with our nursing team. Approval is based on that assessment and a signed residency agreement.',
