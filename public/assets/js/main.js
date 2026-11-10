@@ -97,6 +97,8 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
   var JOB_NOTE = "We don&rsquo;t take job applications or business inquiries through this form. Please call our main line, " + MAIN + ".";
   function check(form) {
     var who = form.querySelector("[data-screen-who]");
+    var honey = form.querySelector('[name="_honey"]');
+    if (honey && honey.value) return { ok: false, msg: "", why: "honeypot" };
     if (who && (who.value === "job" || who.value === "vendor")) return { ok: false, msg: JOB_NOTE, why: who.value };
     var text = Array.prototype.map.call(form.querySelectorAll("textarea, [name='chat_question']"), function (el) { return el.value; }).join(" ");
     if (JOB.test(text)) return { ok: false, msg: JOB_NOTE, why: "job_text" };
@@ -125,6 +127,12 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
   // (such as the respite calendar's date check) run and cancel first.
   var FAIL_NOTE = "Sorry, our message system isn&rsquo;t responding right now. Please call us at " + MAIN + " and we&rsquo;ll help you right away.";
   var LEAD_HOOK = "https://hooks.zapier.com/hooks/catch/27563206/EsZUwGqBy3rIA0Lc/";
+  // FormSubmit is only reached from this script (since 2026-11-10 the forms no longer
+  // name it in their HTML, so bots that post straight to the form's action get nowhere).
+  // The fallback marks its subject so real backup leads can be told apart from spam
+  // that bots still send to the old FormSubmit address directly.
+  var FS_AJAX = ["https://formsubmit.co/ajax/", "mechuz", "@", "medhcp.com"].join("");
+  var FS_MARK = " (sent by website)";
   function send(form) {
     var btn = form.querySelector('[type="submit"]');
     var label = btn ? btn.textContent : "";
@@ -149,8 +157,10 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
       if (done || tried) return; tried = true;
       if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why });
       var t2 = setTimeout(function () { giveUp("fallback_timeout"); }, 12000);
-      fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
-        method: "POST", body: new FormData(form), headers: { Accept: "application/json" }
+      var fsd = new FormData(form);
+      fsd.set("_subject", (fsd.get("_subject") || "Website lead") + FS_MARK);
+      fetch(FS_AJAX, {
+        method: "POST", body: fsd, headers: { Accept: "application/json" }
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
       }).then(function (r) {
@@ -169,6 +179,9 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
     fd.append("page", location.pathname);
     fd.append("reason", "primary");
     fd.append("kg_src", "kirbygateliving");
+    var hp = form.querySelector('[name="_honey"]');
+    fd.append("hp", hp ? hp.value : "");
+    fd.append("el", String(Date.now() - loaded));
     var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
     fetch(LEAD_HOOK, { method: "POST", mode: "no-cors", body: fd })
       .then(function () { clearTimeout(t1); success("zapier"); })
@@ -180,20 +193,20 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
     e.preventDefault();
     var r = check(form);
     if (!r.ok) {
+      if (r.why === "honeypot") { location.href = "/thank-you/"; return; }
       note(form, r.msg);
       if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why });
       return;
     }
     note(form, "");
     if (!window.fetch || !window.FormData) {
-      try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
-      form.submit();
+      note(form, FAIL_NOTE);
       return;
     }
     send(form);
   });
   window.kgScreenForm = attach;
-  document.querySelectorAll('form[action*="formsubmit.co"]').forEach(attach);
+  document.querySelectorAll("form[data-lead-form]").forEach(attach);
 })();
 
 // Dropdown toggle for touch devices (hover handles pointer devices)

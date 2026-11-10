@@ -188,7 +188,7 @@
     if (log.querySelector(".kgc-form")) { log.querySelector(".kgc-form input").focus(); return; }
     bubble("Leave your name and number and our team will call you, usually the same day.", "bot");
     var f = document.createElement("form");
-    f.className = "kgc-form"; f.method = "POST"; f.action = "https://formsubmit.co/mechuz@medhcp.com";
+    f.className = "kgc-form"; f.method = "POST"; f.action = "/thank-you/"; f.setAttribute("data-lead-form", "");
     f.innerHTML =
       '<input type="hidden" name="_cc" value="community@kirbygateliving.com,reception@kirbygateliving.com">' +
       '<input type="hidden" name="_subject" value="NEW LEAD — kirbygateliving.com chat callback">' +
