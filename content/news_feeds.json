@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-10T17:02:33Z",
+ "fetched_at": "2026-11-11T17:08:18Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 5,
+   "count": 4,
    "error": ""
   },
   {
@@ -68,14 +68,14 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 1,
+   "count": 2,
    "error": ""
   },
   {
@@ -109,6 +109,24 @@
  ],
  "items": [
   {
+   "title": "Obesity linked to up to 27% lower risk of death in dementia",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261109205401.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-11T12:59:57Z"
+  },
+  {
+   "title": "New Congress Brings Senior Living Ownership, Staffing Scrutiny, More Opportunities to Address Affordability",
+   "link": "https://seniorhousingnews.com/2026/11/10/new-congress-brings-senior-living-ownership-staffing-scrutiny-more-opportunities-to-address-affordability/",
+   "source": "Senior Housing News",
+   "published": "2026-11-10T22:31:58Z"
+  },
+  {
+   "title": "Eating less protein could slow aging, review of 350 studies finds",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261108203714.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-10T12:48:16Z"
+  },
+  {
    "title": "When a Gun Owner Shows Early Signs of Dementia",
    "link": "https://kffhealthnews.org/aging/new-old-age-guns-firearms-safety-dementia-weapons-suicide/",
    "source": "KFF Health News",
@@ -119,6 +137,12 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233103.htm",
    "source": "ScienceDaily",
    "published": "2026-11-10T01:47:34Z"
+  },
+  {
+   "title": "How Medicaid affected one California House race",
+   "link": "https://www.npr.org/2026/11/09/nx-s1-6030983/how-medicaid-affected-one-california-house-race",
+   "source": "NPR Health",
+   "published": "2026-11-09T22:25:19Z"
   },
   {
    "title": "Rising Pricing Shows More Competition for Senior Living Communities as Development Remains Slow",
@@ -227,18 +251,6 @@
    "link": "https://seniorhousingnews.com/2026/11/05/national-healthcare-properties-continues-to-trade-medical-facilities-for-senior-housing/",
    "source": "Senior Housing News",
    "published": "2026-11-05T21:47:00Z"
-  },
-  {
-   "title": "For Better or Worse, Midterm Political Sea Change Means More Eyes on Senior Living, Long-Term Care",
-   "link": "https://seniorhousingnews.com/2026/11/04/for-better-or-worse-midterm-political-sea-change-means-more-eyes-on-senior-living-long-term-care/",
-   "source": "Senior Housing News",
-   "published": "2026-11-04T22:26:32Z"
-  },
-  {
-   "title": "LTC Properties ‘Buying Future Growth’ With Nearly $1B in Senior Housing Deals This Year",
-   "link": "https://seniorhousingnews.com/2026/11/04/ltc-properties-buying-future-growth-with-nearly-1b-in-senior-housing-deals-this-year/",
-   "source": "Senior Housing News",
-   "published": "2026-11-04T21:36:06Z"
   },
   {
    "title": "Scientists discover new Alzheimer’s drug that repairs DNA damage and reduces brain inflammation",
