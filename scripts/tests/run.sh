@@ -131,7 +131,7 @@ status: published
     # manifest
     check([p["slug"] for p in manifest.get("posts", [])] == [BLOG_SLUG], f"manifest posts: {manifest.get('posts')}")
     check([n["slug"] for n in manifest.get("news", [])] == [NEWS1, ON_MAIN, NEWS2], f"manifest news: {manifest.get('news')}")
-    check([n["url"] for n in manifest.get("news", [])] == [f"{SITE}/news/#{s}" for s in (NEWS1, ON_MAIN, NEWS2)], "manifest news urls")
+    check([n["url"] for n in manifest.get("news", [])] == [f"{SITE}/news/{s}/" for s in (NEWS1, ON_MAIN, NEWS2)], "manifest news urls")
     on_main = next((n for n in manifest.get("news", []) if n["slug"] == ON_MAIN), {})
     check(on_main.get("files") == [] and "already on main" in on_main.get("log", ""),
           f"the committed item was not treated as already on main: {on_main}")
@@ -170,7 +170,7 @@ elif phase == "finalize":
                                  (news2, "recNewsCommunity01", NEWS2)):
             check(entry["table"] == NEWS and entry["id"] == rid, f"news row {rid} not finalized: {entry}")
             check(entry["named"].get("Status") == "Published", f"news row {rid} status: {entry}")
-            check(entry["named"].get("Published URL") == f"{SITE}/news/#{slug}", f"news row {rid} Published URL: {entry}")
+            check(entry["named"].get("Published URL") == f"{SITE}/news/{slug}/", f"news row {rid} Published URL: {entry}")
             check(entry["named"].get("Published At", "").endswith("Z"), f"news row {rid} Published At: {entry}")
             check(f"content/news/{slug}.html" in entry["named"].get("Publish Log", "") and "commit " in entry["named"].get("Publish Log", ""),
                   f"news row {rid} Publish Log: {entry}")
