@@ -346,6 +346,42 @@ window.kgSpam = (function () {
   });
 })();
 
+// Senior Living News: how readers move on from /news/ and the /news/<slug>/ item pages.
+//   news_cta      - a news call to action (data-track="news-...", e.g. news-tour, news-rates,
+//                   news-visit, news-family, news-headline, news-related) or any /visit/ link on a
+//                   news page; event_label is the data-track value, or "visit" for an unlabelled /visit/ link.
+//   news_outbound - a click out to another publisher from a news page or from the headline
+//                   list on the home page; event_label is the publisher's domain.
+(function () {
+  var onNews = /^\/news(\/|$)/.test(location.pathname);
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (!a || typeof gtag !== "function") return;
+    var track = a.dataset.track || "";
+    var inHeadlines = !!a.closest(".headline-list");
+    if (!onNews && !inHeadlines && track.indexOf("news-") !== 0) return;
+    var url;
+    try { url = new URL(a.getAttribute("href"), location.href); } catch (err) { return; }
+    var web = url.protocol === "http:" || url.protocol === "https:";
+    var ours = url.hostname === location.hostname || /(^|\.)kirbygateliving\.com$/.test(url.hostname);
+    if (web && !ours) {
+      var domain = url.hostname.replace(/^www\./, "");
+      gtag("event", "news_outbound", {
+        event_category: "engagement", event_label: domain, publisher_domain: domain,
+        link_url: url.href, transport_type: "beacon",
+      });
+      return;
+    }
+    if (!web) return;
+    var label = track.indexOf("news-") === 0 ? track : (onNews && /^\/visit\/?$/.test(url.pathname) ? "visit" : "");
+    if (label) {
+      gtag("event", "news_cta", {
+        event_category: "engagement", event_label: label, link_url: url.pathname, transport_type: "beacon",
+      });
+    }
+  });
+})();
+
 // Image lightbox — click to expand photos and floor plans.
 (function () {
   var targets = document.querySelectorAll(".two-col > img, .card > img, .fp-media img, [data-zoom]");

@@ -11,7 +11,9 @@ Run by .github/workflows/publish-blog.yml in two steps:
             Then do the same for News Items rows with Status = Approved,
             Compliance Check ticked and a Post Date that is blank or has
             arrived (America/Chicago): each becomes content/news/<slug>.html
-            for the Senior Living News page, oldest Post Date first.
+            for the Senior Living News page, oldest Post Date first. build.py
+            turns each one into its own page at /news/<slug>/ (the Published
+            URL recorded in Airtable) and lists it on /news/ and in the sitemap.
   finalize  After the workflow has pushed the commit, mark those rows
             Published in Airtable and update the articles' linked topics.
 
@@ -511,7 +513,7 @@ def prepare_news_one(rec, post_date, manifest):
         slug = slugify(f"{post_date} {title}")
     if not SLUG_RE.match(slug):
         return fail(f"cannot make a valid slug from {title!r}")
-    url = f"{SITE}/news/#{slug}"
+    url = f"{SITE}/news/{slug}/"      # build.py gives every item its own page
     target = NEWS_DIR / f"{slug}.html"
 
     conflict = slug_conflict(slug, target, manifest["news"])

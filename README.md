@@ -28,7 +28,7 @@ cd public && python3 -m http.server 8741
 
 ## Senior Care News
 
-- `/news/` is a curated page of short summaries that link out to other publishers' articles (paying for care, health research, caregiving, policy, local news) plus our own community updates. One file per item in `content/news/<slug>.html`; the file name is the slug (lowercase letters, digits and hyphens) and the item's anchor on the page (`/news/#<slug>`).
+- `/news/` is a curated page of short summaries that link out to other publishers' articles (paying for care, health research, caregiving, policy, local news) plus our own community updates. One file per item in `content/news/<slug>.html`; the file name is the slug (lowercase letters, digits and hyphens), the item's page (`/news/<slug>/`) and its anchor on the list (`/news/#<slug>`).
 - Each file is a `<!--meta -->` block followed by a short HTML body:
 
   ```
@@ -47,6 +47,8 @@ cd public && python3 -m http.server 8741
 - Categories and their labels: `finance` = Paying for care, `health` = Health & research, `caregiving` = Caregiving & family, `policy` = Policy & benefits, `local` = Memphis & Mid-South, `community` = Community update.
 - The body may only use `p`, `a`, `strong`, `em`, `ul`, `ol` and `li`. The build stops with a clear message on a bad slug; a missing title, source_url, date or category; an unknown category; a source_url that is not http(s); or a body containing script, iframe, style, object, embed, form or `on*` attributes. Everything from the meta block is HTML-escaped on output.
 - The build writes `/news/` (the newest 60 items under month headings, with topic filter chips), `/news/archive/<year>/` for anything older, `/news/feed.xml` (RSS, newest 20) and sitemap entries, with CollectionPage, ItemList and BreadcrumbList schema. External links open in a new tab. Write summaries in our own words and keep any quotation to a few words.
+- Every item also gets its own page at `/news/<slug>/` (in the sitemap, NewsArticle + BreadcrumbList schema, the original publisher as `isBasedOn`): headline, dates, source, our summary, a "What this means for Memphis families" box chosen by topic (`NEWS_FAMILY` in `build.py`: policy/finance → paying guide, caregiving → respite + blog, dementia/Alzheimer's items → memory care, health → assisted living + blog, everything else → /visit/), Book a visit / See rates, three related items and the link out to the publisher. The headline on `/news/` opens that page; old `/news/#<slug>` links still land on the item (or are sent to its page once it moves to the archive). Items published from Airtable get their page on the same build. The slugs `archive` and `feed` are reserved.
+- Clicks are sent to GA4 by `main.js`: `news_cta` (event_label = the link's `data-track`, e.g. `news-tour`, `news-rates`, `news-visit`, `news-family`, or `visit` for any other /visit/ link on a news page) and `news_outbound` (event_label = the publisher's domain).
 
 ## To update content
 

@@ -535,6 +535,11 @@ def load_news_items():
         if bad_tags:
             sys.exit(f"BUILD FAILED — news item {f.name} body may only use {', '.join(sorted(NEWS_TAGS))} tags, "
                      f"not {', '.join(sorted(bad_tags))}")
+        if external and (urllib.parse.urlsplit(url).hostname or "").lower() in ("www.kirbygateliving.com", "kirbygateliving.com"):
+            # A full link to one of our own pages is an internal link (same tab, no "full story at" wording).
+            parts = urllib.parse.urlsplit(url)
+            url = urllib.parse.urlunsplit(("", "", parts.path or "/", parts.query, parts.fragment))
+            external = False
         published = meta.get("published", "").strip()
         source = meta.get("source", "").strip()
         if not source:
@@ -555,10 +560,16 @@ def _news_abs(i):
     return i["url"] if i["external"] else SITE + i["url"]
 
 
+def _news_path(i):
+    """The item's own page on this site."""
+    return f"/news/{i['slug']}/"
+
+
 def _news_item(i):
     import html as _h
     href = _h.escape(i["url"])
     target = ' target="_blank" rel="noopener"' if i["external"] else ""
+    page = _news_path(i)
     when = _h.escape(i["source"])
     if i["published"]:
         when += f' &middot; Published <time datetime="{i["published"]}">{_fmt_date(i["published"])}</time>'
@@ -567,10 +578,12 @@ def _news_item(i):
     return (
         f'<article class="news-item news-{i["category"]}" id="{i["slug"]}" data-category="{i["category"]}">'
         f'<p class="news-badge">{_h.escape(i["label"])}</p>'
-        f'<h3 class="news-title"><a href="{href}"{target}>{_h.escape(i["title"])}</a></h3>'
+        f'<h3 class="news-title"><a href="{page}" data-track="news-headline">{_h.escape(i["title"])}</a></h3>'
         f'<p class="news-meta">{when}</p>'
         f'<div class="news-body">{i["body"]}</div>'
-        f'<p class="news-more"><a href="{href}"{target}>{more}</a></p>'
+        f'<p class="news-more"><a href="{href}"{target}>{more}</a>'
+        f' <span class="news-more-sep" aria-hidden="true">&middot;</span> '
+        f'<a href="{page}" class="news-family-link" data-track="news-family">What it means for families &rarr;</a></p>'
         f'</article>'
     )
 
@@ -589,8 +602,15 @@ def _news_groups(items):
 
 NEWS_INLINE_CTA = ('<aside class="news-cta"><p class="news-cta-title">Looking at assisted living or memory care for a parent?</p>'
                    '<p>See our suites and today&rsquo;s availability, or come for a visit and stay for lunch.</p>'
-                   '<p class="cta-actions"><a href="/contact-us/" class="btn btn-primary" data-track="news-tour">Schedule a Tour</a> '
+                   '<p class="cta-actions"><a href="/visit/" class="btn btn-primary" data-track="news-tour">Book a Visit</a> '
                    '<a href="/rates-floor-plans/" class="btn btn-secondary" data-track="news-rates">See Rates &amp; Availability</a></p></aside>')
+# The closing call to action on /news/ and on every news item page ({{phone_*}} is resolved by render_html).
+NEWS_VISIT_CTA = """<div class="post-cta news-visit-cta">
+      <h2>See The Pointe at Kirby Gate for yourself</h2>
+      <p>Pick a day and time that suits you, meet our team and see the suites in East Memphis. Come for the visit, stay for lunch. Questions first? Call {{phone_fmt}}.</p>
+      <p class="cta-actions"><a href="/visit/" class="btn btn-primary" data-track="news-visit">Book a visit</a> <a href="/rates-floor-plans/" class="btn btn-secondary" data-track="news-rates">See rates</a></p>
+      <p class="news-cta-call"><a href="tel:{{phone_tel}}" data-track="phone">Call {{phone_fmt}}</a></p>
+    </div>"""
 NEWS_INLINE_AFTER = 3    # the inline tour card follows this many items on /news/
 
 
@@ -623,7 +643,7 @@ def _news_crumbs(*extra):
         for n, (name, path) in enumerate(crumbs, 1)]}
 
 
-def render_news_index(items, archive_years):
+def render_news_index(items, archive_years, archived=()):
     meta = {
         "title": "Senior Living News: Senior Housing & Senior Care News | The Pointe at Kirby Gate",
         "description": "Daily senior housing and senior care news: assisted living trends, paying for care, health research, caregiving, benefits and the Mid-South, summarized by The Pointe at Kirby Gate in East Memphis.",
@@ -649,12 +669,13 @@ def render_news_index(items, archive_years):
     <p class="news-empty" hidden>Nothing in this topic yet. Check back soon.</p>
     {listing}
     {archive}
-    {TOUR_CTA}
+    {NEWS_VISIT_CTA}
     <p class="post-subscribe">Get new items by RSS: <a href="/news/feed.xml">news/feed.xml</a></p>
     <p class="news-disclaimer">{NEWS_DISCLAIMER}</p>
   </div>
 </section>
-{NEWS_SCRIPT}"""
+{NEWS_SCRIPT}
+{_news_hash_script(archived)}"""
     head = _ld({
         "@context": "https://schema.org", "@type": "CollectionPage", "name": meta["title"],
         "url": SITE + "/news/", "description": meta["description"], "publisher": ORG,
@@ -662,7 +683,7 @@ def render_news_index(items, archive_years):
         "@context": "https://schema.org", "@type": "ItemList", "name": NEWS_TITLE,
         "itemListOrder": "https://schema.org/ItemListOrderDescending",
         "numberOfItems": len(items[:NEWS_FEED_SIZE]),
-        "itemListElement": [{"@type": "ListItem", "position": n, "name": i["title"], "url": _news_abs(i)}
+        "itemListElement": [{"@type": "ListItem", "position": n, "name": i["title"], "url": SITE + _news_path(i)}
                             for n, i in enumerate(items[:NEWS_FEED_SIZE], 1)],
     }) + _ld(_news_crumbs())
     return render_html(meta, body, head)
@@ -701,12 +722,204 @@ def render_news_archive(year, items, archive_years):
     return render_html(meta, body, head)
 
 
+# ---- One page per news item: /news/<slug>/ ------------------------------
+# Every published item also gets its own page, so each one has a URL of its own
+# in search results and the sitemap, and readers find their way to the rest of
+# the site. The page shows only what is already in the item file (headline,
+# dates, source and our own summary), never the publisher's text, plus a short
+# "What this means for Memphis families" box chosen by topic and the visit CTA.
+# Keep the family-box copy generic and factual: no medical claims, no prices, no
+# suggestion that Medicaid, TennCare, VA or long-term care insurance is accepted
+# (we are private pay), and never "nursing home".
+NEWS_RESERVED_SLUGS = {"archive", "feed"}   # paths already used below /news/
+NEWS_RELATED = 3                            # "More senior news" items on an item page
+NEWS_DESC_MAX = 155                         # meta description length
+NEWS_MEMORY_RE = re.compile(r"dementia|alzheimer|memory (?:care|loss)|cognitive decline", re.I)
+NEWS_FAMILY = {
+    "money": {
+        "text": ("Changes to benefits, taxes and costs can shift a family&rsquo;s budget for care. Before a move, it helps to "
+                 "add up a parent&rsquo;s income and savings and see how long they would cover the monthly cost of assisted "
+                 "living or memory care. The Pointe at Kirby Gate is a private-pay community, and our guide walks through "
+                 "the ways Memphis families plan for that cost."),
+        "links": [("/paying-for-senior-living/", "How Memphis families pay for senior living")],
+    },
+    "caregiving": {
+        "text": ("Caring for a parent is a big job, and family caregivers need rest too. A short respite stay gives a "
+                 "caregiver time to rest, travel or recover while a parent stays in a furnished suite with meals, "
+                 "activities and a care team around the clock. Our guides cover other ways to share the load."),
+        "links": [("/respite-care/", "Respite stays in East Memphis"), ("/blog/", "Guides for family caregivers")],
+    },
+    "memory": {
+        "text": ("If a parent is living with Alzheimer&rsquo;s or another form of dementia, questions about safety and daily "
+                 "routines tend to come up sooner or later. Memory care is senior living built for people with memory "
+                 "loss, with a calm, secure setting and caregivers trained in dementia care. A parent&rsquo;s doctor is "
+                 "the right person to talk to about a diagnosis or treatment."),
+        "links": [("/memory-care/", "Memory care at The Pointe at Kirby Gate")],
+    },
+    "health": {
+        "text": ("Health research is a good starting point for a conversation with a parent&rsquo;s doctor, not a reason "
+                 "to change anything on your own. If everyday tasks such as meals, medications or bathing are getting "
+                 "harder at home, assisted living adds that help while a parent keeps a private suite and their own routine."),
+        "links": [("/assisted-living/", "What assisted living includes"), ("/blog/", "Plain-language guides for families")],
+    },
+    "default": {
+        "text": ("News like this is easier to weigh when you have seen a community in person. If you are comparing "
+                 "assisted living or memory care in East Memphis, a visit is the quickest way to meet the team, see the "
+                 "suites and ask your own questions, with no pressure."),
+        "links": [("/visit/", "Book a visit to The Pointe at Kirby Gate")],
+    },
+}
+
+
+def _news_family_key(i):
+    """Which "What this means for Memphis families" box an item gets."""
+    if i["category"] in ("policy", "finance"):
+        return "money"
+    if NEWS_MEMORY_RE.search(i["title"] + " " + i["text"]):
+        return "memory"
+    return {"caregiving": "caregiving", "health": "health"}.get(i["category"], "default")
+
+
+def _news_summary(i):
+    """The item's own summary as one line: the first paragraph, cut to NEWS_DESC_MAX at a word boundary."""
+    first = re.search(r"<p\b[^>]*>(.*?)</p>", i["body"], re.S)
+    text = _plain_text(first.group(1)) if first else i["text"]
+    if len(text) <= NEWS_DESC_MAX:
+        return text
+    cut = text[:NEWS_DESC_MAX - 1].rsplit(" ", 1)[0].rstrip(",;:.-— ")
+    return cut + "…"
+
+
+def _news_related(i, items, n=NEWS_RELATED):
+    """Up to n other items, same category first, newest first within each group."""
+    others = [o for o in items if o["slug"] != i["slug"]]
+    same = [o for o in others if o["category"] == i["category"]]
+    rest = [o for o in others if o["category"] != i["category"]]
+    return (same + rest)[:n]
+
+
+def _news_related_card(o):
+    import html as _h
+    return (f'<li class="news-{o["category"]}"><p class="news-badge">{_h.escape(o["label"])}</p>'
+            f'<a href="{_news_path(o)}" data-track="news-related">{_h.escape(o["title"])}</a>'
+            f'<span class="headline-meta">{_h.escape(o["source"])} &middot; '
+            f'<time datetime="{o["date"]}">{_fmt_date(o["date"])}</time></span></li>')
+
+
+def render_news_page(i, items):
+    import html as _h
+    path = _news_path(i)
+    abs_url = SITE + path
+    summary = _news_summary(i)
+    meta = {
+        "title": f"{i['title']} | Senior News | The Pointe at Kirby Gate",
+        "description": summary,
+        "path": path, "nav": "news",
+    }
+    source = _h.escape(i["source"])
+    when = f'Shared <time datetime="{i["date"]}">{_fmt_date(i["date"])}</time>'
+    if i["published"]:
+        when = f'Published <time datetime="{i["published"]}">{_fmt_date(i["published"])}</time> &middot; ' + when
+    if i["external"]:
+        attribution = f'Source: <strong>{source}</strong>'
+        more = (f'<p class="news-more news-source-link"><a href="{_h.escape(i["url"])}" target="_blank" rel="noopener" '
+                f'data-track="news-outbound">Read the full story at {source}</a></p>')
+    else:
+        attribution = f'From <strong>{source}</strong>'
+        more = f'<p class="news-more news-source-link"><a href="{_h.escape(i["url"])}">Read more on our site</a></p>'
+    credit = f" The summary above is written by our team; the full story belongs to {source}." if i["external"] else ""
+    fam = NEWS_FAMILY[_news_family_key(i)]
+    fam_links = "".join(f'<li><a href="{href}" data-track="news-family-link">{label} &rarr;</a></li>'
+                        for href, label in fam["links"])
+    related = _news_related(i, items)
+    related_html = ""
+    if related:
+        related_html = ('<section class="news-related" aria-labelledby="news-related-h"><h2 id="news-related-h">More senior news</h2>'
+                        '<ul class="headline-list">' + "".join(_news_related_card(o) for o in related) + "</ul></section>")
+    body = f"""<section class="hero hero-page" style="background-image:url('{NEWS_INDEX_IMAGE}')">
+  <div class="container">
+    <p class="eyebrow">{NEWS_TITLE} &middot; {_h.escape(i["label"])}</p>
+    <h1>{_h.escape(i["title"])}</h1>
+  </div>
+</section>
+<section class="section">
+  <div class="container narrow news">
+    <nav class="news-crumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span aria-hidden="true">&rsaquo;</span> <a href="/news/">{NEWS_TITLE}</a> <span aria-hidden="true">&rsaquo;</span> <span aria-current="page">{_h.escape(i["label"])}</span></nav>
+    <article class="news-item news-article news-{i["category"]}" data-category="{i["category"]}">
+      <p class="news-badge">{_h.escape(i["label"])}</p>
+      <p class="news-meta">{attribution} &middot; {when}</p>
+      <h2 class="news-summary-h">Our summary</h2>
+      <div class="news-body">{i["body"]}</div>
+      {more}
+    </article>
+    <aside class="news-family" aria-labelledby="news-family-h">
+      <h2 id="news-family-h">What this means for Memphis families</h2>
+      <p>{fam["text"]}</p>
+      <ul>{fam_links}</ul>
+    </aside>
+    {NEWS_VISIT_CTA}
+    {related_html}
+    <p class="post-all"><a href="/news/" data-track="news-all">&larr; All senior living news</a></p>
+    <p class="news-disclaimer">{NEWS_DISCLAIMER}{credit}</p>
+  </div>
+</section>"""
+    article = {
+        "@context": "https://schema.org", "@type": "NewsArticle",
+        "headline": i["title"], "description": summary,
+        "datePublished": i["date"], "dateModified": i["date"],
+        "articleSection": i["label"],
+        "image": [SITE + NEWS_INDEX_IMAGE],
+        "author": {"@type": "Organization", "name": "The Pointe at Kirby Gate", "url": SITE},
+        "publisher": ORG,
+        "mainEntityOfPage": {"@type": "WebPage", "@id": abs_url},
+        "url": abs_url,
+    }
+    if i["external"]:
+        original = {"@type": "NewsArticle", "url": i["url"],
+                    "publisher": {"@type": "Organization", "name": i["source"]}}
+        if i["published"]:
+            original["datePublished"] = i["published"]
+        article["isBasedOn"] = original
+        article["citation"] = original
+    else:
+        article["isBasedOn"] = _news_abs(i)
+    head = (
+        _ld(article) + _ld(_news_crumbs((i["title"], path)))
+        + f'<meta property="article:published_time" content="{i["date"]}">\n'
+        + f'<meta property="article:section" content="{_h.escape(i["label"], quote=True)}">\n'
+    )
+    html = render_html(meta, body, head)
+    return html.replace('<meta property="og:type" content="website">', '<meta property="og:type" content="article">', 1)
+
+
+def _news_hash_script(archived):
+    """/news/#<slug> links shared before items had their own pages: an item still on
+    /news/ is simply scrolled to (by the browser, with or without JavaScript) and
+    highlighted; an item that has moved to the archive is sent to its own page."""
+    return ("<script>\n(function () {\n"
+            f"  var moved = {json.dumps(sorted(archived))};\n"
+            "  function land() {\n"
+            "    var slug = decodeURIComponent(location.hash.slice(1));\n"
+            "    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return;\n"
+            "    var el = document.getElementById(slug);\n"
+            "    if (el && el.classList.contains(\"news-item\")) {\n"
+            "      document.querySelectorAll(\".news-target\").forEach(function (t) { t.classList.remove(\"news-target\"); });\n"
+            "      var all = document.querySelector('.news-chips button[data-category=\"\"]');\n"
+            "      if (el.hidden && all) all.click();\n"
+            "      el.classList.add(\"news-target\"); el.scrollIntoView();\n"
+            "    } else if (moved.indexOf(slug) !== -1) location.replace(\"/news/\" + slug + \"/\");\n"
+            "  }\n"
+            "  land();\n"
+            "  window.addEventListener(\"hashchange\", land);\n"
+            "})();\n</script>")
+
+
 def render_news_feed(items):
     import html as _h
     out = []
     for i in items[:NEWS_FEED_SIZE]:
         out.append(
-            f"  <item>\n    <title>{_h.escape(i['title'])}</title>\n    <link>{_h.escape(_news_abs(i))}</link>\n"
+            f"  <item>\n    <title>{_h.escape(i['title'])}</title>\n    <link>{SITE}{_news_path(i)}</link>\n"
             f"    <guid isPermaLink=\"false\">{SITE}/news/#{i['slug']}</guid>\n    <pubDate>{_rfc822(i['date'])}</pubDate>\n"
             f"    <category>{_h.escape(i['label'])}</category>\n    <description>{_h.escape(i['text'])}</description>\n  </item>"
         )
@@ -723,24 +936,43 @@ def render_news_feed(items):
 
 
 def build_news():
-    """Write the news page, its archive pages and feed. Returns [(path, lastmod)] for the sitemap."""
+    """Write the news page, one page per item, the archive pages and feed. Returns
+    [(path, lastmod)] for the sitemap. Items published from Airtable by
+    scripts/publish_from_airtable.py are ordinary content/news/ files, so each gets
+    its page on the next build without any extra step."""
     items = load_news_items()
+    for i in items:
+        if i["slug"] in NEWS_RESERVED_SLUGS:
+            sys.exit(f"BUILD FAILED — news item {i['slug']}.html: the slug {i['slug']!r} is reserved; rename the file")
     by_year = {}
     for i in items[NEWS_PAGE_SIZE:]:
         by_year.setdefault(i["date"][:4], []).append(i)
     archive_years = sorted(by_year, reverse=True)
     (PUBLIC / "news").mkdir(parents=True, exist_ok=True)
-    (PUBLIC / "news" / "index.html").write_text(render_news_index(items[:NEWS_PAGE_SIZE], archive_years))
+    # Item pages from an earlier build whose file has since been deleted or set to draft.
+    live = {i["slug"] for i in items}
+    for old in (PUBLIC / "news").glob("*/index.html"):
+        if old.parent.name not in live and old.parent.name not in NEWS_RESERVED_SLUGS and "news-article" in old.read_text():
+            old.unlink()
+            if not any(old.parent.iterdir()):
+                old.parent.rmdir()
+    archived = [i["slug"] for i in items[NEWS_PAGE_SIZE:]]
+    (PUBLIC / "news" / "index.html").write_text(render_news_index(items[:NEWS_PAGE_SIZE], archive_years, archived))
     (PUBLIC / "news" / "feed.xml").write_text(render_news_feed(items))
     today = datetime.date.today().isoformat()
     entries = [("/news/", items[0]["date"] if items else today)]
+    for i in items:
+        out = PUBLIC / "news" / i["slug"] / "index.html"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(render_news_page(i, items))
+        entries.append((_news_path(i), i["date"]))
     for year in archive_years:
         out = PUBLIC / "news" / "archive" / year / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(render_news_archive(year, by_year[year], archive_years))
         entries.append((f"/news/archive/{year}/", by_year[year][0]["date"]))
         print(f"built {out.relative_to(ROOT)}")
-    print(f"built news index + news/feed.xml ({len(items)} items)")
+    print(f"built news index + {len(items)} news item pages + news/feed.xml")
     return entries
 
 

@@ -496,6 +496,24 @@ body { letter-spacing: -0.005em; }
 .news-more a[target="_blank"]::after { content: " \2197"; }
 .news-empty, .news-archive { color: var(--blue-deep); font-size: 0.95rem; margin: 0 0 1.5rem; }
 .news-disclaimer { font-size: 0.85rem; color: #5f6b60; margin-top: 2rem; }
+.news-more-sep { color: #8a978b; margin: 0 0.35rem; }
+.news-family-link { white-space: nowrap; }
+.news-item.news-target { box-shadow: 0 0 0 3px var(--green-light), var(--shadow); }
+/* One page per item: /news/<slug>/ */
+.news-crumbs { font-size: 0.9rem; color: #5f6b60; margin: 0 0 1.25rem; overflow-wrap: anywhere; }
+.news-crumbs a { color: var(--blue-deep); }
+.news-summary-h { font-size: 1.1rem; margin: 0.25rem 0 0.5rem; }
+.news-source-link { margin-top: 0.5rem; }
+.news-family { background: var(--ice); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin: 1.5rem 0 0; }
+.news-family h2 { font-size: 1.3rem; margin: 0 0 0.6rem; }
+.news-family p { margin: 0 0 0.75rem; }
+.news-family ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+.news-family a { font-weight: 600; color: var(--navy); }
+.news-visit-cta .news-cta-call { margin: 0.75rem 0 0; font-size: 0.95rem; }
+.news-related { margin-top: 2.5rem; }
+.news-related h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+.news-related .news-badge { margin-bottom: 0.35rem; }
+.news-related .headline-list a::after { content: " \2192"; }
 @media (max-width: 520px) {
   .container.news { padding-left: 1rem; padding-right: 1rem; }
   .news-item { padding: 1rem 1rem 1rem 0.9rem; }
