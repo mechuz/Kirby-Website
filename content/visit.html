@@ -1,0 +1,49 @@
+<!--meta
+title: Book Your Visit | The Pointe at Kirby Gate
+description: Pick a day and time to visit The Pointe at Kirby Gate assisted living and memory care in East Memphis.
+path: /visit/
+body_attr: data-page="visit"
+sitemap: no
+robots: noindex, follow
+-->
+<section class="section">
+  <div class="container narrow" style="padding:2.5rem 1.25rem;max-width:640px">
+    <div id="kv-form-wrap">
+      <p class="eyebrow center">Personal Tour</p>
+      <h1 class="center" id="kv-title">Book Your Visit</h1>
+      <p class="center" style="margin-top:0.5rem">Meet our team and see our newly renovated suites. Pick a day and a time, then tap <strong>Book my visit</strong>.</p>
+
+      <form id="kv-form" class="card" style="margin-top:1.5rem" novalidate>
+        <div style="padding:1.25rem 1.25rem 1.5rem">
+          <h2 style="font-size:1.15rem;margin:0 0 0.6rem">1. Pick a day</h2>
+          <div id="kv-days" role="radiogroup" aria-label="Day" style="display:flex;flex-wrap:wrap;gap:0.5rem"></div>
+
+          <h2 style="font-size:1.15rem;margin:1.25rem 0 0.6rem">2. Pick a time</h2>
+          <div id="kv-times" role="radiogroup" aria-label="Time" style="display:flex;flex-wrap:wrap;gap:0.5rem"></div>
+
+          <div id="kv-contact" hidden style="margin-top:1.25rem">
+            <h2 style="font-size:1.15rem;margin:0 0 0.6rem">3. Your name and phone</h2>
+            <div class="form-row"><label for="kv-name">Your name</label><input type="text" id="kv-name" autocomplete="name"></div>
+            <div class="form-row"><label for="kv-phone">Phone</label><input type="tel" id="kv-phone" autocomplete="tel"></div>
+          </div>
+          <input type="text" id="kv-hp" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+
+          <button type="submit" id="kv-submit" class="btn btn-primary btn-lg" style="width:100%;margin-top:1.5rem">Book my visit</button>
+          <p id="kv-msg" role="alert" aria-live="polite" style="margin:0.75rem 0 0;min-height:1.4em"></p>
+          <p style="font-size:0.9rem;margin:0.5rem 0 0">Prefer to talk? Call or text <a href="tel:9012475835">(901) 247-5835</a>.</p>
+        </div>
+      </form>
+    </div>
+
+    <div id="kv-done" hidden class="center" style="padding:1rem 0">
+      <p class="eyebrow">You're on our calendar</p>
+      <h1 id="kv-done-title">See you soon!</h1>
+      <p id="kv-done-text" style="font-size:1.15rem;margin-top:0.75rem"></p>
+      <p style="margin-top:0.75rem">Our team will call you to confirm. Need to change it? Call or text <a href="tel:9012475835">(901) 247-5835</a>.</p>
+      <p style="margin-top:1.5rem"><a class="btn btn-secondary" href="/rates-floor-plans/">See suites &amp; current rates</a></p>
+      <p style="margin-top:0.75rem"><a href="/respite-care/">Respite stays</a> &middot; <a href="/blog/">Guides &amp; resources</a> &middot; <a href="/paying-for-senior-living/">Paying for senior living</a> &middot; <a href="/news/">Senior living news</a></p>
+      <p style="margin-top:1rem">6480 Quince Rd, Memphis, TN 38119 &middot; <a href="https://www.google.com/maps/dir/?api=1&amp;destination=6480+Quince+Rd+Memphis+TN+38119" target="_blank" rel="noopener">Directions</a></p>
+    </div>
+  </div>
+</section>
+<script src="/assets/js/visit.js" defer></script>

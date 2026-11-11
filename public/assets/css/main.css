@@ -735,7 +735,11 @@ a.price-card:hover .price-go { text-decoration: underline; }
 .merch-points h3 { margin: 0 0 0.4rem; color: var(--navy); font-size: 1.05rem; }
 
 /* Staff team login page: hide the family tour band */
-body[data-page="team"] .cta-band{display:none}
+body[data-page="team"] .cta-band,body[data-page="visit"] .cta-band{display:none}
+.kv-chip{background:#fff;color:#2f5e31;border:2px solid var(--green);border-radius:999px;padding:0.6rem 0.9rem;min-width:7.2rem;font:inherit;font-weight:600;cursor:pointer}
+.kv-chip[aria-checked="true"]{background:#2f5e31;border-color:#2f5e31;color:#fff;box-shadow:0 0 0 3px rgba(78,154,81,.35)}
+.kv-chip[aria-checked="true"]::before{content:"\2713\00a0"}
+.kv-chip:focus-visible{outline:3px solid #2f5e31;outline-offset:2px}
 
 /* Header "Team Login" menu: same green as the Resident Portal link */
 .main-nav .nav-team > button { color: var(--green); font-weight: 700; white-space: nowrap; }
