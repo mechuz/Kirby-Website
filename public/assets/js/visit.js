@@ -57,6 +57,14 @@
 
   function msg(t) { $("kv-msg").textContent = t || ""; }
 
+  function booked(name) {
+    $("kv-form-wrap").hidden = true;
+    $("kv-done").hidden = false;
+    $("kv-done-title").textContent = (first || name.split(" ")[0] || "Thank you") + ", you're booked!";
+    $("kv-done-text").textContent = "We'll see you " + dayLabel + " at " + time + ".";
+    window.scrollTo(0, 0);
+  }
+
   $("kv-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
     if (!day) { msg("Please pick a day."); return; }
@@ -66,6 +74,19 @@
     if (!leadId) {
       if (!name) { msg("Please enter your name."); return; }
       if (phone.replace(/\D/g, "").length < 10) { msg("Please enter a phone number so we can confirm."); return; }
+    }
+    // Spam filter (2026-11-11): bots fill the hidden honeypot fields, submit within
+    // seconds of loading, or type links and spam words. They see the normal
+    // confirmation, but nothing is sent. A family opening our email link (r=) can tap
+    // through quickly, so for them a too-fast tap just asks them to tap again.
+    var fast = Date.now() - loaded < 3000;
+    if (fast && leadId) { msg("Please check your day and time, then tap Book my visit again."); loaded = Date.now() - 3000; return; }
+    var bot = $("kv-hp").value || ($("kv-hp2") && $("kv-hp2").value) ? "honeypot" : (fast ? "fast" : "");
+    if (!bot && window.kgSpam) bot = window.kgSpam.check(name, name);
+    if (bot) {
+      if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: bot, form: "visit" });
+      booked(name);
+      return;
     }
     var btn = $("kv-submit");
     btn.disabled = true;
@@ -86,12 +107,12 @@
     body.set("el", String(Date.now() - loaded));
     fetch(HOOK, { method: "POST", body: body }).then(function (r) {
       if (!r.ok) throw new Error("status " + r.status);
-      if (typeof gtag === "function") gtag("event", "generate_lead", { event_category: "lead", lead_source: "visit_booking" });
-      $("kv-form-wrap").hidden = true;
-      $("kv-done").hidden = false;
-      $("kv-done-title").textContent = (first || name.split(" ")[0] || "Thank you") + ", you're booked!";
-      $("kv-done-text").textContent = "We'll see you " + dayLabel + " at " + time + ".";
-      window.scrollTo(0, 0);
+      if (typeof gtag === "function") {
+        gtag("event", "generate_lead", { event_category: "lead", lead_source: "visit_booking" });
+        // Google Ads conversion "Tour booking (/visit/ page)" (ID 7898949491), added 2026-11-11.
+        gtag("event", "conversion", { send_to: "AW-18300279647/YoG6CPPOwbYdEN-2oJZE" });
+      }
+      booked(name);
     }).catch(function () {
       btn.disabled = false;
       btn.textContent = "Book my visit";

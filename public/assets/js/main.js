@@ -91,6 +91,60 @@ function kgLeadSource() {
   }
 })();
 
+// Spam filter (2026-11-11, after a gambling-spam message came through the website
+// form on 11/10). Shared by every lead form (contact, respite booking, chat callback,
+// and /visit/ via window.kgSpam). It only stops submissions that are clearly bots, and
+// those are dropped silently (the sender sees the normal thank-you), so it never asks a
+// real family to solve a puzzle. Rules, all deliberately conservative:
+//  - a link together with a typical spam word (casino, betting, crypto, loan, SEO ...),
+//  - more than 2 links,
+//  - Cyrillic or Chinese/Japanese/Korean text with a link, or with no English letters
+//    at all in the name and message.
+// Email addresses are ignored when counting links, so "my email is jo@gmail.com" is fine.
+window.kgSpam = (function () {
+  // Kept specific on purpose: a family pasting a VA or pharmacy link must still get through.
+  var WORDS = /\b(casinos?|gambl(e|ing)|betting|sportsbook|bookmakers?|bet365|1xbet|slot machines?|online slots|free spins|poker|jackpot|roulette|crypto(currency)?|bitcoin|btc|usdt|forex|binary options|payday loans?|quick loans?|instant loans?|personal loans?|loan offers?|seo|backlinks?|link building|viagra|cialis|porn|porno|xxx|escorts?|onlyfans|nudes|hookups?)\b|\u043A\u0430\u0437\u0438\u043D\u043E|\u0441\u0442\u0430\u0432\u043A|\u0431\u0443\u043A\u043C\u0435\u043A\u0435\u0440|\u043A\u0440\u0438\u043F\u0442|\u0431\u0438\u0442\u043A\u043E\u0438\u043D|\u0437\u0430\u0439\u043C|\u043F\u043E\u0440\u043D|\u0441\u043B\u043E\u0442\u044B/i;
+  var LINK = /(https?:\/\/|www\.)[^\s<>"']+|\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|net|org|info|biz|ru|su|ua|by|kz|cn|xyz|top|site|online|shop|store|club|bet|casino|io|co|me|ly|cc|tk|pw|win|vip|link|click|pro|live|app)\/[^\s<>"']*/gi;
+  var EMAIL = /[^\s@<>"']+@[^\s@<>"']+\.[a-z]{2,}/gi;
+  var FOREIGN = /[\u0400-\u04FF\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uAC00-\uD7AF]/g;
+  // words: everything a person typed (name, email, message); prose: just name + message.
+  function check(words, prose) {
+    words = String(words || ""); prose = String(prose || "");
+    var links = (words.replace(EMAIL, " ").match(LINK) || []).length;
+    if (links > 2) return "spam_links";
+    if (links && WORDS.test(words)) return "spam_words";
+    var plain = prose.replace(EMAIL, " ").replace(LINK, " ");
+    var foreign = (plain.match(FOREIGN) || []).length;
+    if (foreign >= 3 && (links || !/[A-Za-z]/.test(plain))) return "spam_script";
+    return "";
+  }
+  function form(f) {
+    var words = [], prose = [];
+    Array.prototype.forEach.call(f.querySelectorAll("input, textarea"), function (el) {
+      if (!el.name || el.name.charAt(0) === "_" || el.hasAttribute("data-kg-hp") || !el.value) return;
+      if (el.type === "checkbox" || el.type === "radio" || el.type === "tel" || el.type === "submit") return;
+      if (el.type === "hidden" && el.name !== "chat_question") return;
+      words.push(el.value);
+      if (el.type !== "email") prose.push(el.value);
+    });
+    return check(words.join("\n"), prose.join("\n"));
+  }
+  // A second honeypot that bots fill and people never see: off-screen (not
+  // display:none, which some bots skip), out of the tab order, hidden from screen
+  // readers, and with a name no browser autofill recognises.
+  function honeypot(f) {
+    var hp = f.querySelector("[data-kg-hp]");
+    if (hp) return hp;
+    var wrap = document.createElement("div");
+    wrap.setAttribute("aria-hidden", "true");
+    wrap.style.cssText = "position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden";
+    wrap.innerHTML = '<label>Leave this field empty <input type="text" name="kg_hp_field" data-kg-hp tabindex="-1" autocomplete="off"></label>';
+    f.appendChild(wrap);
+    return wrap.querySelector("input");
+  }
+  return { check: check, form: form, honeypot: honeypot, MIN_MS: 3000 };
+})();
+
 // Lead screening for every FormSubmit form on the site (contact, respite booking, chat
 // callback). Job seekers and vendors are pointed to the main line instead of sending,
 // sales pitches, links, fake phone numbers and instant bot submissions are stopped,
@@ -124,19 +178,26 @@ function kgLeadSource() {
   function check(form) {
     var who = form.querySelector("[data-screen-who]");
     var honey = form.querySelector('[name="_honey"]');
-    if (honey && honey.value) return { ok: false, msg: "", why: "honeypot" };
+    if (honey && honey.value) return { ok: false, msg: "", why: "honeypot", silent: true };
+    var hp2 = form.querySelector("[data-kg-hp]");
+    if (hp2 && hp2.value) return { ok: false, msg: "", why: "honeypot", silent: true };
+    // Bots submit within a second or two of the page loading; no person can fill in a
+    // name and phone that fast.
+    if (Date.now() - loaded < window.kgSpam.MIN_MS) return { ok: false, msg: "", why: "fast", silent: true };
+    var spam = window.kgSpam.form(form);
+    if (spam) return { ok: false, msg: "", why: spam, silent: true };
     if (who && (who.value === "job" || who.value === "vendor")) return { ok: false, msg: JOB_NOTE, why: who.value };
     var text = Array.prototype.map.call(form.querySelectorAll("textarea, [name='chat_question']"), function (el) { return el.value; }).join(" ");
     if (JOB.test(text)) return { ok: false, msg: JOB_NOTE, why: "job_text" };
     if (SPAM.test(text)) return { ok: false, msg: "Please remove any links or sales offers from your message, or call us at " + MAIN + ".", why: "spam_text" };
     var phone = form.querySelector('[name="phone"]');
     if (phone && badPhone(phone.value)) return { ok: false, msg: "Please enter a 10-digit phone number so our team can call you back.", why: "phone" };
-    if (Date.now() - loaded < 2500) return { ok: false, msg: "Please check your details and press the button again.", why: "fast" };
     return { ok: true };
   }
   function attach(form) {
     if (form.dataset.screened) return;
     form.dataset.screened = "1";
+    window.kgSpam.honeypot(form);
     var who = form.querySelector("[data-screen-who]");
     if (who) who.addEventListener("change", function () {
       var stop = who.value === "job" || who.value === "vendor";
@@ -185,6 +246,10 @@ function kgLeadSource() {
       var t2 = setTimeout(function () { giveUp("fallback_timeout"); }, 12000);
       var fsd = new FormData(form);
       fsd.set("_subject", (fsd.get("_subject") || "Website lead") + FS_MARK);
+      // FormSubmit's own honeypot: it discards any submission where _honey is filled.
+      var fsHoney = form.querySelector('[name="_honey"]');
+      fsd.set("_honey", fsHoney ? fsHoney.value : "");
+      fsd.delete("kg_hp_field");
       var fsSrc = kgLeadSource();
       Object.keys(fsSrc).forEach(function (k) { fsd.set(k, String(fsSrc[k]).slice(0, 200)); });
       fetch(FS_AJAX, {
@@ -198,7 +263,7 @@ function kgLeadSource() {
     }
     var fd = new URLSearchParams();
     Array.prototype.forEach.call(form.elements, function (el) {
-      if (!el.name || el.name.charAt(0) === "_" || el.type === "submit") return;
+      if (!el.name || el.name.charAt(0) === "_" || el.type === "submit" || el.hasAttribute("data-kg-hp")) return;
       if ((el.type === "checkbox" || el.type === "radio") && !el.checked) return;
       fd.append(el.name, el.value);
     });
@@ -223,7 +288,13 @@ function kgLeadSource() {
     e.preventDefault();
     var r = check(form);
     if (!r.ok) {
-      if (r.why === "honeypot") { location.href = "/thank-you/"; return; }
+      // Bots: pretend it worked and send nothing. The thank-you page does not count
+      // these as leads (no kg_lead_ok flag).
+      if (r.silent) {
+        if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why, transport_type: "beacon" });
+        location.href = "/thank-you/";
+        return;
+      }
       note(form, r.msg);
       if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why });
       return;
