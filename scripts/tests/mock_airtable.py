@@ -27,29 +27,29 @@ from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-BASE = "appZ2xOP1HzOWjug7"
-ITEMS, TOPICS, PHOTOS, NEWS = "tblVtdUcldbtwe50j", "tbl2jfMNcGqANbQ2q", "tbl3Kr5c6Iovf0tx9", "tblShi8ugFZKwvz4k"
+BASE = "appHbBBWU2iYOniEJ"
+ITEMS, TOPICS, PHOTOS, NEWS = "tblfga1hhTE8y1M5f", "tblWt1ZslMVIFakEQ", "tblGlobVh5R4LLFwy", "tblNZOjmXFb20ymV0"
 
 # table id -> {column name: field id}, the same ids the publisher uses
 TABLES = {
     ITEMS: {
-        "Title": "fldjkMH6vTJUGEnjs", "Channel": "fld5Hg2Z2bfLR9Va7", "Status": "fldVeRcuq6Kfsb1wo",
-        "Publish Date": "fldBfij1yPpo8s1Vx", "Headline": "fldv61FVy374FuiQH", "Copy": "fldZ7gZVtaBtnhS9I",
-        "Slug": "fld5ZytzRqrLsA43X", "Meta Description": "fldeoI39cMyiuwydL", "Primary Keyword": "fldWRoyuIDZO8VdYE",
-        "Image URL": "fldsY6uzuoy7Lb2wC", "Image Alt Text": "fldBfORvhdrOFdpW9", "Photo": "fldgFZVjz31hFsS9u",
-        "Compliance Check": "fldnN11jeIvb4wJqL", "Published URL": "fldWQ3lTcLXtOsA7C", "Published At": "fldTeBxf6bufiuTpe",
-        "Publish Log": "fldavaVWQzLlQwuVf", "Topic": "fld2vq1JajYdLlekC",
+        "Title": "fldupdw6AU6qsQc0g", "Channel": "fld10c2O1i7kqyRMB", "Status": "fld78XRSbI4ga1d29",
+        "Publish Date": "fldUDerU1MbiNHgZk", "Headline": "fld07QBTQoLwYunsh", "Copy": "fldH8NLJMeRWFV6tA",
+        "Slug": "fldfAoDncCuncCPO9", "Meta Description": "fldUdi6ALl9cIUFTN", "Primary Keyword": "fldXObKg17PS6xweO",
+        "Image URL": "fldmOsiM4v2onHWWC", "Image Alt Text": "fldq6CZkdoRX7Jw68", "Photo": "fldlbBCb1KuuVSp1n",
+        "Compliance Check": "fld751GKYlbbof5xU", "Published URL": "fldFIupZVy11Xxx0B", "Published At": "fldLM1TuWpqJuDV6p",
+        "Publish Log": "fldnYllpgXholyDJH", "Topic": "fld4upnmGucj4ng5F",
     },
-    TOPICS: {"Topic": "fld23rCLAEOvN4UlS", "Pillar": "fldE46oRrF5abE4vg", "Status": "fld9ScdnbK8TEpTuR",
-             "Published URL": "fldRXkomlewHN2tux"},
-    PHOTOS: {"Name": "fldSHKs2O4omHOA01", "URL": "fldGXEgC4pqcAe99d", "Status": "fldjjHNkxpR4eQV8W"},
+    TOPICS: {"Topic": "fldxE9sjzYuWM2bP8", "Pillar": "fldbq5grmVLQbBxOw", "Status": "fldOSDQoVgU8vL1EW",
+             "Published URL": "fldkOxWdnZXWGDDsN"},
+    PHOTOS: {"Name": "fldDiOP7NAoqOwjkZ", "URL": "fld6cW3W4Jn7SPig9", "Status": "fld29jPI0J92218Uz"},
     NEWS: {
-        "Title": "fld0j3cwYUexMuUvO", "Source": "fldgsvUdQCqYnY49l", "Source URL": "fld3TwnCDts5c1kGd",
-        "Article Date": "fldTY1vtCesbUxg2O", "Category": "fld4DIXgZ1xtHK06z", "Summary": "fldnCKId0CrwIsr4z",
-        "Why It Matters": "fldXOLW8ZapBYq130", "Status": "fldQlakdY6hVHwaPZ", "Added By": "fldAO9f4nsvYscAqy",
-        "Compliance Check": "fldO7msiyQ0IeWXPl", "Post Date": "fldrmFj75X5EfQGw3", "Slug": "fldO7qUjBnbkWWP9n",
-        "Published URL": "fldfzfJUHGPygSKUq", "Published At": "fld6WOeBJcbSTXiFs", "Publish Log": "fldHzhdfKpokoBZYP",
-        "Notes": "fldpJ6h0gYLJfm8dk",
+        "Title": "fldZRz2TbEw6PJ2hf", "Source": "fldzMNNCyiFcFGpa9", "Source URL": "fldnhuWmFGKPAQtSn",
+        "Article Date": "fldvc3skbjWboFp6X", "Category": "fldMVexhAkqPLP9kC", "Summary": "fldHgRlhjJX6GepdT",
+        "Why It Matters": "fldlsCEGTa4irmUY8", "Status": "fldMTS5KxVHbjHNN4", "Added By": "fldfp9uX2ZybUnQxj",
+        "Compliance Check": "fldDfcyAfZLO2uegI", "Post Date": "fldQ8MsnHY14EQLjI", "Slug": "fldDJju7bVo5BjD6f",
+        "Published URL": "fldaT3DNhlIsqJoNN", "Published At": "fldmbI3wuQL5ioiH5", "Publish Log": "fldiVRTvGWwjaMxOA",
+        "Notes": "fldg3OJ3rIm9zOKP9",
     },
 }
 

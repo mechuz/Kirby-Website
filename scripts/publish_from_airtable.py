@@ -50,53 +50,53 @@ SITE = "https://www.kirbygateliving.com"
 SITE_NAME = "The Pointe at Kirby Gate"
 
 API = os.environ.get("AIRTABLE_API_URL", "https://api.airtable.com/v0").rstrip("/")
-BASE = "appZ2xOP1HzOWjug7"          # Kirby Gate Lead Engine
-ITEMS = "tblVtdUcldbtwe50j"         # Content Items
-TOPICS = "tbl2jfMNcGqANbQ2q"        # Content Topics
-PHOTOS = "tbl3Kr5c6Iovf0tx9"        # GBP Post Photos
-NEWS = "tblShi8ugFZKwvz4k"          # News Items
+BASE = "appHbBBWU2iYOniEJ"          # Kirby Gate Marketing (split from the lead base on 2026-11-11)
+ITEMS = "tblfga1hhTE8y1M5f"         # Content Items
+TOPICS = "tblWt1ZslMVIFakEQ"        # Content Topics
+PHOTOS = "tblGlobVh5R4LLFwy"        # GBP Post Photos
+NEWS = "tblNZOjmXFb20ymV0"          # News Items
 
 # Content Items fields (by id, so renaming a column cannot break publishing)
 F = {
-    "title": "fldjkMH6vTJUGEnjs",
-    "channel": "fld5Hg2Z2bfLR9Va7",
-    "status": "fldVeRcuq6Kfsb1wo",
-    "publish_date": "fldBfij1yPpo8s1Vx",
-    "headline": "fldv61FVy374FuiQH",
-    "copy": "fldZ7gZVtaBtnhS9I",
-    "slug": "fld5ZytzRqrLsA43X",
-    "meta_description": "fldeoI39cMyiuwydL",
-    "keyword": "fldWRoyuIDZO8VdYE",
-    "image_url": "fldsY6uzuoy7Lb2wC",
-    "image_alt": "fldBfORvhdrOFdpW9",
-    "photo": "fldgFZVjz31hFsS9u",
-    "compliance": "fldnN11jeIvb4wJqL",
-    "published_url": "fldWQ3lTcLXtOsA7C",
-    "published_at": "fldTeBxf6bufiuTpe",
-    "publish_log": "fldavaVWQzLlQwuVf",
-    "topic": "fld2vq1JajYdLlekC",
+    "title": "fldupdw6AU6qsQc0g",
+    "channel": "fld10c2O1i7kqyRMB",
+    "status": "fld78XRSbI4ga1d29",
+    "publish_date": "fldUDerU1MbiNHgZk",
+    "headline": "fld07QBTQoLwYunsh",
+    "copy": "fldH8NLJMeRWFV6tA",
+    "slug": "fldfAoDncCuncCPO9",
+    "meta_description": "fldUdi6ALl9cIUFTN",
+    "keyword": "fldXObKg17PS6xweO",
+    "image_url": "fldmOsiM4v2onHWWC",
+    "image_alt": "fldq6CZkdoRX7Jw68",
+    "photo": "fldlbBCb1KuuVSp1n",
+    "compliance": "fld751GKYlbbof5xU",
+    "published_url": "fldFIupZVy11Xxx0B",
+    "published_at": "fldLM1TuWpqJuDV6p",
+    "publish_log": "fldnYllpgXholyDJH",
+    "topic": "fld4upnmGucj4ng5F",
 }
-TF = {"status": "fld9ScdnbK8TEpTuR", "published_url": "fldRXkomlewHN2tux", "pillar": "fldE46oRrF5abE4vg"}
-PF = {"name": "fldSHKs2O4omHOA01", "url": "fldGXEgC4pqcAe99d", "status": "fldjjHNkxpR4eQV8W"}
+TF = {"status": "fldOSDQoVgU8vL1EW", "published_url": "fldkOxWdnZXWGDDsN", "pillar": "fldbq5grmVLQbBxOw"}
+PF = {"name": "fldDiOP7NAoqOwjkZ", "url": "fld6cW3W4Jn7SPig9", "status": "fld29jPI0J92218Uz"}
 
 # News Items fields (by id, like F)
 NF = {
-    "title": "fld0j3cwYUexMuUvO",
-    "source": "fldgsvUdQCqYnY49l",
-    "source_url": "fld3TwnCDts5c1kGd",
-    "article_date": "fldTY1vtCesbUxg2O",
-    "category": "fld4DIXgZ1xtHK06z",
-    "summary": "fldnCKId0CrwIsr4z",
-    "why": "fldXOLW8ZapBYq130",
-    "status": "fldQlakdY6hVHwaPZ",
-    "added_by": "fldAO9f4nsvYscAqy",
-    "compliance": "fldO7msiyQ0IeWXPl",
-    "post_date": "fldrmFj75X5EfQGw3",
-    "slug": "fldO7qUjBnbkWWP9n",
-    "published_url": "fldfzfJUHGPygSKUq",
-    "published_at": "fld6WOeBJcbSTXiFs",
-    "publish_log": "fldHzhdfKpokoBZYP",
-    "notes": "fldpJ6h0gYLJfm8dk",
+    "title": "fldZRz2TbEw6PJ2hf",
+    "source": "fldzMNNCyiFcFGpa9",
+    "source_url": "fldnhuWmFGKPAQtSn",
+    "article_date": "fldvc3skbjWboFp6X",
+    "category": "fldMVexhAkqPLP9kC",
+    "summary": "fldHgRlhjJX6GepdT",
+    "why": "fldlsCEGTa4irmUY8",
+    "status": "fldMTS5KxVHbjHNN4",
+    "added_by": "fldfp9uX2ZybUnQxj",
+    "compliance": "fldDfcyAfZLO2uegI",
+    "post_date": "fldQ8MsnHY14EQLjI",
+    "slug": "fldDJju7bVo5BjD6f",
+    "published_url": "fldaT3DNhlIsqJoNN",
+    "published_at": "fldmbI3wuQL5ioiH5",
+    "publish_log": "fldiVRTvGWwjaMxOA",
+    "notes": "fldg3OJ3rIm9zOKP9",
 }
 # Category option name in Airtable -> category key the news page understands
 NEWS_CATEGORIES = {
