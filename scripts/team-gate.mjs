@@ -113,7 +113,7 @@ analytics: no
             <input type="password" id="kg-pass" name="password" required autocomplete="current-password">
           </div>
           <div class="form-row">
-            <label for="kg-remember" style="font-weight:normal;display:flex;align-items:center;gap:0.6rem;cursor:pointer"><input type="checkbox" id="kg-remember" style="width:1.35rem;height:1.35rem;margin:0;flex:none"> Keep me signed in on this device for 14 days (not on shared computers)</label>
+            <label for="kg-remember" style="font-weight:normal;display:flex;align-items:center;gap:0.6rem;cursor:pointer"><input type="checkbox" id="kg-remember" checked style="width:1.35rem;height:1.35rem;margin:0;flex:none"> Keep me signed in on this phone or computer for 180 days (untick on a shared computer)</label>
           </div>
           <button type="submit" id="kg-submit" class="btn btn-primary btn-lg" style="width:100%">Sign in</button>
           <p id="kg-gate-msg" role="alert" aria-live="polite" style="margin:1rem 0 0;min-height:1.5em"></p>

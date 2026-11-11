@@ -28,7 +28,7 @@
   }
 
   var STORE = "kg_team_" + D.id;
-  var REMEMBER_DAYS = 14;
+  var REMEMBER_DAYS = 180;
   function store(get, val) {
     try {
       if (get) {
@@ -63,6 +63,7 @@
       team.innerHTML = new TextDecoder().decode(pt);
       gate.hidden = true;
       team.hidden = false;
+      try { window.scrollTo(0, 0); } catch (e) {}
       var out = document.getElementById("kg-signout");
       if (!out) {
         out = document.createElement("button");
@@ -75,6 +76,17 @@
         team.innerHTML = "";
         location.replace(location.pathname);
       });
+      // "Make the phone icon": put #calls in the address so the home-screen icon opens My Calls Today directly.
+      var iconBtn = team.querySelector("[data-kg-icon]");
+      var iconSteps = team.querySelector("[data-kg-icon-steps]");
+      if (iconBtn && iconSteps) iconBtn.addEventListener("click", function () {
+        try { history.replaceState(null, "", location.pathname + "#calls"); } catch (e) {}
+        iconSteps.hidden = false;
+        iconBtn.hidden = true;
+      });
+      // Opened from the home-screen icon (/team/#calls): go straight to My Calls Today.
+      var go = team.querySelector('a[data-go="calls"]');
+      if (go && location.hash === "#calls") location.assign(go.href);
     });
   }
 
