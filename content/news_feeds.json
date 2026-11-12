@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-11T17:08:18Z",
+ "fetched_at": "2026-11-12T17:36:04Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 4,
+   "count": 3,
    "error": ""
   },
   {
@@ -75,7 +75,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
@@ -247,12 +247,6 @@
    "published": "2026-11-06T01:11:19Z"
   },
   {
-   "title": "National Healthcare Properties Continues to Trade Medical Facilities for Senior Housing",
-   "link": "https://seniorhousingnews.com/2026/11/05/national-healthcare-properties-continues-to-trade-medical-facilities-for-senior-housing/",
-   "source": "Senior Housing News",
-   "published": "2026-11-05T21:47:00Z"
-  },
-  {
    "title": "Scientists discover new Alzheimer’s drug that repairs DNA damage and reduces brain inflammation",
    "link": "https://www.sciencedaily.com/releases/2026/11/261102075806.htm",
    "source": "ScienceDaily",
@@ -287,12 +281,6 @@
    "link": "https://kffhealthnews.org/medicare/medicare-drug-plans-premium-hikes-affordability-trump-cms/",
    "source": "KFF Health News",
    "published": "2026-10-30T09:01:00Z"
-  },
-  {
-   "title": "Less than 42 minutes of bright daylight linked to higher dementia risk",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261028232707.htm",
-   "source": "ScienceDaily",
-   "published": "2026-10-29T11:30:32Z"
   }
  ]
 }
