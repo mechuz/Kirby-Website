@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-12T17:36:04Z",
+ "fetched_at": "2026-11-13T17:13:25Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -33,7 +33,7 @@
    "name": "KFF Health News",
    "url": "https://kffhealthnews.org/topics/aging/feed/",
    "ok": true,
-   "count": 3,
+   "count": 2,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 2,
+   "count": 1,
    "error": ""
   },
   {
@@ -108,6 +108,24 @@
   }
  ],
  "items": [
+  {
+   "title": "Odyssey Debacle Parallels How Cruise Ship-Style Senior Living Has Run Aground",
+   "link": "https://seniorhousingnews.com/2026/11/12/odyssey-debacle-parallels-how-cruise-ship-style-senior-living-has-run-aground/",
+   "source": "Senior Housing News",
+   "published": "2026-11-12T20:35:30Z"
+  },
+  {
+   "title": "Tarkett Earns Cradle to Cradle Certified® Silver Version 5.0 for Ethos® Carpet Tile Portfolio",
+   "link": "https://www.argentum.org/tarkett-earns-cradle-to-cradle-certified-silver-version-5-0-for-ethos-carpet-tile-portfolio/",
+   "source": "Argentum",
+   "published": "2026-11-12T20:33:54Z"
+  },
+  {
+   "title": "Tarkett Convenes Cross-Disciplinary Group on Future of Senior Living Design",
+   "link": "https://www.argentum.org/tarkett-convenes-cross-disciplinary-group-on-future-of-senior-living-design/",
+   "source": "Argentum",
+   "published": "2026-11-12T19:47:53Z"
+  },
   {
    "title": "Obesity linked to up to 27% lower risk of death in dementia",
    "link": "https://www.sciencedaily.com/releases/2026/11/261109205401.htm",
@@ -187,18 +205,6 @@
    "published": "2026-11-09T17:04:45Z"
   },
   {
-   "title": "Assessing the State of Technology Adoption in Senior Living",
-   "link": "https://www.argentum.org/assessing-the-state-of-technology-adoption-in-senior-living/",
-   "source": "Argentum",
-   "published": "2026-11-09T16:55:25Z"
-  },
-  {
-   "title": "He was diagnosed with cancer. Then he was told he lost his Medicaid",
-   "link": "https://www.npr.org/2026/11/09/nx-s1-6032732/trump-medicaid-health-nebraska-work-insurance",
-   "source": "NPR Health",
-   "published": "2026-11-09T10:00:00Z"
-  },
-  {
    "title": "Common osteoporosis drugs linked to 24% lower dementia risk in major study",
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233037.htm",
    "source": "ScienceDaily",
@@ -227,18 +233,6 @@
    "link": "https://www.nicmap.com/blog/senior-care-industry-attracting-new-investors/",
    "source": "NIC MAP",
    "published": "2026-11-06T20:46:22Z"
-  },
-  {
-   "title": "Capital and Scale, Not Ideas, Are Biggest Barriers to Middle-Market Senior Living",
-   "link": "https://seniorhousingnews.com/2026/11/06/capital-and-scale-not-ideas-are-biggest-barriers-to-middle-market-senior-living/",
-   "source": "Senior Housing News",
-   "published": "2026-11-06T20:44:21Z"
-  },
-  {
-   "title": "Ridge Crest at Meadow Ridge Receives Prestigious Designation from the Centers for Medicare & Medicaid Services",
-   "link": "https://www.argentum.org/ridge-crest-at-meadow-ridge-receives-prestigious-designation-from-the-centers-for-medicare-medicaid-services/",
-   "source": "Argentum",
-   "published": "2026-11-06T16:54:16Z"
   },
   {
    "title": "An anti-aging drug may help protect the brain before Alzheimer's symptoms begin",
@@ -275,12 +269,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261029072142.htm",
    "source": "ScienceDaily",
    "published": "2026-10-31T00:59:52Z"
-  },
-  {
-   "title": "Medicare Drug Plans Are Hiking Premiums While Trump Claims Victory on Medicine Prices",
-   "link": "https://kffhealthnews.org/medicare/medicare-drug-plans-premium-hikes-affordability-trump-cms/",
-   "source": "KFF Health News",
-   "published": "2026-10-30T09:01:00Z"
   }
  ]
 }
