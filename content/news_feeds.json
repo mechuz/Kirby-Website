@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-13T17:13:25Z",
+ "fetched_at": "2026-11-14T15:48:59Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 3,
+   "count": 4,
    "error": ""
   },
   {
@@ -75,7 +75,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 1,
+   "count": 0,
    "error": ""
   },
   {
@@ -108,6 +108,30 @@
   }
  ],
  "items": [
+  {
+   "title": "Stanford scientists discover hidden brain signals that predict Alzheimer’s years before symptoms",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261112230444.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-14T12:25:05Z"
+  },
+  {
+   "title": "Yale scientists reveal what really slows aging and what doesn't",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261112230452.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-14T04:26:12Z"
+  },
+  {
+   "title": "In the Pipeline: Vi Plans Luxury Redevelopment in Florida; MorningStar, Edgemark Growing in California",
+   "link": "https://seniorhousingnews.com/2026/11/13/in-the-pipeline-vi-plans-luxury-redevelopment-in-florida-morningstar-edgemark-growing-in-california/",
+   "source": "Senior Housing News",
+   "published": "2026-11-13T21:44:14Z"
+  },
+  {
+   "title": "Senior Living Operators Deploy New Models Aimed at Middle-Income Residents",
+   "link": "https://seniorhousingnews.com/2026/11/13/senior-living-operators-deploy-new-models-aimed-at-middle-income-residents/",
+   "source": "Senior Housing News",
+   "published": "2026-11-13T21:27:35Z"
+  },
   {
    "title": "Odyssey Debacle Parallels How Cruise Ship-Style Senior Living Has Run Aground",
    "link": "https://seniorhousingnews.com/2026/11/12/odyssey-debacle-parallels-how-cruise-ship-style-senior-living-has-run-aground/",
@@ -155,18 +179,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233103.htm",
    "source": "ScienceDaily",
    "published": "2026-11-10T01:47:34Z"
-  },
-  {
-   "title": "How Medicaid affected one California House race",
-   "link": "https://www.npr.org/2026/11/09/nx-s1-6030983/how-medicaid-affected-one-california-house-race",
-   "source": "NPR Health",
-   "published": "2026-11-09T22:25:19Z"
-  },
-  {
-   "title": "Rising Pricing Shows More Competition for Senior Living Communities as Development Remains Slow",
-   "link": "https://seniorhousingnews.com/2026/11/09/rising-pricing-shows-more-competition-for-senior-living-communities-as-development-remains-slow/",
-   "source": "Senior Housing News",
-   "published": "2026-11-09T21:31:20Z"
   },
   {
    "title": "This Veterans Day, One Veteran’s Dream Honors a Friend He Never Forgot",
@@ -263,12 +275,6 @@
    "link": "https://alzheimersnewstoday.com/news/landmarks-worldwide-light-up-teal-today-alzheimers-awareness-month/",
    "source": "Alzheimer's News Today",
    "published": "2026-11-02T13:15:46Z"
-  },
-  {
-   "title": "A simple blood test could reveal Alzheimer’s risk 10 years before symptoms",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261029072142.htm",
-   "source": "ScienceDaily",
-   "published": "2026-10-31T00:59:52Z"
   }
  ]
 }
