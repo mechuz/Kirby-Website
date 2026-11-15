@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-14T15:48:59Z",
+ "fetched_at": "2026-11-15T16:22:04Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -68,7 +68,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 6,
+   "count": 7,
    "error": ""
   },
   {
@@ -108,6 +108,12 @@
   }
  ],
  "items": [
+  {
+   "title": "Alzheimer’s may start shrinking two brain regions years before memory loss",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261114202130.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-15T04:31:56Z"
+  },
   {
    "title": "Stanford scientists discover hidden brain signals that predict Alzheimer’s years before symptoms",
    "link": "https://www.sciencedaily.com/releases/2026/11/261112230444.htm",
