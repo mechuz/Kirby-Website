@@ -636,3 +636,12 @@ window.kgSpam = (function () {
     if (target && target.style.display !== "none") target.click();
   }
 })();
+
+// Hide time-limited promos once their end date passes.
+(function () {
+  var now = Date.now();
+  document.querySelectorAll('[data-expires]').forEach(function (el) {
+    var t = Date.parse(el.getAttribute('data-expires'));
+    if (!isNaN(t) && now >= t) { el.hidden = true; }
+  });
+})();
