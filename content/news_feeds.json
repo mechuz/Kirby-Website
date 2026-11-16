@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-15T16:22:04Z",
+ "fetched_at": "2026-11-16T19:36:35Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 4,
+   "count": 5,
    "error": ""
   },
   {
@@ -61,7 +61,7 @@
    "name": "Alzheimer's News Today",
    "url": "https://alzheimersnewstoday.com/feed/",
    "ok": true,
-   "count": 1,
+   "count": 0,
    "error": ""
   },
   {
@@ -75,7 +75,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
@@ -108,6 +108,12 @@
   }
  ],
  "items": [
+  {
+   "title": "3 Steps to Take in Q4 2026 For AI Success in 2027",
+   "link": "https://seniorhousingnews.com/2026/11/16/3-steps-to-take-in-q4-2026-for-ai-success-in-2027/",
+   "source": "Senior Housing News",
+   "published": "2026-11-16T17:30:45Z"
+  },
   {
    "title": "Alzheimer’s may start shrinking two brain regions years before memory loss",
    "link": "https://www.sciencedaily.com/releases/2026/11/261114202130.htm",
@@ -269,18 +275,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/10/261031221155.htm",
    "source": "ScienceDaily",
    "published": "2026-11-03T00:34:59Z"
-  },
-  {
-   "title": "Extra weight may be aging your brain faster than you think",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261101010559.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-02T13:55:28Z"
-  },
-  {
-   "title": "Landmarks worldwide to light up teal today for Alzheimer’s awareness",
-   "link": "https://alzheimersnewstoday.com/news/landmarks-worldwide-light-up-teal-today-alzheimers-awareness-month/",
-   "source": "Alzheimer's News Today",
-   "published": "2026-11-02T13:15:46Z"
   }
  ]
 }
