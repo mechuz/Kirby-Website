@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-16T19:36:35Z",
+ "fetched_at": "2026-11-17T18:34:42Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 5,
+   "count": 7,
    "error": ""
   },
   {
@@ -68,7 +68,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 7,
+   "count": 5,
    "error": ""
   },
   {
@@ -108,6 +108,60 @@
   }
  ],
  "items": [
+  {
+   "title": "LifeLoop launches Olia, the AI companion for senior living that moves teams from insight to action",
+   "link": "https://www.argentum.org/lifeloop-launches-olia-the-ai-companion-for-senior-living-that-moves-teams-from-insight-to-action/",
+   "source": "Argentum",
+   "published": "2026-11-17T17:45:30Z"
+  },
+  {
+   "title": "Inflation Is Up. Isolation Doesn’t Have to Be.",
+   "link": "https://www.argentum.org/inflation-is-up-isolation-doesnt-have-to-be/",
+   "source": "Argentum",
+   "published": "2026-11-17T17:38:46Z"
+  },
+  {
+   "title": "Argentum and NIC MAP Special Report Examines How Operating Expenses Constrain Senior Housing Development Despite Record Demand",
+   "link": "https://www.argentum.org/argentum-and-nic-map-special-report-examines-how-operating-expenses-constrain-senior-housing-development-despite-record-demand/",
+   "source": "Argentum",
+   "published": "2026-11-17T15:13:10Z"
+  },
+  {
+   "title": "Alzheimer’s Researcher Calls for Earlier Diagnosis to Better Manage Dementia as Care Needs Grow",
+   "link": "https://seniorhousingnews.com/2026/11/16/alzheimers-researcher-calls-for-earlier-diagnosis-to-better-manage-dementia-as-care-needs-grow/",
+   "source": "Senior Housing News",
+   "published": "2026-11-16T22:17:46Z"
+  },
+  {
+   "title": "Dial Senior Living Grows to 39 Communities in 8 States as it Merges with The Waters Senior Living",
+   "link": "https://seniorhousingnews.com/2026/11/16/dial-senior-living-grows-to-39-communities-in-8-states-as-it-merges-with-the-waters-senior-living/",
+   "source": "Senior Housing News",
+   "published": "2026-11-16T22:02:10Z"
+  },
+  {
+   "title": "How 2Life, Lifespark and Maplewood Are Changing Resident Engagement With Personalized Programming That Fosters Belonging",
+   "link": "https://seniorhousingnews.com/2026/11/16/how-2life-lifespark-and-maplewood-are-changing-resident-engagement-with-personalized-programming-that-fosters-belonging/",
+   "source": "Senior Housing News",
+   "published": "2026-11-16T21:11:53Z"
+  },
+  {
+   "title": "A Commitment to Lead: The Value of Earning and Maintaining the CDAL Credential",
+   "link": "https://www.argentum.org/a-commitment-to-lead-the-value-of-earning-and-maintaining-the-cdal-credential/",
+   "source": "Argentum",
+   "published": "2026-11-16T20:41:54Z"
+  },
+  {
+   "title": "Big Ideas and Great Connections at Argentum’s Leadership Summit",
+   "link": "https://www.argentum.org/big-ideas-and-great-connections-at-argentums-leadership-summit/",
+   "source": "Argentum",
+   "published": "2026-11-16T20:26:54Z"
+  },
+  {
+   "title": "Post-Election Briefing: Election Results Reshape the Policy Landscape for Senior Living",
+   "link": "https://www.argentum.org/post-election-briefing-election-results-reshape-the-policy-landscape-for-senior-living/",
+   "source": "Argentum",
+   "published": "2026-11-16T20:15:41Z"
+  },
   {
    "title": "3 Steps to Take in Q4 2026 For AI Success in 2027",
    "link": "https://seniorhousingnews.com/2026/11/16/3-steps-to-take-in-q4-2026-for-ai-success-in-2027/",
@@ -169,12 +223,6 @@
    "published": "2026-11-11T12:59:57Z"
   },
   {
-   "title": "New Congress Brings Senior Living Ownership, Staffing Scrutiny, More Opportunities to Address Affordability",
-   "link": "https://seniorhousingnews.com/2026/11/10/new-congress-brings-senior-living-ownership-staffing-scrutiny-more-opportunities-to-address-affordability/",
-   "source": "Senior Housing News",
-   "published": "2026-11-10T22:31:58Z"
-  },
-  {
    "title": "Eating less protein could slow aging, review of 350 studies finds",
    "link": "https://www.sciencedaily.com/releases/2026/11/261108203714.htm",
    "source": "ScienceDaily",
@@ -191,42 +239,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233103.htm",
    "source": "ScienceDaily",
    "published": "2026-11-10T01:47:34Z"
-  },
-  {
-   "title": "This Veterans Day, One Veteran’s Dream Honors a Friend He Never Forgot",
-   "link": "https://www.argentum.org/this-veterans-day-one-veterans-dream-honors-a-friend-he-never-forgot/",
-   "source": "Argentum",
-   "published": "2026-11-09T20:21:18Z"
-  },
-  {
-   "title": "DOL Independent Contractor Rule Nears Release",
-   "link": "https://www.argentum.org/dol-independent-contractor-rule-nears-release/",
-   "source": "Argentum",
-   "published": "2026-11-09T20:09:48Z"
-  },
-  {
-   "title": "New Congressional Oversight Plans Signal Greater Scrutiny for Senior Living",
-   "link": "https://www.argentum.org/new-congressional-oversight-plans-signal-greater-scrutiny-for-senior-living/",
-   "source": "Argentum",
-   "published": "2026-11-09T20:04:43Z"
-  },
-  {
-   "title": "Make Connection a Priority This Holiday Season",
-   "link": "https://www.argentum.org/make-connection-a-priority-this-holiday-season/",
-   "source": "Argentum",
-   "published": "2026-11-09T18:10:15Z"
-  },
-  {
-   "title": "Last Chance to Join Senior Living Leaders in Austin",
-   "link": "https://www.argentum.org/last-chance-to-join-senior-living-leaders-in-austin/",
-   "source": "Argentum",
-   "published": "2026-11-09T17:10:52Z"
-  },
-  {
-   "title": "I Love Senior Living: Honoring Service, Sharing Gratitude",
-   "link": "https://www.argentum.org/i-love-senior-living-honoring-service-sharing-gratitude/",
-   "source": "Argentum",
-   "published": "2026-11-09T17:04:45Z"
   },
   {
    "title": "Common osteoporosis drugs linked to 24% lower dementia risk in major study",
@@ -263,18 +275,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261104084017.htm",
    "source": "ScienceDaily",
    "published": "2026-11-06T01:11:19Z"
-  },
-  {
-   "title": "Scientists discover new Alzheimer’s drug that repairs DNA damage and reduces brain inflammation",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261102075806.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-03T04:11:58Z"
-  },
-  {
-   "title": "Scientists reverse liver cell aging and cut Alzheimer’s-linked protein in half",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261031221155.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-03T00:34:59Z"
   }
  ]
 }
