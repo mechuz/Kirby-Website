@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-17T18:34:42Z",
+ "fetched_at": "2026-11-18T18:04:19Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 7,
+   "count": 8,
    "error": ""
   },
   {
@@ -68,14 +68,14 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
@@ -108,6 +108,42 @@
   }
  ],
  "items": [
+  {
+   "title": "Edgehill Health Center Recognized Among Best in the Country by U.S. News & World Report",
+   "link": "https://www.argentum.org/edgehill-health-center-recognized-among-best-in-the-country-by-u-s-news-world-report/",
+   "source": "Argentum",
+   "published": "2026-11-18T17:45:41Z"
+  },
+  {
+   "title": "MIT discovers that aging weakens the brain’s nighttime cleaning system",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261114202137.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-18T12:06:44Z"
+  },
+  {
+   "title": "A little-known protein could be a powerful weapon against Alzheimer’s",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261114202233.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-18T11:53:30Z"
+  },
+  {
+   "title": "NexCore, MetLife Launch Senior Living Co-Investment, Development Venture",
+   "link": "https://seniorhousingnews.com/2026/11/17/nexcore-metlife-launch-senior-living-co-investment-development-venture/",
+   "source": "Senior Housing News",
+   "published": "2026-11-17T22:45:14Z"
+  },
+  {
+   "title": "Senior Living Demand is Hot, Development is Not. A New Report Helps Explain Why",
+   "link": "https://seniorhousingnews.com/2026/11/17/senior-living-demand-is-hot-development-is-not-a-new-report-helps-explain-why/",
+   "source": "Senior Housing News",
+   "published": "2026-11-17T21:46:57Z"
+  },
+  {
+   "title": "Not Just for Memory Care: Operators Extend Brain Health into Independent Living, Assisted Living",
+   "link": "https://seniorhousingnews.com/2026/11/17/not-just-for-memory-care-operators-extend-brain-health-into-independent-living-assisted-living/",
+   "source": "Senior Housing News",
+   "published": "2026-11-17T20:43:32Z"
+  },
   {
    "title": "LifeLoop launches Olia, the AI companion for senior living that moves teams from insight to action",
    "link": "https://www.argentum.org/lifeloop-launches-olia-the-ai-companion-for-senior-living-that-moves-teams-from-insight-to-action/",
@@ -193,28 +229,10 @@
    "published": "2026-11-13T21:44:14Z"
   },
   {
-   "title": "Senior Living Operators Deploy New Models Aimed at Middle-Income Residents",
-   "link": "https://seniorhousingnews.com/2026/11/13/senior-living-operators-deploy-new-models-aimed-at-middle-income-residents/",
-   "source": "Senior Housing News",
-   "published": "2026-11-13T21:27:35Z"
-  },
-  {
-   "title": "Odyssey Debacle Parallels How Cruise Ship-Style Senior Living Has Run Aground",
-   "link": "https://seniorhousingnews.com/2026/11/12/odyssey-debacle-parallels-how-cruise-ship-style-senior-living-has-run-aground/",
-   "source": "Senior Housing News",
-   "published": "2026-11-12T20:35:30Z"
-  },
-  {
    "title": "Tarkett Earns Cradle to Cradle Certified® Silver Version 5.0 for Ethos® Carpet Tile Portfolio",
    "link": "https://www.argentum.org/tarkett-earns-cradle-to-cradle-certified-silver-version-5-0-for-ethos-carpet-tile-portfolio/",
    "source": "Argentum",
    "published": "2026-11-12T20:33:54Z"
-  },
-  {
-   "title": "Tarkett Convenes Cross-Disciplinary Group on Future of Senior Living Design",
-   "link": "https://www.argentum.org/tarkett-convenes-cross-disciplinary-group-on-future-of-senior-living-design/",
-   "source": "Argentum",
-   "published": "2026-11-12T19:47:53Z"
   },
   {
    "title": "Obesity linked to up to 27% lower risk of death in dementia",
