@@ -8,6 +8,8 @@
 }
 .kgc-launch:hover, .kgc-launch:focus-visible { background: var(--green, #4e9a51); }
 .kgc-launch.kgc-open { display: none; }
+/* Hidden while the short call-back form is on screen, so it never covers that form's button. */
+.kgc-launch.kgc-away { display: none; }
 .kgc-panel {
   position: fixed; right: 18px; bottom: 18px; z-index: 901;
   width: min(380px, calc(100vw - 24px)); height: min(560px, calc(100vh - 110px)); height: min(560px, calc(100dvh - 110px));

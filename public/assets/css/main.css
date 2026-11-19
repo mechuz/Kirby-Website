@@ -320,6 +320,25 @@ body { letter-spacing: -0.005em; }
   outline: 2px solid var(--green-light); border-color: var(--green);
 }
 .form-note { font-size: 0.85rem; color: #5f6b60; margin-top: 1rem; }
+
+/* Call-back band: a two-field lead form on the pages ads land on (see CALL_ME in build.py). */
+.call-me { background: var(--ice); padding: 2.75rem 0; }
+.call-me-paper { background: var(--paper); }
+.call-me-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 2.5rem; align-items: center; }
+.call-me h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
+.call-me-alt { margin-top: 0.6rem; font-weight: 600; }
+/* One line and a 44px tap height for the phone number. */
+.call-me-alt a { white-space: nowrap; display: inline-block; padding: 0.5rem 0; margin: -0.5rem 0; }
+.call-me-form { padding: 1.5rem; }
+.call-me-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.call-me-fields .form-row { margin-bottom: 0; }
+.call-me-form .btn { margin-top: 1rem; width: 100%; text-align: center; justify-content: center; }
+.call-me-form .form-note { margin-top: 0.8rem; }
+.call-me-form .call-me-who { margin-top: 0.9rem; }
+@media (max-width: 960px) { .call-me-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
+@media (max-width: 520px) { .call-me { padding: 2rem 0; } .call-me-fields { grid-template-columns: 1fr; } .call-me-form { padding: 1.1rem; } .call-me h2 { margin-bottom: 0.3rem; } }
+/* When the browser scrolls to a field it wants filled in, keep it clear of the sticky header. */
+.form-row input, .form-row select, .form-row textarea { scroll-margin-top: 7.5rem; }
 .contact-info-card { background: var(--paper); border-radius: var(--radius); padding: 2rem; }
 .contact-info-card h3 { margin-top: 1.25rem; }
 .contact-info-card h3:first-child { margin-top: 0; }

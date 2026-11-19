@@ -163,6 +163,89 @@ TOUR_CTA = """<div class="post-cta">
     </div>"""
 
 
+# Call-back band ({{call_me:<key>}}): a two-field lead form for the pages ads land on.
+# Added 2026-11-19: analytics showed ad visitors almost never reached the longer form on
+# the contact page (it was started 21 times in the two weeks to Nov 2 and once in the 16
+# days after). It is an ordinary lead form (data-lead-form), so main.js screens and sends
+# it exactly like the contact form. The main line is written out here because build()
+# fills {{phone_*}} in the page template before the body is inserted, so those tokens
+# are not resolved inside a content page's body.
+_CALL_MAIN = 'Prefer to talk now? Call <a href="tel:9017533449" data-track="phone">(901) 753-3449</a>.'
+_CALL_RESERVATIONS = 'Prefer to talk now? Call reservations at <a href="tel:9012475835" data-track="phone">(901) 247-5835</a>.'
+CALL_ME_PAGES = {
+    # key: (eyebrow, sentence under the heading, hidden "interest" value, page name used in the
+    # lead email, extra CSS class, "prefer to talk now" line).
+    # The interest is only the page the visitor was on; the hidden message says so, because
+    # this form asks for nothing else. The rates and reserve pages give the reservations
+    # line, like the rest of those pages. The rates page uses the paper background because
+    # the section that follows the band there is already mint.
+    "home": ("Questions First?",
+             "Leave your name and number, and a member of our team will call you about care, availability and pricing.",
+             "Not specified yet", "Home", "", _CALL_MAIN),
+    "assisted-living": ("Questions First?",
+                        "Leave your name and number, and a member of our team will call you about assisted living, availability and pricing.",
+                        "Assisted Living", "Assisted Living", "", _CALL_MAIN),
+    "memory-care": ("Questions First?",
+                    "Leave your name and number, and a member of our team will call you about memory care, availability and pricing.",
+                    "Memory Care", "Memory Care", "", _CALL_MAIN),
+    "rates": ("Questions First?",
+              "Leave your name and number, and a member of our team will call you to go over suites, pricing and current availability.",
+              "Rates &amp; Availability", "Rates and Floor Plans", " call-me-paper", _CALL_RESERVATIONS),
+    "reserve": ("Not Ready to Apply?",
+                "Leave your name and number, and a member of our team will call you about suites, pricing and next steps.",
+                "Questions before applying", "Reserve", "", _CALL_RESERVATIONS),
+}
+
+# The consent line does not link the Terms of Service on purpose: this form asks only for a
+# phone call and must not imply text messages.
+CALL_ME = """<section class="call-me%(cls)s" id="call-me" aria-labelledby="call-me-h">
+  <div class="container call-me-grid">
+    <div>
+      <p class="eyebrow">%(eyebrow)s</p>
+      <h2 id="call-me-h">Have Us Call You</h2>
+      <p>%(lead)s</p>
+      <p class="call-me-alt">%(alt)s</p>
+    </div>
+    <div>
+      <noscript><style>.call-me-form{display:none}</style><p class="form-note">This form needs JavaScript. Please call us at <a href="tel:9017533449">(901) 753-3449</a>.</p></noscript>
+      <form class="contact-form call-me-form" action="/thank-you/" data-lead-form method="POST">
+        <input type="hidden" name="_cc" value="mechuz@kirbygateliving.com,community@kirbygateliving.com,reception@kirbygateliving.com">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_subject" value="NEW LEAD — kirbygateliving.com call-back request (%(page)s page)">
+        <input type="hidden" name="_next" value="https://www.kirbygateliving.com/thank-you/">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_blacklist" value="seeking employment, job opportunity, employment opportunities, my resume, backlinks, seo services, guest post, web design, tourist.com, bitcoin, crypto, casino">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="interest" value="%(interest)s">
+        <input type="hidden" name="message" value="Call-back request from the short form on the %(page)s page. The visitor gave only a name and phone number. The interest shown is the page they were on, not a choice they made.">
+        <div class="call-me-fields">
+          <div class="form-row">
+            <label for="cm-name">Your name *</label>
+            <input type="text" id="cm-name" name="name" required autocomplete="name">
+          </div>
+          <div class="form-row">
+            <label for="cm-phone">Phone *</label>
+            <input type="tel" id="cm-phone" name="phone" required autocomplete="tel" inputmode="tel">
+          </div>
+        </div>
+        <p class="form-note call-me-who">Job seekers, vendors and calls for current residents: please call the main line, <a href="tel:9017533449">(901) 753-3449</a>.</p>
+        <button type="submit" class="btn btn-primary">Request a Call</button>
+        <p class="form-note">By sending this request you agree that our team may call you about your inquiry at the number you give. Sending it does not sign you up for text messages. See our <a href="/privacy-policy/">Privacy Policy</a>. Your information is never sold.</p>
+      </form>
+    </div>
+  </div>
+</section>"""
+
+
+def render_call_me(key):
+    """The call-back band for one page. An unknown key stops the build, so a typo in a
+    content file can never publish a page with a raw {{call_me:...}} token."""
+    if key not in CALL_ME_PAGES:
+        raise ValueError("Unknown {{call_me:%s}}; known keys: %s" % (key, ", ".join(sorted(CALL_ME_PAGES))))
+    eyebrow, lead, interest, page, cls, alt = CALL_ME_PAGES[key]
+    return CALL_ME % {"eyebrow": eyebrow, "lead": lead, "interest": interest, "page": page, "cls": cls, "alt": alt}
+
+
 def render_html(meta, body, head_extra=""):
     """Wrap a body in templates/base.html. Placeholders inside the body
     ({{phone_fmt}}, {{icon:...}}) are resolved too."""
@@ -1317,6 +1400,10 @@ def build():
         if "{{dl_" in body:
             for _k, _v in _dl_tokens.items():
                 body = body.replace("{{%s}}" % _k, _v)
+        if "{{call_me:" in body:
+            body = re.sub(r"\{\{call_me:([^}]*)\}\}", lambda m: render_call_me(m.group(1).strip()), body)
+            if body.count('id="call-me"') > 1:
+                raise ValueError("{{call_me:...}} is used more than once in %s" % f.name)
         import html as _html
         main_phone = meta.get("phone") == "main"
         repl = {

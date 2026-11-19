@@ -98,8 +98,10 @@ function kgLeadSource() {
 // real family to solve a puzzle. Rules, all deliberately conservative:
 //  - a link together with a typical spam word (casino, betting, crypto, loan, SEO ...),
 //  - more than 2 links,
-//  - Cyrillic or Chinese/Japanese/Korean text with a link, or with no English letters
-//    at all in the name and message.
+//  - Cyrillic or Chinese/Japanese/Korean text together with a link.
+// Another alphabet on its own is never a reason to drop a message (changed 2026-11-19):
+// a family may write in their own language, and on the short call-back form the name is
+// the only thing typed, so a name in Korean, Chinese or Russian letters must get through.
 // Email addresses are ignored when counting links, so "my email is jo@gmail.com" is fine.
 window.kgSpam = (function () {
   // Kept specific on purpose: a family pasting a VA or pharmacy link must still get through.
@@ -115,7 +117,7 @@ window.kgSpam = (function () {
     if (links && WORDS.test(words)) return "spam_words";
     var plain = prose.replace(EMAIL, " ").replace(LINK, " ");
     var foreign = (plain.match(FOREIGN) || []).length;
-    if (foreign >= 3 && (links || !/[A-Za-z]/.test(plain))) return "spam_script";
+    if (foreign >= 3 && links) return "spam_script";
     return "";
   }
   function form(f) {
@@ -230,6 +232,9 @@ window.kgSpam = (function () {
       if (done) return; done = true;
       try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
       if (via !== "zapier" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead", via: via });
+      // The short call-back band (build.py CALL_ME) gets its own event so its leads can be
+      // counted apart from the contact form's.
+      if (form.classList.contains("call-me-form") && typeof gtag === "function") gtag("event", "call_back_request", { event_category: "lead", transport_type: "beacon" });
       location.href = next && next.value ? next.value : "/thank-you/";
     }
     function giveUp(why) {
@@ -275,6 +280,8 @@ window.kgSpam = (function () {
     var hp = form.querySelector('[name="_honey"]');
     fd.append("hp", hp ? hp.value : "");
     fd.append("el", String(Date.now() - loaded));
+    // Set when the request was held back until the three-second bot timer ran out.
+    if (form.dataset.kgFast) fd.append("fast", "1");
     var src = kgLeadSource();
     Object.keys(src).forEach(function (k) { fd.append(k, String(src[k]).slice(0, 200)); });
     var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
@@ -282,11 +289,22 @@ window.kgSpam = (function () {
       .then(function () { clearTimeout(t1); success("zapier"); })
       .catch(function () { clearTimeout(t1); fallback("network"); });
   }
-  document.addEventListener("submit", function (e) {
-    var form = e.target;
-    if (!form || !form.dataset || !form.dataset.screened || e.defaultPrevented) return;
-    e.preventDefault();
-    var r = check(form);
+  // Tie the phone error to the phone field for screen readers and put the cursor there.
+  function markPhone(form, bad) {
+    var ph = form.querySelector('[name="phone"]');
+    if (!ph) return;
+    if (bad) {
+      var n = form.querySelector(".form-screen-note");
+      if (n && !n.id) n.id = "kg-note-" + Math.random().toString(36).slice(2, 8);
+      ph.setAttribute("aria-invalid", "true");
+      if (n) ph.setAttribute("aria-describedby", n.id);
+      ph.focus();
+    } else {
+      ph.removeAttribute("aria-invalid");
+      ph.removeAttribute("aria-describedby");
+    }
+  }
+  function handle(form, r) {
     if (!r.ok) {
       // Bots: pretend it worked and send nothing. The thank-you page does not count
       // these as leads (no kg_lead_ok flag).
@@ -296,15 +314,42 @@ window.kgSpam = (function () {
         return;
       }
       note(form, r.msg);
+      markPhone(form, r.why === "phone");
       if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: r.why });
       return;
     }
     note(form, "");
+    markPhone(form, false);
     if (!window.fetch || !window.FormData) {
       note(form, FAIL_NOTE);
       return;
     }
     send(form);
+  }
+  document.addEventListener("submit", function (e) {
+    var form = e.target;
+    if (!form || !form.dataset || !form.dataset.screened || e.defaultPrevented) return;
+    e.preventDefault();
+    if (form.dataset.kgWait) return;
+    var r = check(form);
+    if (!r.ok && r.why === "fast") {
+      // A person whose phone fills in name and number can finish the two-field form
+      // inside the three-second bot timer. Hold the request until the timer runs out and
+      // check it again, rather than dropping it without a word (changed 2026-11-19). The
+      // honeypots were already checked; the spam, job and phone checks run after the wait.
+      form.dataset.kgWait = "1";
+      form.dataset.kgFast = "1";
+      var wb = form.querySelector('[type="submit"]');
+      var wasOff = wb ? wb.disabled : false;
+      if (wb) wb.disabled = true;
+      setTimeout(function () {
+        delete form.dataset.kgWait;
+        if (wb) wb.disabled = wasOff;
+        handle(form, check(form));
+      }, Math.max(window.kgSpam.MIN_MS - (Date.now() - loaded), 0) + 50);
+      return;
+    }
+    handle(form, r);
   });
   window.kgScreenForm = attach;
   document.querySelectorAll("form[data-lead-form]").forEach(attach);

@@ -131,6 +131,15 @@
     '<p class="kgc-note">Automated answers from our website. For anything personal or medical, talk with our team.</p>';
 
   document.body.appendChild(launcher);
+  // The launcher sits bottom-right and would cover the "Request a Call" button of the short
+  // call-back form on phones. That form offers the same call back, so step aside while it
+  // is on screen.
+  var callMe = document.querySelector("form.call-me-form");
+  if (callMe && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      launcher.classList.toggle("kgc-away", entries[entries.length - 1].isIntersecting);
+    }).observe(callMe);
+  }
   document.body.appendChild(panel);
   var log = panel.querySelector(".kgc-log");
   var started = false;
