@@ -18,18 +18,18 @@ var FORM_CONVERSION_LABEL = "9qxfCLvdra4dEN-2oJZE";
   }
 })();
 
-// Track phone-link clicks as a gtag event (calls from ads are already
-// tracked via call reporting; this covers organic site visitors).
+// Track every tap on a phone link as a gtag event (calls from ads are already
+// tracked via call reporting; this covers taps on the site). One listener on the page
+// catches every tel: link, tagged with data-track="phone" or not, including links that
+// scripts add later (until 2026-11-19 only tagged links were counted, and seven were not).
 (function () {
-  document.querySelectorAll('[data-track="phone"]').forEach(function (el) {
-    el.addEventListener("click", function () {
-      if (typeof gtag === "function") {
-        gtag("event", "phone_click", { event_category: "engagement" });
-        // Google Ads conversion "Website phone click" (ID 7872108647) — counts
-        // tel: taps from ad visitors who call the main line instead of the ad number.
-        gtag("event", "conversion", { send_to: "AW-18300279647/jhcdCOew26kdEN-2oJZE" });
-      }
-    });
+  document.addEventListener("click", function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('a[href^="tel:"], [data-track="phone"]') : null;
+    if (!el || typeof gtag !== "function") return;
+    gtag("event", "phone_click", { event_category: "engagement" });
+    // Google Ads conversion "Website phone click" (ID 7872108647) — counts
+    // tel: taps from ad visitors who call the main line instead of the ad number.
+    gtag("event", "conversion", { send_to: "AW-18300279647/jhcdCOew26kdEN-2oJZE" });
   });
 })();
 
