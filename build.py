@@ -163,6 +163,81 @@ TOUR_CTA = """<div class="post-cta">
     </div>"""
 
 
+# Call-back band ({{call_me:<key>}}): a two-field lead form for the pages ads land on.
+# Added 2026-11-19: analytics showed ad visitors almost never reached the longer form on
+# the contact page (it was started 21 times in the two weeks to Nov 2 and once in the 16
+# days after). It is an ordinary lead form (data-lead-form), so main.js screens and sends
+# it exactly like the contact form. The main line is written out here because build()
+# fills {{phone_*}} in the page template before the body is inserted, so those tokens
+# are not resolved inside a content page's body.
+CALL_ME_PAGES = {
+    # key: (eyebrow, sentence under the heading, hidden "interest" value, page name used in the
+    # lead email, extra CSS class). The rates page uses the paper background because the
+    # section that follows the band there is already mint.
+    "home": ("Questions First?",
+             "Leave your name and number, and a member of our team will call you about care, availability and pricing.",
+             "Not specified yet", "Home", ""),
+    "assisted-living": ("Questions First?",
+                        "Leave your name and number, and a member of our team will call you about assisted living, availability and pricing.",
+                        "Assisted Living", "Assisted Living", ""),
+    "memory-care": ("Questions First?",
+                    "Leave your name and number, and a member of our team will call you about memory care, availability and pricing.",
+                    "Memory Care", "Memory Care", ""),
+    "rates": ("Questions First?",
+              "Leave your name and number, and a member of our team will call you to go over suites, pricing and what is available now.",
+              "Rates &amp; Availability", "Rates and Floor Plans", " call-me-paper"),
+    "reserve": ("Not Ready to Apply?",
+                "Leave your name and number, and a member of our team will call you about suites, pricing and next steps.",
+                "Applying / Reserving a Suite", "Reserve", ""),
+}
+
+CALL_ME = """<section class="call-me%(cls)s" id="call-me" aria-labelledby="call-me-h">
+  <div class="container call-me-grid">
+    <div>
+      <p class="eyebrow">%(eyebrow)s</p>
+      <h2 id="call-me-h">Have Us Call You</h2>
+      <p>%(lead)s</p>
+      <p class="call-me-alt">Prefer to talk now? Call <a href="tel:9017533449" data-track="phone">(901) 753-3449</a>.</p>
+    </div>
+    <div>
+      <noscript><p class="form-note">This form needs JavaScript. Please call us at <a href="tel:9017533449">(901) 753-3449</a>.</p></noscript>
+      <form class="contact-form call-me-form" action="/thank-you/" data-lead-form method="POST">
+        <input type="hidden" name="_cc" value="mechuz@kirbygateliving.com,community@kirbygateliving.com,reception@kirbygateliving.com">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_subject" value="NEW LEAD — kirbygateliving.com call-back request (%(page)s page)">
+        <input type="hidden" name="_next" value="https://www.kirbygateliving.com/thank-you/">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_blacklist" value="seeking employment, job opportunity, employment opportunities, my resume, backlinks, seo services, guest post, web design, tourist.com, bitcoin, crypto, casino">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="interest" value="%(interest)s">
+        <input type="hidden" name="message" value="Please call me back. Sent from the short call-back form on the %(page)s page.">
+        <div class="call-me-fields">
+          <div class="form-row">
+            <label for="cm-name">Your name *</label>
+            <input type="text" id="cm-name" name="name" required autocomplete="name">
+          </div>
+          <div class="form-row">
+            <label for="cm-phone">Phone *</label>
+            <input type="tel" id="cm-phone" name="phone" required autocomplete="tel" inputmode="tel">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Request a Call</button>
+        <p class="form-note">By sending this request you agree to be contacted by phone about your inquiry, and to our <a href="/terms-of-service/">Terms of Service</a> and <a href="/privacy-policy/">Privacy Policy</a>. Your information is never sold. Job seekers, vendors and calls for current residents: please call the main line, <a href="tel:9017533449">(901) 753-3449</a>.</p>
+      </form>
+    </div>
+  </div>
+</section>"""
+
+
+def render_call_me(key):
+    """The call-back band for one page. An unknown key stops the build, so a typo in a
+    content file can never publish a page with a raw {{call_me:...}} token."""
+    if key not in CALL_ME_PAGES:
+        raise ValueError("Unknown {{call_me:%s}}; known keys: %s" % (key, ", ".join(sorted(CALL_ME_PAGES))))
+    eyebrow, lead, interest, page, cls = CALL_ME_PAGES[key]
+    return CALL_ME % {"eyebrow": eyebrow, "lead": lead, "interest": interest, "page": page, "cls": cls}
+
+
 def render_html(meta, body, head_extra=""):
     """Wrap a body in templates/base.html. Placeholders inside the body
     ({{phone_fmt}}, {{icon:...}}) are resolved too."""
@@ -1317,6 +1392,8 @@ def build():
         if "{{dl_" in body:
             for _k, _v in _dl_tokens.items():
                 body = body.replace("{{%s}}" % _k, _v)
+        if "{{call_me:" in body:
+            body = re.sub(r"\{\{call_me:([a-z-]+)\}\}", lambda m: render_call_me(m.group(1)), body)
         import html as _html
         main_phone = meta.get("phone") == "main"
         repl = {

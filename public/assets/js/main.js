@@ -230,6 +230,9 @@ window.kgSpam = (function () {
       if (done) return; done = true;
       try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
       if (via !== "zapier" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead", via: via });
+      // The short call-back band (build.py CALL_ME) gets its own event so its leads can be
+      // counted apart from the contact form's.
+      if (form.classList.contains("call-me-form") && typeof gtag === "function") gtag("event", "call_back_request", { event_category: "lead", transport_type: "beacon" });
       location.href = next && next.value ? next.value : "/thank-you/";
     }
     function giveUp(why) {
