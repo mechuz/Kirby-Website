@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say voice="Polly.Joanna">Thank you. We have your message and will call you back soon. Goodbye.</Say>
+  <Hangup/>
+</Response>
