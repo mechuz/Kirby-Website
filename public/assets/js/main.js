@@ -453,6 +453,8 @@ window.kgSpam = (function () {
   var view = new Date(today.getFullYear(), today.getMonth(), 1);
   var maxView = new Date(today.getFullYear(), today.getMonth() + 11, 1);
   var start = null, end = null;
+  var flex = document.getElementById("bk-flex");
+  function flexOn() { return !!(flex && flex.checked); }
   var fmt = function (d) {
     return MONTHS[d.getMonth()].slice(0,3) + " " + d.getDate() + ", " + d.getFullYear();
   };
@@ -509,9 +511,20 @@ window.kgSpam = (function () {
     if (sIn) sIn.textContent = start ? fmt(start) : "—";
     if (sOut) sOut.textContent = end ? fmt(end) : "—";
     if (sN) sN.textContent = nights ? nights + " nights" : "—";
-    if (btn) btn.disabled = !(start && end);
+    // Families who do not know their dates yet can still send the request
+    // (2026-11-19: 18 people started this form in 28 days and 1 sent it, because the
+    // button stayed locked until two dates were picked).
+    var open = flexOn();
+    var ready = !!(start && end);
+    if (btn) {
+      btn.disabled = !(ready || open);
+      btn.textContent = ready || !open ? "Request These Dates" : "Request a Call About a Stay";
+    }
+    var need = document.getElementById("bk-need");
+    if (need) need.hidden = ready || open;
     if (hint) {
-      if (!start) hint.textContent = "Select your check-in date.";
+      if (!start && open) hint.textContent = "No dates needed. Fill in your details below and we will call you to plan the stay.";
+      else if (!start) hint.textContent = "Select your check-in date.";
       else if (!end) hint.textContent = "Now select a check-out date at least " + MIN_NIGHTS + " days later.";
       else hint.textContent = "Dates look good — fill in your details below and send the request.";
     }
@@ -545,15 +558,16 @@ window.kgSpam = (function () {
   });
   var form = document.getElementById("bk-form");
   if (form) form.addEventListener("submit", function (e) {
-    if (!start || !end) {
+    if ((!start || !end) && !flexOn()) {
       e.preventDefault();
       var hint = document.getElementById("bk-hint");
       if (hint) hint.textContent = "Please select your dates on the calendar first.";
       root.scrollIntoView({ behavior: "smooth", block: "center" });
     } else if (typeof gtag === "function") {
-      gtag("event", "respite_booking_request", { event_category: "engagement" });
+      gtag("event", "respite_booking_request", { event_category: "engagement", dates: start && end ? "set" : "open" });
     }
   });
+  if (flex) flex.addEventListener("change", update);
   render();
 })();
 

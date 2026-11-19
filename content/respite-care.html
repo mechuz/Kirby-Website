@@ -109,6 +109,7 @@ nav: respite
           <label for="bk-notes">Anything we should know about your loved one&rsquo;s needs?</label>
           <textarea id="bk-notes" name="notes" rows="3"></textarea>
         </div>
+        <label class="consent" style="margin-bottom:1rem"><input type="checkbox" id="bk-flex" name="dates_not_set" value="yes"> <span>I don&rsquo;t have exact dates yet. Please call me to plan the stay.</span></label>
         <div class="rules-box">
           <h4>Booking rules &mdash; please read before you request</h4>
           <ul>
@@ -121,6 +122,7 @@ nav: respite
           </ul>
           <label class="consent"><input type="checkbox" name="agreed_to_booking_rules" value="yes" required> <span>I have read and agree to the booking rules. *</span></label>
         </div>
+        <p class="form-note" id="bk-need" role="status" style="margin-bottom:.75rem">To send your request, choose your dates on the calendar above, or tick &ldquo;I don&rsquo;t have exact dates yet.&rdquo;</p>
         <button type="submit" class="btn btn-primary btn-lg btn-arrow" id="bk-submit" disabled>Request These Dates</button>
         <p class="form-note">This is a booking request, not a confirmed reservation &mdash; we confirm availability, the daily rate, and a brief nurse assessment before check-in, as required for licensed assisted-care facilities in Tennessee. No payment is collected online.</p>
       </form>
