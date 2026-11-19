@@ -3,6 +3,6 @@
 <Response>
   <Pause length="1"/>
   <Say voice="Polly.Joanna">Thank you for calling The Pointe at Kirby Gate, assisted living and memory care in East Memphis. We're sorry we missed your call. Please leave your name, your phone number, and how we can help after the tone, and a member of our team will call you back as soon as possible. You can also book a tour any time at kirby gate living dot com.</Say>
-  <Record maxLength="180" timeout="6" playBeep="true" finishOnKey="#" method="GET" action="https://www.kirbygateliving.com/phone/thanks.xml"/>
+  <Record maxLength="120" timeout="6" playBeep="true" finishOnKey="#" transcribe="true" method="GET" action="https://www.kirbygateliving.com/phone/thanks.xml"/>
   <Say voice="Polly.Joanna">We did not get a message. Please call us again, or visit kirby gate living dot com. Goodbye.</Say>
 </Response>
