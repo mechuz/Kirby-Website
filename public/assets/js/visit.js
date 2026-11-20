@@ -2,10 +2,15 @@
 // Email links add ?r=<lead id>&n=<first name>, so a known family never retypes
 // their name or phone. Without r, the page also asks for name and phone.
 // Bookings go to the website's lead workflow, which alerts the team and logs
-// the visit on the family's lead.
+// the visit on the family's lead. Since 2026-11-20 a marked backup copy also goes to
+// FormSubmit, and FormSubmit is the fallback when the workflow cannot be reached: the
+// workflow's hook answers "success" even when it accepts a booking and then holds it.
 (function () {
   "use strict";
   var HOOK = "https://hooks.zapier.com/hooks/catch/27563206/EsZUwGqBy3rIA0Lc/";
+  var FS_AJAX = ["https://formsubmit.co/ajax/", "mechuz", "@", "medhcp.com"].join("");
+  var FS_TEAM = "mechuz@kirbygateliving.com,community@kirbygateliving.com,reception@kirbygateliving.com";
+  var TRACKER = "https://airtable.com/appZ2xOP1HzOWjug7/tbl4VEuo6ByyJAaXm/";
   var TIMES = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM"];
   var CLOSED = { "2026-11-26": 1, "2026-12-25": 1, "2027-01-01": 1 }; // holidays: no tours
   var DAYS_AHEAD = 10;
@@ -105,18 +110,67 @@
     ["utm_source", "utm_medium", "utm_campaign"].forEach(function (k) { if (q.get(k)) body.set(k, q.get(k)); });
     body.set("hp", $("kv-hp").value);
     body.set("el", String(Date.now() - loaded));
-    fetch(HOOK, { method: "POST", body: body }).then(function (r) {
-      if (!r.ok) throw new Error("status " + r.status);
+    // The same booking for FormSubmit. Names that start with TEST reach ownership only,
+    // as in the workflow.
+    function fsBooking(mark) {
+      var test = /^\s*test\b/i.test(name);
+      var f = new FormData();
+      f.set("_subject", (test ? "TEST (ignore) — " : "") + "TOUR BOOKED — " + dayLabel + " at " + time + " — " + (name || "A family") + mark);
+      if (!test) f.set("_cc", FS_TEAM);
+      f.set("_template", "table");
+      f.set("_captcha", "false");
+      f.set("_honey", "");
+      f.set("name", name || "(a family from our emails)");
+      if (phone) f.set("phone", phone);
+      f.set("visit_date", day);
+      f.set("visit_time", time);
+      if (leadId) f.set("lead_in_tracker", TRACKER + leadId);
+      f.set("page", location.pathname);
+      f.set("please", "Call to confirm and add it to the calendar.");
+      return f;
+    }
+    var settled = false;
+    function done(via) {
+      if (settled) return; settled = true;
       if (typeof gtag === "function") {
         gtag("event", "generate_lead", { event_category: "lead", lead_source: "visit_booking" });
         // Google Ads conversion "Tour booking (/visit/ page)" (ID 7898949491), added 2026-11-11.
         gtag("event", "conversion", { send_to: "AW-18300279647/YoG6CPPOwbYdEN-2oJZE" });
+        if (via !== "zapier") gtag("event", "lead_sent_backup", { event_category: "lead", via: via, form: "visit" });
       }
       booked(name);
-    }).catch(function () {
+    }
+    function fail() {
+      if (settled) return; settled = true;
       btn.disabled = false;
       btn.textContent = "Book my visit";
       msg("Sorry, that didn't go through. Please call or text (901) 247-5835 and we'll book it for you.");
-    });
+      if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: "visit", form: "visit" });
+    }
+    var tried = false;
+    function fallback(why) {
+      if (settled || tried) return; tried = true;
+      if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why, form: "visit" });
+      var t2 = setTimeout(fail, 12000);
+      fetch(FS_AJAX, { method: "POST", body: fsBooking(" (sent by website)"), headers: { Accept: "application/json" } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
+        }).then(function (r) {
+          clearTimeout(t2);
+          if (r.ok && String(r.j.success) === "true") done("formsubmit"); else fail();
+        }).catch(function () { clearTimeout(t2); fail(); });
+    }
+    var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
+    fetch(HOOK, { method: "POST", body: body }).then(function (r) {
+      clearTimeout(t1);
+      if (!r.ok) { fallback("status_" + r.status); return; }
+      if (settled) return;
+      if (!tried) {
+        try {
+          fetch(FS_AJAX, { method: "POST", body: fsBooking(" (backup copy)"), headers: { Accept: "application/json" }, keepalive: true }).catch(function () {});
+        } catch (err) {}
+      }
+      done("zapier");
+    }).catch(function () { clearTimeout(t1); fallback("network"); });
   });
 })();
