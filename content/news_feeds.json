@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-19T18:16:45Z",
+ "fetched_at": "2026-11-20T17:48:32Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 8,
+   "count": 7,
    "error": ""
   },
   {
@@ -109,6 +109,24 @@
  ],
  "items": [
   {
+   "title": "This simple habit is linked to a 33% lower risk of Alzheimer's",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261118065536.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-20T12:06:07Z"
+  },
+  {
+   "title": "In the Pipeline: Cedarhurst Plans Latest Nebraska Development; Covenant Starts on Expansions",
+   "link": "https://seniorhousingnews.com/2026/11/19/in-the-pipeline-cedarhurst-plans-latest-nebraska-development-covenant-starts-on-expansions/",
+   "source": "Senior Housing News",
+   "published": "2026-11-19T22:13:14Z"
+  },
+  {
+   "title": "SNL’s ‘Sister’ Sketch a Warning and Opportunity for Senior Living Operators",
+   "link": "https://seniorhousingnews.com/2026/11/19/snls-sister-sketch-a-warning-and-opportunity-for-senior-living-operators/",
+   "source": "Senior Housing News",
+   "published": "2026-11-19T19:39:06Z"
+  },
+  {
    "title": "What’s Behind a Recent Spike in Early Social Security Claims?",
    "link": "https://kffhealthnews.org/aging/social-security-early-claims-spike-doge-new-old-age/",
    "source": "KFF Health News",
@@ -185,24 +203,6 @@
    "link": "https://www.argentum.org/argentum-and-nic-map-special-report-examines-how-operating-expenses-constrain-senior-housing-development-despite-record-demand/",
    "source": "Argentum",
    "published": "2026-11-17T15:13:10Z"
-  },
-  {
-   "title": "Alzheimer’s Researcher Calls for Earlier Diagnosis to Better Manage Dementia as Care Needs Grow",
-   "link": "https://seniorhousingnews.com/2026/11/16/alzheimers-researcher-calls-for-earlier-diagnosis-to-better-manage-dementia-as-care-needs-grow/",
-   "source": "Senior Housing News",
-   "published": "2026-11-16T22:17:46Z"
-  },
-  {
-   "title": "Dial Senior Living Grows to 39 Communities in 8 States as it Merges with The Waters Senior Living",
-   "link": "https://seniorhousingnews.com/2026/11/16/dial-senior-living-grows-to-39-communities-in-8-states-as-it-merges-with-the-waters-senior-living/",
-   "source": "Senior Housing News",
-   "published": "2026-11-16T22:02:10Z"
-  },
-  {
-   "title": "How 2Life, Lifespark and Maplewood Are Changing Resident Engagement With Personalized Programming That Fosters Belonging",
-   "link": "https://seniorhousingnews.com/2026/11/16/how-2life-lifespark-and-maplewood-are-changing-resident-engagement-with-personalized-programming-that-fosters-belonging/",
-   "source": "Senior Housing News",
-   "published": "2026-11-16T21:11:53Z"
   },
   {
    "title": "A Commitment to Lead: The Value of Earning and Maintaining the CDAL Credential",
@@ -299,12 +299,6 @@
    "link": "https://www.nicmap.com/blog/senior-care-industry-attracting-new-investors/",
    "source": "NIC MAP",
    "published": "2026-11-06T20:46:22Z"
-  },
-  {
-   "title": "An anti-aging drug may help protect the brain before Alzheimer's symptoms begin",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261104084017.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-06T01:11:19Z"
   }
  ]
 }
