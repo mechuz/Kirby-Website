@@ -155,7 +155,8 @@ window.kgSpam = (function () {
   var MAIN = '<a href="tel:9017533449">(901) 753-3449</a>';
   var loaded = Date.now();
   var JOB = /\b(employment|job|jobs|hiring|hire me|resume|career|careers|looking for work|seeking work|work for you|work with your company|working with your company|job position|open position|positions? available|cna position|caregiver position|apply for (a|the) (job|position)|years of experience)\b/i;
-  var SPAM = /(https?:\/\/|www\.|\bseo\b|backlink|guest post|web ?design|marketing services|free listing|your listing|tourist\.com|crypto|bitcoin|casino|loan offer|investment opportunity)/i;
+  // "<a " and "[url" are link markup no family types; the lead workflow drops them too.
+  var SPAM = /(https?:\/\/|www\.|<a\s|\[url|\bseo\b|backlink|guest post|web ?design|marketing services|free listing|your listing|tourist\.com|crypto|bitcoin|casino|loan offer|investment opportunity)/i;
   function badPhone(p) {
     var d = String(p || "").replace(/\D/g, "");
     if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
@@ -165,6 +166,9 @@ window.kgSpam = (function () {
     if (d.slice(3, 6) === "555") return true;
     return false;
   }
+  // The tour-booking page (/visit/) uses the same phone rule, so it never accepts a
+  // number the lead workflow would then drop.
+  window.kgSpam.badPhone = badPhone;
   function note(form, html) {
     var n = form.querySelector(".form-screen-note");
     if (!n) {
@@ -227,22 +231,30 @@ window.kgSpam = (function () {
   // Backup copy (2026-11-20). Zapier answers "success" even when it accepts a lead and
   // then HOLDS the run (the account is over its task ceiling, or one of the workflow's
   // app connections has expired), so this page cannot see a hold. After Zapier accepts a
-  // lead, the same lead is therefore also handed to FormSubmit: with no automatic reply
-  // to the family, with the subject marked as a copy, and without keeping the visitor
-  // waiting (keepalive lets the request finish after the redirect). While both paths
-  // work the team gets each lead twice; the hourly intake check matches the two.
+  // lead, the same lead is therefore also handed to FormSubmit: with no FormSubmit reply
+  // to the family, with a subject that names the family and says what to do with it, and
+  // without keeping the visitor waiting (keepalive lets the request finish after the
+  // redirect). While both paths work the team gets each lead twice. During a hold the
+  // copy is the ONLY notice, so it must never be treated as noise. The lead intake check
+  // matches the two by phone number.
+  // While copies are on, do not replay held runs of the lead workflow in Zapier: the team
+  // already has each lead, and a replay would send a stale alert and a late confirmation.
   // Set FS_COPY to false to stop the copies.
   var FS_COPY = true;
-  var FS_COPY_MARK = " (backup copy)";
+  var FS_COPY_MARK = " (website copy: act on it if no other email came for this family)";
   // Names that start with TEST reach ownership only, as in the Zapier workflow: no team
-  // copies, no automatic reply, and the same "TEST (ignore)" start to the subject.
+  // copies, no FormSubmit reply, and the same "TEST (ignore)" start to the subject. (The
+  // workflow still sends its own "TEST:" confirmation when a test gives an email address.)
   var TEST_NAME = /^\s*test\b/i;
-  function fsData(form, mark, copy) {
+  // noReply: leave out FormSubmit's automatic reply to the family. withName: put the
+  // family's name in the subject, so the copy can be matched to the workflow's email.
+  function fsData(form, mark, noReply, withName) {
     var fsd = new FormData(form);
-    var test = TEST_NAME.test(String(fsd.get("name") || ""));
-    fsd.set("_subject", (test ? "TEST (ignore) — " : "") + (fsd.get("_subject") || "Website lead") + mark);
+    var name = String(fsd.get("name") || "").replace(/\s+/g, " ").trim().slice(0, 60);
+    var test = TEST_NAME.test(name);
+    fsd.set("_subject", (test ? "TEST (ignore) — " : "") + (fsd.get("_subject") || "Website lead") + (withName && name ? " — " + name : "") + mark);
     if (test) fsd.delete("_cc");
-    if (test || copy) fsd.delete("_autoresponse");
+    if (test || noReply) fsd.delete("_autoresponse");
     // FormSubmit's own honeypot: it discards any submission where _honey is filled.
     var fsHoney = form.querySelector('[name="_honey"]');
     fsd.set("_honey", fsHoney ? fsHoney.value : "");
@@ -251,14 +263,31 @@ window.kgSpam = (function () {
     Object.keys(fsSrc).forEach(function (k) { fsd.set(k, String(fsSrc[k]).slice(0, 200)); });
     return fsd;
   }
+  // Browsers refuse a keepalive request whose body is over 64 KB, so keepalive is only
+  // asked for when the typed text is short (the forms cap free text at 2,000 characters).
+  function fsSmall(fsd) {
+    try {
+      var n = 0;
+      fsd.forEach(function (v) { n += typeof v === "string" ? v.length : 0; });
+      return n < 15000;
+    } catch (err) { return false; }
+  }
   function send(form) {
     var btn = form.querySelector('[type="submit"]');
     var label = btn ? btn.textContent : "";
-    if (btn) { btn.disabled = true; btn.textContent = "Sending\u2026"; }
+    if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+    // Stops a second send while this one is in flight (the respite calendar can switch
+    // its button back on when a date changes).
+    form.dataset.kgSending = "1";
     var next = form.querySelector('[name="_next"]');
+    var started = Date.now();
     var done = false;
+    // zap: "pending" until the Zapier hook answers, then "ok" or "bad".
+    // fsFail: why the FormSubmit fallback failed, kept while Zapier has not answered yet.
+    var zap = "pending", fsFail = "", t3 = null;
     function success(via) {
       if (done) return; done = true;
+      clearTimeout(t3);
       try { sessionStorage.setItem("kg_lead_ok", "1"); } catch (err) {}
       if (via !== "zapier" && typeof gtag === "function") gtag("event", "lead_sent_backup", { event_category: "lead", via: via });
       // The short call-back band (build.py CALL_ME) gets its own event so its leads can be
@@ -268,25 +297,41 @@ window.kgSpam = (function () {
     }
     function giveUp(why) {
       if (done) return; done = true;
+      clearTimeout(t3);
+      delete form.dataset.kgSending;
       if (btn) { btn.disabled = false; btn.textContent = label; }
       note(form, FAIL_NOTE);
       if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: why });
+    }
+    // The fallback failed. If Zapier has not answered yet it may still take the lead, so
+    // wait for its answer before telling the visitor it did not go through. The wait never
+    // runs past 22 seconds from the start, which was already the longest wait.
+    function fsFailed(why) {
+      if (done) return;
+      if (zap !== "pending") { giveUp(why); return; }
+      fsFail = why;
+      clearTimeout(t3);
+      t3 = setTimeout(function () { giveUp(why); }, Math.max(22000 - (Date.now() - started), 0));
     }
     // Fallback: FormSubmit (AJAX endpoint of the form's own action).
     var tried = false;
     function fallback(why) {
       if (done || tried) return; tried = true;
       if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why });
-      var t2 = setTimeout(function () { giveUp("fallback_timeout"); }, 12000);
+      var t2 = setTimeout(function () { fsFailed("fallback_timeout"); }, 12000);
+      var body;
+      // After a time-out Zapier may still deliver the lead and send its own confirmation,
+      // so FormSubmit's reply to the family is left out then: a family never gets two.
+      try { body = fsData(form, FS_MARK, why === "timeout", false); } catch (err) { clearTimeout(t2); fsFailed("fallback_build"); return; }
       // keepalive: if Zapier answers late and the page moves on, this request still finishes.
       fetch(FS_AJAX, {
-        method: "POST", body: fsData(form, FS_MARK, false), headers: { Accept: "application/json" }, keepalive: true
+        method: "POST", body: body, headers: { Accept: "application/json" }, keepalive: fsSmall(body)
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
       }).then(function (r) {
         clearTimeout(t2);
-        if (r.ok && String(r.j.success) === "true") success("formsubmit"); else giveUp("fallback_status");
-      }).catch(function () { clearTimeout(t2); giveUp("fallback_network"); });
+        if (r.ok && String(r.j.success) === "true") success("formsubmit"); else fsFailed("fallback_status");
+      }).catch(function () { clearTimeout(t2); fsFailed("fallback_network"); });
     }
     var fd = new URLSearchParams();
     Array.prototype.forEach.call(form.elements, function (el) {
@@ -307,25 +352,32 @@ window.kgSpam = (function () {
     var src = kgLeadSource();
     Object.keys(src).forEach(function (k) { fd.append(k, String(src[k]).slice(0, 200)); });
     var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
+    // Zapier did not take the lead (an error answer, or no answer at all).
+    function zapBad(why) {
+      clearTimeout(t1);
+      zap = "bad";
+      if (fsFail) giveUp(fsFail); else fallback(why);
+    }
     // Zapier's hooks send Access-Control-Allow-Origin: *, so the answer can be read (the
     // tour-booking page has relied on that since 2026-11-10). A hook that answers 404
     // (workflow turned off), 429 or 5xx now falls back to FormSubmit instead of counting
     // as sent. A held run still answers 200: the backup copy covers that case.
-    fetch(LEAD_HOOK, { method: "POST", body: fd })
-      .then(function (res) {
-        clearTimeout(t1);
-        if (!res.ok) { fallback("status_" + res.status); return; }
-        if (done) return;
-        if (FS_COPY && !tried) {
-          try {
-            fetch(FS_AJAX, {
-              method: "POST", body: fsData(form, FS_COPY_MARK, true), headers: { Accept: "application/json" }, keepalive: true
-            }).catch(function () {});
-          } catch (err) {}
-        }
-        success("zapier");
-      })
-      .catch(function () { clearTimeout(t1); fallback("network"); });
+    fetch(LEAD_HOOK, { method: "POST", body: fd }).then(function (res) {
+      if (!res.ok) { zapBad("status_" + res.status); return; }
+      clearTimeout(t1);
+      zap = "ok";
+      if (done) return;
+      // No copy when the fallback already went out: FormSubmit has the lead (or was tried).
+      if (FS_COPY && !tried) {
+        try {
+          var copy = fsData(form, FS_COPY_MARK, true, true);
+          fetch(FS_AJAX, {
+            method: "POST", body: copy, headers: { Accept: "application/json" }, keepalive: fsSmall(copy)
+          }).catch(function () {});
+        } catch (err) {}
+      }
+      success("zapier");
+    }, function () { zapBad("network"); });
   }
   // Tie the phone error to the phone field for screen readers and put the cursor there.
   function markPhone(form, bad) {
@@ -368,7 +420,7 @@ window.kgSpam = (function () {
     var form = e.target;
     if (!form || !form.dataset || !form.dataset.screened || e.defaultPrevented) return;
     e.preventDefault();
-    if (form.dataset.kgWait) return;
+    if (form.dataset.kgWait || form.dataset.kgSending) return;
     var r = check(form);
     if (!r.ok && r.why === "fast") {
       // A person whose phone fills in name and number can finish the two-field form

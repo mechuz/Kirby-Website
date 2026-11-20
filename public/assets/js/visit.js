@@ -9,7 +9,7 @@
   "use strict";
   var HOOK = "https://hooks.zapier.com/hooks/catch/27563206/EsZUwGqBy3rIA0Lc/";
   var FS_AJAX = ["https://formsubmit.co/ajax/", "mechuz", "@", "medhcp.com"].join("");
-  var FS_TEAM = "mechuz@kirbygateliving.com,community@kirbygateliving.com,reception@kirbygateliving.com";
+  var FS_TEAM = "mechuz@kirbygateliving.com,community@kirbygateliving.com,reception@kirbygateliving.com,info@kirbygateliving.com";
   var TRACKER = "https://airtable.com/appZ2xOP1HzOWjug7/tbl4VEuo6ByyJAaXm/";
   var TIMES = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM"];
   var CLOSED = { "2026-11-26": 1, "2026-12-25": 1, "2027-01-01": 1 }; // holidays: no tours
@@ -62,11 +62,11 @@
 
   function msg(t) { $("kv-msg").textContent = t || ""; }
 
-  function booked(name) {
+  function booked(name, label, at) {
     $("kv-form-wrap").hidden = true;
     $("kv-done").hidden = false;
     $("kv-done-title").textContent = (first || name.split(" ")[0] || "Thank you") + ", you're booked!";
-    $("kv-done-text").textContent = "We'll see you " + dayLabel + " at " + time + ".";
+    $("kv-done-text").textContent = "We'll see you " + (label || dayLabel) + " at " + (at || time) + ".";
     window.scrollTo(0, 0);
   }
 
@@ -77,9 +77,14 @@
     var name = leadId ? first : $("kv-name").value.trim();
     var phone = leadId ? "" : $("kv-phone").value.trim();
     if (!leadId) {
+      // A name in any alphabet is welcome. The phone rule is the one the other forms and
+      // the lead workflow use, so a mistyped number is fixed here instead of being dropped.
       if (!name) { msg("Please enter your name."); return; }
-      if (phone.replace(/\D/g, "").length < 10) { msg("Please enter a phone number so we can confirm."); return; }
+      var badPhone = window.kgSpam && window.kgSpam.badPhone ? window.kgSpam.badPhone(phone) : phone.replace(/\D/g, "").length < 10;
+      if (badPhone) { msg("Please enter a 10-digit phone number so we can confirm."); return; }
     }
+    // The day and time as they are now: the chips stay tappable while the booking is sent.
+    var sDay = day, sLabel = dayLabel, sTime = time;
     // Spam filter (2026-11-11): bots fill the hidden honeypot fields, submit within
     // seconds of loading, or type links and spam words. They see the normal
     // confirmation, but nothing is sent. A family opening our email link (r=) can tap
@@ -90,7 +95,7 @@
     if (!bot && window.kgSpam) bot = window.kgSpam.check(name, name);
     if (bot) {
       if (typeof gtag === "function") gtag("event", "lead_screened_out", { event_category: "lead", reason: bot, form: "visit" });
-      booked(name);
+      booked(name, sLabel, sTime);
       return;
     }
     var btn = $("kv-submit");
@@ -104,73 +109,97 @@
     body.set("lead_id", leadId);
     body.set("name", name);
     body.set("phone", phone);
-    body.set("visit_date", day);
-    body.set("visit_time", time);
+    body.set("visit_date", sDay);
+    body.set("visit_time", sTime);
     body.set("page", location.pathname);
     ["utm_source", "utm_medium", "utm_campaign"].forEach(function (k) { if (q.get(k)) body.set(k, q.get(k)); });
     body.set("hp", $("kv-hp").value);
     body.set("el", String(Date.now() - loaded));
-    // The same booking for FormSubmit. Names that start with TEST reach ownership only,
-    // as in the workflow.
+    // The same booking for FormSubmit. A name counts as a test exactly as in the lead
+    // workflow (letters only, then "test" as the first word): tests reach ownership only.
     function fsBooking(mark) {
-      var test = /^\s*test\b/i.test(name);
+      var test = /^test\b/i.test(name.trim().replace(/[^A-Za-z .'-]/g, ""));
       var f = new FormData();
-      f.set("_subject", (test ? "TEST (ignore) — " : "") + "TOUR BOOKED — " + dayLabel + " at " + time + " — " + (name || "A family") + mark);
+      f.set("_subject", (test ? "TEST (ignore) \u2014 " : "") + "TOUR BOOKED \u2014 " + sLabel + " at " + sTime + " \u2014 " + (name || "A family") + mark);
       if (!test) f.set("_cc", FS_TEAM);
       f.set("_template", "table");
       f.set("_captcha", "false");
       f.set("_honey", "");
       f.set("name", name || "(a family from our emails)");
       if (phone) f.set("phone", phone);
-      f.set("visit_date", day);
-      f.set("visit_time", time);
+      f.set("visit_date", sDay);
+      f.set("visit_time", sTime);
       if (leadId) f.set("lead_in_tracker", TRACKER + leadId);
       f.set("page", location.pathname);
       f.set("please", "Call to confirm and add it to the calendar.");
       return f;
     }
+    var started = Date.now();
     var settled = false;
+    // zap: "pending" until the workflow's hook answers, then "ok" or "bad".
+    // fsFail: set when the FormSubmit fallback failed while the hook had not answered yet.
+    var zap = "pending", fsFail = false, t3 = null;
     function done(via) {
       if (settled) return; settled = true;
+      clearTimeout(t3);
       if (typeof gtag === "function") {
         gtag("event", "generate_lead", { event_category: "lead", lead_source: "visit_booking" });
         // Google Ads conversion "Tour booking (/visit/ page)" (ID 7898949491), added 2026-11-11.
         gtag("event", "conversion", { send_to: "AW-18300279647/YoG6CPPOwbYdEN-2oJZE" });
         if (via !== "zapier") gtag("event", "lead_sent_backup", { event_category: "lead", via: via, form: "visit" });
       }
-      booked(name);
+      booked(name, sLabel, sTime);
     }
     function fail() {
       if (settled) return; settled = true;
+      clearTimeout(t3);
       btn.disabled = false;
       btn.textContent = "Book my visit";
       msg("Sorry, that didn't go through. Please call or text (901) 247-5835 and we'll book it for you.");
       if (typeof gtag === "function") gtag("event", "lead_send_failed", { event_category: "lead", reason: "visit", form: "visit" });
     }
+    // The fallback failed. If the hook has not answered yet it may still take the booking,
+    // so wait for it (never past 22 seconds from the start) before showing the error.
+    function fsFailed() {
+      if (settled) return;
+      if (zap !== "pending") { fail(); return; }
+      fsFail = true;
+      clearTimeout(t3);
+      t3 = setTimeout(fail, Math.max(22000 - (Date.now() - started), 0));
+    }
     var tried = false;
     function fallback(why) {
       if (settled || tried) return; tried = true;
       if (typeof gtag === "function") gtag("event", "lead_primary_failed", { event_category: "lead", reason: why, form: "visit" });
-      var t2 = setTimeout(fail, 12000);
-      fetch(FS_AJAX, { method: "POST", body: fsBooking(" (sent by website)"), headers: { Accept: "application/json" } })
+      var t2 = setTimeout(fsFailed, 12000);
+      var fsBody;
+      try { fsBody = fsBooking(" (sent by website)"); } catch (err) { clearTimeout(t2); fsFailed(); return; }
+      fetch(FS_AJAX, { method: "POST", body: fsBody, headers: { Accept: "application/json" } })
         .then(function (res) {
           return res.json().catch(function () { return {}; }).then(function (j) { return { ok: res.ok, j: j }; });
         }).then(function (r) {
           clearTimeout(t2);
-          if (r.ok && String(r.j.success) === "true") done("formsubmit"); else fail();
-        }).catch(function () { clearTimeout(t2); fail(); });
+          if (r.ok && String(r.j.success) === "true") done("formsubmit"); else fsFailed();
+        }).catch(function () { clearTimeout(t2); fsFailed(); });
     }
     var t1 = setTimeout(function () { fallback("timeout"); }, 10000);
-    fetch(HOOK, { method: "POST", body: body }).then(function (r) {
+    function zapBad(why) {
       clearTimeout(t1);
-      if (!r.ok) { fallback("status_" + r.status); return; }
+      zap = "bad";
+      if (fsFail) fail(); else fallback(why);
+    }
+    fetch(HOOK, { method: "POST", body: body }).then(function (r) {
+      if (!r.ok) { zapBad("status_" + r.status); return; }
+      clearTimeout(t1);
+      zap = "ok";
       if (settled) return;
+      // During a hold this copy is the only notice the team gets, so its subject says so.
       if (!tried) {
         try {
-          fetch(FS_AJAX, { method: "POST", body: fsBooking(" (backup copy)"), headers: { Accept: "application/json" }, keepalive: true }).catch(function () {});
+          fetch(FS_AJAX, { method: "POST", body: fsBooking(" (website copy: act on it if no other email came for this booking)"), headers: { Accept: "application/json" }, keepalive: true }).catch(function () {});
         } catch (err) {}
       }
       done("zapier");
-    }).catch(function () { clearTimeout(t1); fallback("network"); });
+    }, function () { zapBad("network"); });
   });
 })();

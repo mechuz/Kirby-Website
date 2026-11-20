@@ -2,8 +2,8 @@
 // Answers common questions from the facts published on this site (no AI service,
 // nothing sent anywhere until a visitor chooses to leave their number), and points
 // every conversation toward reserving a suite, booking a tour or a callback.
-// Callback requests post to FormSubmit like the contact form, so they arrive as
-// form leads and land on /thank-you/ (one Google Ads form conversion).
+// Callback requests go through the site's lead sender (main.js) like the contact form,
+// so they arrive as form leads and land on /thank-you/ (one Google Ads form conversion).
 (function () {
   if (window.kgChat) return;
   if (document.body && document.body.getAttribute("data-page") === "team") return; // staff page: no family chat
