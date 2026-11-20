@@ -248,16 +248,17 @@ window.kgSpam = (function () {
   var TEST_NAME = /^\s*test\b/i;
   // noReply: leave out FormSubmit's automatic reply to the family. withName: put the
   // family's name in the subject, so the copy can be matched to the workflow's email.
-  function fsData(form, mark, noReply, withName) {
-    var fsd = new FormData(form);
+  // snap: the form's fields as they were when the visitor pressed Send.
+  function fsData(snap, mark, noReply, withName) {
+    var fsd = new FormData();
+    snap.forEach(function (v, k) { fsd.append(k, v); });
     var name = String(fsd.get("name") || "").replace(/\s+/g, " ").trim().slice(0, 60);
     var test = TEST_NAME.test(name);
     fsd.set("_subject", (test ? "TEST (ignore) — " : "") + (fsd.get("_subject") || "Website lead") + (withName && name ? " — " + name : "") + mark);
     if (test) fsd.delete("_cc");
     if (test || noReply) fsd.delete("_autoresponse");
     // FormSubmit's own honeypot: it discards any submission where _honey is filled.
-    var fsHoney = form.querySelector('[name="_honey"]');
-    fsd.set("_honey", fsHoney ? fsHoney.value : "");
+    fsd.set("_honey", String(snap.get("_honey") || ""));
     fsd.delete("kg_hp_field");
     var fsSrc = kgLeadSource();
     Object.keys(fsSrc).forEach(function (k) { fsd.set(k, String(fsSrc[k]).slice(0, 200)); });
@@ -279,6 +280,10 @@ window.kgSpam = (function () {
     // Stops a second send while this one is in flight (the respite calendar can switch
     // its button back on when a date changes).
     form.dataset.kgSending = "1";
+    form.dataset.kgLabel = label;
+    // What the visitor sent, fixed now: the fields stay editable while the request is in
+    // flight, and both services must receive the same lead.
+    var snap = new FormData(form);
     var next = form.querySelector('[name="_next"]');
     var started = Date.now();
     var done = false;
@@ -322,7 +327,7 @@ window.kgSpam = (function () {
       var body;
       // After a time-out Zapier may still deliver the lead and send its own confirmation,
       // so FormSubmit's reply to the family is left out then: a family never gets two.
-      try { body = fsData(form, FS_MARK, why === "timeout", false); } catch (err) { clearTimeout(t2); fsFailed("fallback_build"); return; }
+      try { body = fsData(snap, FS_MARK, why === "timeout", false); } catch (err) { clearTimeout(t2); fsFailed("fallback_build"); return; }
       // keepalive: if Zapier answers late and the page moves on, this request still finishes.
       fetch(FS_AJAX, {
         method: "POST", body: body, headers: { Accept: "application/json" }, keepalive: fsSmall(body)
@@ -370,7 +375,7 @@ window.kgSpam = (function () {
       // No copy when the fallback already went out: FormSubmit has the lead (or was tried).
       if (FS_COPY && !tried) {
         try {
-          var copy = fsData(form, FS_COPY_MARK, true, true);
+          var copy = fsData(snap, FS_COPY_MARK, true, true);
           fetch(FS_AJAX, {
             method: "POST", body: copy, headers: { Accept: "application/json" }, keepalive: fsSmall(copy)
           }).catch(function () {});
@@ -440,6 +445,16 @@ window.kgSpam = (function () {
       return;
     }
     handle(form, r);
+  });
+  // The browser's Back button can restore this page exactly as it was left, in the
+  // middle of "Sending…". Put the form back in a usable state.
+  window.addEventListener("pageshow", function (e) {
+    if (!e.persisted) return;
+    document.querySelectorAll("form[data-kg-sending]").forEach(function (f) {
+      delete f.dataset.kgSending;
+      var b = f.querySelector('[type="submit"]');
+      if (b) { b.disabled = false; if (f.dataset.kgLabel) b.textContent = f.dataset.kgLabel; }
+    });
   });
   window.kgScreenForm = attach;
   document.querySelectorAll("form[data-lead-form]").forEach(attach);
