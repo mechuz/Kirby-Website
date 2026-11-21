@@ -1,18 +1,18 @@
 {
- "fetched_at": "2026-11-20T17:48:32Z",
+ "fetched_at": "2026-11-21T16:47:47Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 7,
+   "count": 5,
    "error": ""
   },
   {
    "name": "NIC MAP",
    "url": "https://www.nicmap.com/feed/",
    "ok": true,
-   "count": 1,
+   "count": 0,
    "error": ""
   },
   {
@@ -33,7 +33,7 @@
    "name": "KFF Health News",
    "url": "https://kffhealthnews.org/topics/aging/feed/",
    "ok": true,
-   "count": 3,
+   "count": 2,
    "error": ""
   },
   {
@@ -68,7 +68,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
@@ -108,6 +108,12 @@
   }
  ],
  "items": [
+  {
+   "title": "Senior Living Marketers Prepare for ‘Zero-Click Move-ins’ as Prospects Use AI Tools",
+   "link": "https://seniorhousingnews.com/2026/11/20/senior-living-marketers-prepare-for-zero-click-move-ins-as-prospects-use-ai-tools/",
+   "source": "Senior Housing News",
+   "published": "2026-11-20T20:19:13Z"
+  },
   {
    "title": "This simple habit is linked to a 33% lower risk of Alzheimer's",
    "link": "https://www.sciencedaily.com/releases/2026/11/261118065536.htm",
@@ -167,24 +173,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261114202233.htm",
    "source": "ScienceDaily",
    "published": "2026-11-18T11:53:30Z"
-  },
-  {
-   "title": "NexCore, MetLife Launch Senior Living Co-Investment, Development Venture",
-   "link": "https://seniorhousingnews.com/2026/11/17/nexcore-metlife-launch-senior-living-co-investment-development-venture/",
-   "source": "Senior Housing News",
-   "published": "2026-11-17T22:45:14Z"
-  },
-  {
-   "title": "Senior Living Demand is Hot, Development is Not. A New Report Helps Explain Why",
-   "link": "https://seniorhousingnews.com/2026/11/17/senior-living-demand-is-hot-development-is-not-a-new-report-helps-explain-why/",
-   "source": "Senior Housing News",
-   "published": "2026-11-17T21:46:57Z"
-  },
-  {
-   "title": "Not Just for Memory Care: Operators Extend Brain Health into Independent Living, Assisted Living",
-   "link": "https://seniorhousingnews.com/2026/11/17/not-just-for-memory-care-operators-extend-brain-health-into-independent-living-assisted-living/",
-   "source": "Senior Housing News",
-   "published": "2026-11-17T20:43:32Z"
   },
   {
    "title": "LifeLoop launches Olia, the AI companion for senior living that moves teams from insight to action",
@@ -281,24 +269,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261105224609.htm",
    "source": "ScienceDaily",
    "published": "2026-11-08T02:52:28Z"
-  },
-  {
-   "title": "Drinking 2–3 cups of coffee a day linked to dramatically lower dementia risk",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261105224550.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-07T10:16:19Z"
-  },
-  {
-   "title": "Our Reporters Discuss Healthcare Costs — And What Changes the Midterms May Portend",
-   "link": "https://kffhealthnews.org/on-air/on-air-november-7-2026-midterm-election-healthcare-costs-reform-media-appearances/",
-   "source": "KFF Health News",
-   "published": "2026-11-07T10:00:00Z"
-  },
-  {
-   "title": "Why the Senior Care Industry Is Attracting New Investors: NIC MAP’s Data From CREDA 2026",
-   "link": "https://www.nicmap.com/blog/senior-care-industry-attracting-new-investors/",
-   "source": "NIC MAP",
-   "published": "2026-11-06T20:46:22Z"
   }
  ]
 }
