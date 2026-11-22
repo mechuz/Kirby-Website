@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-21T16:47:47Z",
+ "fetched_at": "2026-11-22T17:09:44Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -75,7 +75,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 1,
+   "count": 2,
    "error": ""
   },
   {
@@ -108,6 +108,12 @@
   }
  ],
  "items": [
+  {
+   "title": "Medicare looks a bit different in 2027, so don't miss open enrollment",
+   "link": "https://www.npr.org/2026/11/22/nx-s1-6036735/medicare-open-enrollment-2027",
+   "source": "NPR Health",
+   "published": "2026-11-22T13:11:04Z"
+  },
   {
    "title": "Senior Living Marketers Prepare for ‘Zero-Click Move-ins’ as Prospects Use AI Tools",
    "link": "https://seniorhousingnews.com/2026/11/20/senior-living-marketers-prepare-for-zero-click-move-ins-as-prospects-use-ai-tools/",
@@ -263,12 +269,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233037.htm",
    "source": "ScienceDaily",
    "published": "2026-11-09T07:36:14Z"
-  },
-  {
-   "title": "Stronger flu shot linked to nearly 55% lower Alzheimer's risk",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261105224609.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-08T02:52:28Z"
   }
  ]
 }
