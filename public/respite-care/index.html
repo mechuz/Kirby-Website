@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/main.css?v=b2743dc7">
+  <link rel="stylesheet" href="/assets/css/main.css?v=7e29c879">
   <!--analytics-->
   <!-- Google tag: Ads conversion tracking (AW-18300279647) + GA4 analytics (G-1X0LL0YDPZ) -->
   <!-- Thank-you page: count one form lead per browser session (window.kgLead); a reload/revisit goes home instead of re-firing the conversion -->
@@ -119,7 +119,7 @@
     <div class="header-cta">
       <a href="tel:9017533449" class="phone-link" data-track="phone">(901) 753-3449</a>
       <a href="/reserve/" class="btn btn-primary btn-tour" data-track="reserve-header">Reserve a Suite</a>
-      <a href="/reserve/" class="btn btn-primary btn-call" data-track="reserve-header">Reserve</a>
+      <a href="tel:9017533449" class="btn btn-primary btn-call" data-track="phone">Call Now</a>
     </div>
   </div>
 </header>
@@ -161,6 +161,44 @@
       </ul>
     </div>
     <img src="/assets/img/guest-suite.webp" alt="A cozy, sunlit respite suite with a floral quilt and reading chair" loading="lazy">
+  </div>
+</section>
+
+<section class="call-me" id="call-me" aria-labelledby="call-me-h">
+  <div class="container call-me-grid">
+    <div>
+      <p class="eyebrow">Questions First?</p>
+      <h2 id="call-me-h">Have Us Call You</h2>
+      <p>Leave your name and number, and a member of our team will call you about a respite stay, availability and pricing.</p>
+      <p class="call-me-alt">Prefer to talk now? Call reservations at <a href="tel:9012475835" data-track="phone">(901) 247-5835</a>.</p>
+    </div>
+    <div>
+      <noscript><style>.call-me-form{display:none}</style><p class="form-note">This form needs JavaScript. Please call us at <a href="tel:9017533449">(901) 753-3449</a>.</p></noscript>
+      <form class="contact-form call-me-form" action="/thank-you/" data-lead-form method="POST">
+        <input type="hidden" name="_cc" value="mechuz@kirbygateliving.com,community@kirbygateliving.com,reception@kirbygateliving.com">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_subject" value="NEW LEAD — kirbygateliving.com call-back request (Respite Care page)">
+        <input type="hidden" name="_next" value="https://www.kirbygateliving.com/thank-you/">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_blacklist" value="seeking employment, job opportunity, employment opportunities, my resume, backlinks, seo services, guest post, web design, tourist.com, bitcoin, crypto, casino">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="interest" value="Respite Care (Short-Term Stay)">
+        <input type="hidden" name="message" value="Call-back request from the short form on the Respite Care page. The visitor gave only a name and phone number. The interest shown is the page they were on, not a choice they made.">
+        <div class="call-me-fields">
+          <div class="form-row">
+            <label for="cm-name">Your name *</label>
+            <input type="text" id="cm-name" name="name" required autocomplete="name">
+          </div>
+          <div class="form-row">
+            <label for="cm-phone">Phone *</label>
+            <input type="tel" id="cm-phone" name="phone" required autocomplete="tel" inputmode="tel">
+          </div>
+        </div>
+        <p class="form-note call-me-who">Job seekers, vendors and calls for current residents: please call the main line, <a href="tel:9017533449">(901) 753-3449</a>.</p>
+        <button type="submit" class="btn btn-primary">Request a Call</button>
+        <p class="form-note">By sending this request you agree that our team may call you about your inquiry at the number you give. Sending it does not sign you up for text messages. See our <a href="/privacy-policy/">Privacy Policy</a>. Your information is never sold.</p>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -230,6 +268,7 @@
           <label for="bk-notes">Anything we should know about your loved one&rsquo;s needs?</label>
           <textarea id="bk-notes" name="notes" rows="3"></textarea>
         </div>
+        <label class="consent" style="margin-bottom:1rem"><input type="checkbox" id="bk-flex" name="dates_not_set" value="yes"> <span>I don&rsquo;t have exact dates yet. Please call me to plan the stay.</span></label>
         <div class="rules-box">
           <h4>Booking rules &mdash; please read before you request</h4>
           <ul>
@@ -242,6 +281,7 @@
           </ul>
           <label class="consent"><input type="checkbox" name="agreed_to_booking_rules" value="yes" required> <span>I have read and agree to the booking rules. *</span></label>
         </div>
+        <p class="form-note" id="bk-need" role="status" style="margin-bottom:.75rem">To send your request, choose your dates on the calendar above, or tick &ldquo;I don&rsquo;t have exact dates yet.&rdquo;</p>
         <button type="submit" class="btn btn-primary btn-lg btn-arrow" id="bk-submit" disabled>Request These Dates</button>
         <p class="form-note">This is a booking request, not a confirmed reservation &mdash; we confirm availability, the daily rate, and a brief nurse assessment before check-in, as required for licensed assisted-care facilities in Tennessee. No payment is collected online.</p>
       </form>
@@ -388,7 +428,7 @@
     <p>&copy; 2026 The Pointe at Kirby Gate &middot; 6480 Quince Rd, Memphis, TN 38119 &middot; <a href="/privacy-policy/">Privacy</a> &middot; <a href="/terms-of-service/">Terms</a> &middot; <a href="/ada-compliance/">Accessibility</a> &middot; <a href="/nondiscrimination/">Nondiscrimination</a></p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=2bcb0c84" defer></script>
-<script src="/assets/js/chat.js?v=2bcb0c84" defer></script>
+<script src="/assets/js/main.js?v=b1a223f1" defer></script>
+<script src="/assets/js/chat.js?v=b1a223f1" defer></script>
 </body>
 </html>
