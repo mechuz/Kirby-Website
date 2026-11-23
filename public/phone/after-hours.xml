@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Voicemail safety net for the after-hours line. Used only while the AI phone concierge is unavailable. -->
+<!-- Sales line (901) 247-5835 while the AI phone concierge is unavailable.
+     1. Ring the front desk (901) 753-3449 for 15 seconds. The desk hears a short
+        whisper and must press 1 to take the call (whisper.xml). If a voicemail box
+        or menu picks up instead, nobody presses 1, that leg hangs up, and the
+        caller drops to step 2, so no lead lands in another voicemail box.
+     2. Voicemail with transcription (unchanged from the 2026-11-19 safety net).
+     GitHub Pages serves static files only and accepts GET, so every URL uses GET. -->
 <Response>
-  <Pause length="1"/>
+  <Dial timeout="15" answerOnBridge="true">
+    <Number url="https://www.kirbygateliving.com/phone/whisper.xml" method="GET">+19017533449</Number>
+  </Dial>
   <!-- Kept short on purpose (about 9 seconds): on 2026-11-19 callers hung up within 12 seconds, before the 20-second greeting reached the tone. -->
   <Say voice="Polly.Joanna">Thank you for calling The Pointe at Kirby Gate. We're sorry we missed you. Please leave your name and number after the tone, and a member of our team will call you back.</Say>
   <Record maxLength="120" timeout="6" playBeep="true" finishOnKey="#" transcribe="true" method="GET" action="https://www.kirbygateliving.com/phone/thanks.xml"/>

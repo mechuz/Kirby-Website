@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Played only to the front desk when a sales line call rings through. -->
+<Response>
+  <Gather numDigits="1" timeout="6" method="GET" action="https://www.kirbygateliving.com/phone/connect.xml">
+    <Say voice="Polly.Joanna">Sales line call. Press 1 to take it.</Say>
+    <Pause length="1"/>
+    <Say voice="Polly.Joanna">Sales line call. Press 1.</Say>
+  </Gather>
+  <Hangup/>
+</Response>
