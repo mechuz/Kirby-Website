@@ -111,7 +111,7 @@
   }
 
   var css = document.createElement("link");
-  css.rel = "stylesheet"; css.href = "/assets/css/chat.css?v=1";
+  css.rel = "stylesheet"; css.href = "/assets/css/chat.css?v=2";
   document.head.appendChild(css);
 
   var launcher = document.createElement("button");
@@ -139,6 +139,36 @@
     new IntersectionObserver(function (entries) {
       launcher.classList.toggle("kgc-away", entries[entries.length - 1].isIntersecting);
     }).observe(callMe);
+  }
+  // The launcher floats over the page, so on a phone it can land on top of a hero button
+  // (for example "Call (901) 753-3449" or "Schedule a Tour") or the last footer links. While
+  // any link, button, form field or map is passing under its corner of the screen, it fades out
+  // and lets taps through; it comes back as soon as that spot is clear.
+  if ("IntersectionObserver" in window) {
+    var under = new Set(), cornerIO = null;
+    var watchCorner = function () {
+      if (cornerIO) cornerIO.disconnect();
+      under.clear(); launcher.classList.remove("kgc-step");
+      // Measure where the launcher sits even while it is hidden for the call-back form.
+      var cls = launcher.className;
+      launcher.className = "kgc-launch";
+      var r = launcher.getBoundingClientRect();
+      launcher.className = cls;
+      if (!r.width) return;
+      var pad = 6;
+      cornerIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) under.add(e.target); else under.delete(e.target); });
+        launcher.classList.toggle("kgc-step", under.size > 0);
+      }, { rootMargin: "-" + Math.max(0, Math.floor(r.top - pad)) + "px 0px 0px -" + Math.max(0, Math.floor(r.left - pad)) + "px" });
+      document.querySelectorAll("a[href], button, input, select, textarea, label, iframe").forEach(function (el) {
+        if (el !== launcher && !panel.contains(el)) cornerIO.observe(el);
+      });
+    };
+    var cornerTimer = null;
+    var rewatch = function () { clearTimeout(cornerTimer); cornerTimer = setTimeout(watchCorner, 200); };
+    if (document.readyState === "complete") watchCorner(); else window.addEventListener("load", watchCorner);
+    window.addEventListener("resize", rewatch);
+    window.addEventListener("orientationchange", rewatch);
   }
   document.body.appendChild(panel);
   var log = panel.querySelector(".kgc-log");

@@ -176,8 +176,8 @@ CALL_ME_PAGES = {
     # key: (eyebrow, sentence under the heading, hidden "interest" value, page name used in the
     # lead email, extra CSS class, "prefer to talk now" line).
     # The interest is only the page the visitor was on; the hidden message says so, because
-    # this form asks for nothing else. The rates and reserve pages give the reservations
-    # line, like the rest of those pages. The rates page uses the paper background because
+    # this form asks for nothing else. The rates, reserve and respite pages give the
+    # reservations line, which takes suite reservations and respite bookings. The rates page uses the paper background because
     # the section that follows the band there is already mint.
     "home": ("Questions First?",
              "Leave your name and number, and a member of our team will call you about care, availability and pricing.",
@@ -194,6 +194,9 @@ CALL_ME_PAGES = {
     "reserve": ("Not Ready to Apply?",
                 "Leave your name and number, and a member of our team will call you about suites, pricing and next steps.",
                 "Questions before applying", "Reserve", "", _CALL_RESERVATIONS),
+    "respite": ("Questions First?",
+                "Leave your name and number, and a member of our team will call you about a respite stay, availability and pricing.",
+                "Respite Care (Short-Term Stay)", "Respite Care", "", _CALL_RESERVATIONS),
 }
 
 # The consent line does not link the Terms of Service on purpose: this form asks only for a

@@ -10,6 +10,9 @@
 .kgc-launch.kgc-open { display: none; }
 /* Hidden while the short call-back form is on screen, so it never covers that form's button. */
 .kgc-launch.kgc-away { display: none; }
+/* Faded out (and not tappable) while a link, button or field is under it; see chat.js. */
+.kgc-launch { transition: opacity 0.15s ease; }
+.kgc-launch.kgc-step { opacity: 0; pointer-events: none; }
 .kgc-panel {
   position: fixed; right: 18px; bottom: 18px; z-index: 901;
   width: min(380px, calc(100vw - 24px)); height: min(560px, calc(100vh - 110px)); height: min(560px, calc(100dvh - 110px));
@@ -38,7 +41,8 @@
 .kgc-note { margin: 0; padding: 0 0.9rem 0.6rem; font-size: 0.75rem; color: #5f6b60; }
 .kgc-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 520px) {
-  .kgc-launch { right: 12px; bottom: 12px; padding: 0.7rem 1rem; font-size: 0.9rem; }
-  .kgc-panel { right: 8px; left: 8px; bottom: 8px; width: auto; }
+  /* Kept clear of the iPhone home indicator and rounded corners (safe-area insets). */
+  .kgc-launch { right: calc(12px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .kgc-panel { right: calc(8px + env(safe-area-inset-right, 0px)); left: calc(8px + env(safe-area-inset-left, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); width: auto; }
 }
 @media print { .kgc-launch, .kgc-panel { display: none !important; } }
