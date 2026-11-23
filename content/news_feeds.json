@@ -1,18 +1,18 @@
 {
- "fetched_at": "2026-11-19T18:16:45Z",
+ "fetched_at": "2026-11-22T17:09:44Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 8,
+   "count": 5,
    "error": ""
   },
   {
    "name": "NIC MAP",
    "url": "https://www.nicmap.com/feed/",
    "ok": true,
-   "count": 1,
+   "count": 0,
    "error": ""
   },
   {
@@ -33,7 +33,7 @@
    "name": "KFF Health News",
    "url": "https://kffhealthnews.org/topics/aging/feed/",
    "ok": true,
-   "count": 3,
+   "count": 2,
    "error": ""
   },
   {
@@ -68,14 +68,14 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 6,
+   "count": 5,
    "error": ""
   },
   {
@@ -89,7 +89,7 @@
    "name": "NPR Health",
    "url": "https://feeds.npr.org/1128/rss.xml",
    "ok": true,
-   "count": 1,
+   "count": 2,
    "error": ""
   },
   {
@@ -108,6 +108,36 @@
   }
  ],
  "items": [
+  {
+   "title": "Medicare looks a bit different in 2027, so don't miss open enrollment",
+   "link": "https://www.npr.org/2026/11/22/nx-s1-6036735/medicare-open-enrollment-2027",
+   "source": "NPR Health",
+   "published": "2026-11-22T13:11:04Z"
+  },
+  {
+   "title": "Senior Living Marketers Prepare for ‘Zero-Click Move-ins’ as Prospects Use AI Tools",
+   "link": "https://seniorhousingnews.com/2026/11/20/senior-living-marketers-prepare-for-zero-click-move-ins-as-prospects-use-ai-tools/",
+   "source": "Senior Housing News",
+   "published": "2026-11-20T20:19:13Z"
+  },
+  {
+   "title": "This simple habit is linked to a 33% lower risk of Alzheimer's",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261118065536.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-20T12:06:07Z"
+  },
+  {
+   "title": "In the Pipeline: Cedarhurst Plans Latest Nebraska Development; Covenant Starts on Expansions",
+   "link": "https://seniorhousingnews.com/2026/11/19/in-the-pipeline-cedarhurst-plans-latest-nebraska-development-covenant-starts-on-expansions/",
+   "source": "Senior Housing News",
+   "published": "2026-11-19T22:13:14Z"
+  },
+  {
+   "title": "SNL’s ‘Sister’ Sketch a Warning and Opportunity for Senior Living Operators",
+   "link": "https://seniorhousingnews.com/2026/11/19/snls-sister-sketch-a-warning-and-opportunity-for-senior-living-operators/",
+   "source": "Senior Housing News",
+   "published": "2026-11-19T19:39:06Z"
+  },
   {
    "title": "What’s Behind a Recent Spike in Early Social Security Claims?",
    "link": "https://kffhealthnews.org/aging/social-security-early-claims-spike-doge-new-old-age/",
@@ -151,24 +181,6 @@
    "published": "2026-11-18T11:53:30Z"
   },
   {
-   "title": "NexCore, MetLife Launch Senior Living Co-Investment, Development Venture",
-   "link": "https://seniorhousingnews.com/2026/11/17/nexcore-metlife-launch-senior-living-co-investment-development-venture/",
-   "source": "Senior Housing News",
-   "published": "2026-11-17T22:45:14Z"
-  },
-  {
-   "title": "Senior Living Demand is Hot, Development is Not. A New Report Helps Explain Why",
-   "link": "https://seniorhousingnews.com/2026/11/17/senior-living-demand-is-hot-development-is-not-a-new-report-helps-explain-why/",
-   "source": "Senior Housing News",
-   "published": "2026-11-17T21:46:57Z"
-  },
-  {
-   "title": "Not Just for Memory Care: Operators Extend Brain Health into Independent Living, Assisted Living",
-   "link": "https://seniorhousingnews.com/2026/11/17/not-just-for-memory-care-operators-extend-brain-health-into-independent-living-assisted-living/",
-   "source": "Senior Housing News",
-   "published": "2026-11-17T20:43:32Z"
-  },
-  {
    "title": "LifeLoop launches Olia, the AI companion for senior living that moves teams from insight to action",
    "link": "https://www.argentum.org/lifeloop-launches-olia-the-ai-companion-for-senior-living-that-moves-teams-from-insight-to-action/",
    "source": "Argentum",
@@ -185,24 +197,6 @@
    "link": "https://www.argentum.org/argentum-and-nic-map-special-report-examines-how-operating-expenses-constrain-senior-housing-development-despite-record-demand/",
    "source": "Argentum",
    "published": "2026-11-17T15:13:10Z"
-  },
-  {
-   "title": "Alzheimer’s Researcher Calls for Earlier Diagnosis to Better Manage Dementia as Care Needs Grow",
-   "link": "https://seniorhousingnews.com/2026/11/16/alzheimers-researcher-calls-for-earlier-diagnosis-to-better-manage-dementia-as-care-needs-grow/",
-   "source": "Senior Housing News",
-   "published": "2026-11-16T22:17:46Z"
-  },
-  {
-   "title": "Dial Senior Living Grows to 39 Communities in 8 States as it Merges with The Waters Senior Living",
-   "link": "https://seniorhousingnews.com/2026/11/16/dial-senior-living-grows-to-39-communities-in-8-states-as-it-merges-with-the-waters-senior-living/",
-   "source": "Senior Housing News",
-   "published": "2026-11-16T22:02:10Z"
-  },
-  {
-   "title": "How 2Life, Lifespark and Maplewood Are Changing Resident Engagement With Personalized Programming That Fosters Belonging",
-   "link": "https://seniorhousingnews.com/2026/11/16/how-2life-lifespark-and-maplewood-are-changing-resident-engagement-with-personalized-programming-that-fosters-belonging/",
-   "source": "Senior Housing News",
-   "published": "2026-11-16T21:11:53Z"
   },
   {
    "title": "A Commitment to Lead: The Value of Earning and Maintaining the CDAL Credential",
@@ -275,36 +269,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233037.htm",
    "source": "ScienceDaily",
    "published": "2026-11-09T07:36:14Z"
-  },
-  {
-   "title": "Stronger flu shot linked to nearly 55% lower Alzheimer's risk",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261105224609.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-08T02:52:28Z"
-  },
-  {
-   "title": "Drinking 2–3 cups of coffee a day linked to dramatically lower dementia risk",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261105224550.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-07T10:16:19Z"
-  },
-  {
-   "title": "Our Reporters Discuss Healthcare Costs — And What Changes the Midterms May Portend",
-   "link": "https://kffhealthnews.org/on-air/on-air-november-7-2026-midterm-election-healthcare-costs-reform-media-appearances/",
-   "source": "KFF Health News",
-   "published": "2026-11-07T10:00:00Z"
-  },
-  {
-   "title": "Why the Senior Care Industry Is Attracting New Investors: NIC MAP’s Data From CREDA 2026",
-   "link": "https://www.nicmap.com/blog/senior-care-industry-attracting-new-investors/",
-   "source": "NIC MAP",
-   "published": "2026-11-06T20:46:22Z"
-  },
-  {
-   "title": "An anti-aging drug may help protect the brain before Alzheimer's symptoms begin",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261104084017.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-06T01:11:19Z"
   }
  ]
 }
