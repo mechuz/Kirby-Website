@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-22T17:09:44Z",
+ "fetched_at": "2026-11-23T21:25:35Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -109,10 +109,70 @@
  ],
  "items": [
   {
+   "title": "What an Emergency Plan Looks Like in Practice",
+   "link": "https://www.argentum.org/what-an-emergency-plan-looks-like-in-practice/",
+   "source": "Argentum",
+   "published": "2026-11-23T20:13:13Z"
+  },
+  {
+   "title": "Argentum Leadership Summit Examines the Policies Shaping Senior Living",
+   "link": "https://www.argentum.org/argentum-leadership-summit-examines-the-policies-shaping-senior-living/",
+   "source": "Argentum",
+   "published": "2026-11-23T19:44:09Z"
+  },
+  {
+   "title": "Half the Ledger: Why Record Demand Hasn’t Produced Record Development",
+   "link": "https://www.argentum.org/half-the-ledger-why-record-demand-hasnt-produced-record-development/",
+   "source": "Argentum",
+   "published": "2026-11-23T19:06:19Z"
+  },
+  {
+   "title": "Making the Holidays a Time for Connection in Senior Living",
+   "link": "https://www.argentum.org/making-the-holidays-a-time-for-connection-in-senior-living/",
+   "source": "Argentum",
+   "published": "2026-11-23T18:58:00Z"
+  },
+  {
+   "title": "Senate Appropriators Advances Language to Expand Long-Term Care Choices for Veterans",
+   "link": "https://www.argentum.org/senate-appropriators-advances-language-to-expand-long-term-care-choices-for-veterans/",
+   "source": "Argentum",
+   "published": "2026-11-23T18:46:46Z"
+  },
+  {
+   "title": "Argentum Joins 100+ Organizations Urging Congress to Lower Costs for Family Caregivers",
+   "link": "https://www.argentum.org/argentum-joins-100-organizations-urging-congress-to-lower-costs-for-family-caregivers/",
+   "source": "Argentum",
+   "published": "2026-11-23T18:34:39Z"
+  },
+  {
+   "title": "Trump Administration Finalizes Independent Contractor Rule",
+   "link": "https://www.argentum.org/trump-administration-finalizes-independent-contractor-rule/",
+   "source": "Argentum",
+   "published": "2026-11-23T18:22:05Z"
+  },
+  {
+   "title": "Congress Faces Year-End Deadlines as Long-Term Care Scrutiny Builds",
+   "link": "https://www.argentum.org/congress-faces-year-end-deadlines-as-long-term-care-scrutiny-builds/",
+   "source": "Argentum",
+   "published": "2026-11-23T17:29:25Z"
+  },
+  {
+   "title": "'Medicare for all' is back on the drawing board. Does it stand a better chance this time?",
+   "link": "https://www.npr.org/2026/11/23/nx-s1-6047706/health-medicare-for-all-chances",
+   "source": "NPR Health",
+   "published": "2026-11-23T16:00:49Z"
+  },
+  {
    "title": "Medicare looks a bit different in 2027, so don't miss open enrollment",
    "link": "https://www.npr.org/2026/11/22/nx-s1-6036735/medicare-open-enrollment-2027",
    "source": "NPR Health",
    "published": "2026-11-22T13:11:04Z"
+  },
+  {
+   "title": "Alzheimer’s breakthrough exposes a hidden flaw in the brain’s cleanup system",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261120075600.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-22T03:00:27Z"
   },
   {
    "title": "Senior Living Marketers Prepare for ‘Zero-Click Move-ins’ as Prospects Use AI Tools",
@@ -157,18 +217,6 @@
    "published": "2026-11-18T21:36:36Z"
   },
   {
-   "title": "As overdose deaths fall, White House makes misleading claims about who deserves credit",
-   "link": "https://www.npr.org/2026/11/18/nx-s1-6044209/drug-deaths-overdose-drop-trump-biden-fentanyl",
-   "source": "NPR Health",
-   "published": "2026-11-18T18:18:16Z"
-  },
-  {
-   "title": "Edgehill Health Center Recognized Among Best in the Country by U.S. News & World Report",
-   "link": "https://www.argentum.org/edgehill-health-center-recognized-among-best-in-the-country-by-u-s-news-world-report/",
-   "source": "Argentum",
-   "published": "2026-11-18T17:45:41Z"
-  },
-  {
    "title": "MIT discovers that aging weakens the brain’s nighttime cleaning system",
    "link": "https://www.sciencedaily.com/releases/2026/11/261114202137.htm",
    "source": "ScienceDaily",
@@ -179,42 +227,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261114202233.htm",
    "source": "ScienceDaily",
    "published": "2026-11-18T11:53:30Z"
-  },
-  {
-   "title": "LifeLoop launches Olia, the AI companion for senior living that moves teams from insight to action",
-   "link": "https://www.argentum.org/lifeloop-launches-olia-the-ai-companion-for-senior-living-that-moves-teams-from-insight-to-action/",
-   "source": "Argentum",
-   "published": "2026-11-17T17:45:30Z"
-  },
-  {
-   "title": "Inflation Is Up. Isolation Doesn’t Have to Be.",
-   "link": "https://www.argentum.org/inflation-is-up-isolation-doesnt-have-to-be/",
-   "source": "Argentum",
-   "published": "2026-11-17T17:38:46Z"
-  },
-  {
-   "title": "Argentum and NIC MAP Special Report Examines How Operating Expenses Constrain Senior Housing Development Despite Record Demand",
-   "link": "https://www.argentum.org/argentum-and-nic-map-special-report-examines-how-operating-expenses-constrain-senior-housing-development-despite-record-demand/",
-   "source": "Argentum",
-   "published": "2026-11-17T15:13:10Z"
-  },
-  {
-   "title": "A Commitment to Lead: The Value of Earning and Maintaining the CDAL Credential",
-   "link": "https://www.argentum.org/a-commitment-to-lead-the-value-of-earning-and-maintaining-the-cdal-credential/",
-   "source": "Argentum",
-   "published": "2026-11-16T20:41:54Z"
-  },
-  {
-   "title": "Big Ideas and Great Connections at Argentum’s Leadership Summit",
-   "link": "https://www.argentum.org/big-ideas-and-great-connections-at-argentums-leadership-summit/",
-   "source": "Argentum",
-   "published": "2026-11-16T20:26:54Z"
-  },
-  {
-   "title": "Post-Election Briefing: Election Results Reshape the Policy Landscape for Senior Living",
-   "link": "https://www.argentum.org/post-election-briefing-election-results-reshape-the-policy-landscape-for-senior-living/",
-   "source": "Argentum",
-   "published": "2026-11-16T20:15:41Z"
   },
   {
    "title": "Alzheimer’s may start shrinking two brain regions years before memory loss",
@@ -233,12 +245,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261112230452.htm",
    "source": "ScienceDaily",
    "published": "2026-11-14T04:26:12Z"
-  },
-  {
-   "title": "Tarkett Earns Cradle to Cradle Certified® Silver Version 5.0 for Ethos® Carpet Tile Portfolio",
-   "link": "https://www.argentum.org/tarkett-earns-cradle-to-cradle-certified-silver-version-5-0-for-ethos-carpet-tile-portfolio/",
-   "source": "Argentum",
-   "published": "2026-11-12T20:33:54Z"
   },
   {
    "title": "Obesity linked to up to 27% lower risk of death in dementia",
@@ -263,12 +269,6 @@
    "link": "https://www.sciencedaily.com/releases/2026/11/261108233103.htm",
    "source": "ScienceDaily",
    "published": "2026-11-10T01:47:34Z"
-  },
-  {
-   "title": "Common osteoporosis drugs linked to 24% lower dementia risk in major study",
-   "link": "https://www.sciencedaily.com/releases/2026/11/261108233037.htm",
-   "source": "ScienceDaily",
-   "published": "2026-11-09T07:36:14Z"
   }
  ]
 }
