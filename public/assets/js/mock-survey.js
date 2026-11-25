@@ -888,14 +888,15 @@ function auditCard(a){
     return card;
   }
   const st = auditState(a);
-  card.append(h("div", {class:"row"},
+  // native append() would print empty slots as the text "null", so drop them first
+  card.append(...[h("div", {class:"row"},
     h("strong", {}, periodLabel(a, st.key)),
     st.doc ? h("span", {class:"chip " + (st.doc.result === "Issues found" ? "bad" : "ok")}, (st.doc.result || "Done") + " · " + (st.doc.doneBy || "") + " · " + fmtShort(st.doc.doneDate || today()))
       : h("span", {class:"chip " + (st.overdue ? "bad" : "warn")}, st.overdue ? "Overdue" : st.due)),
     st.doc && st.doc.note ? h("div", {class:"note"}, st.doc.note) : null,
     !st.doc && st.prevMissed ? h("div", {class:"err"}, periodLabel(a, st.prev) + " was not logged.") : null,
     !st.doc && canEditData(a.dept) ? auditForm(a, st.key, today(), false) : null,
-    history(a, st.key));
+    history(a, st.key)].filter(Boolean));
   return card;
 }
 function auditForm(a, key, date, compact){
