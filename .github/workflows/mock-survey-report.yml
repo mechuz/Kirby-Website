@@ -1,0 +1,45 @@
+name: Mock survey 3 PM results email
+
+# Emails leadership the day's mock-survey results at 3:00 PM Central.
+# GitHub schedules run in UTC and can start late, so this wakes four times
+# between 3:00 and 5:00 PM Central (summer and winter) and the script sends
+# once per day (report_log table). Needs the SUPABASE_* and SMTP_* secrets and
+# REPORT_TO; without the Supabase secrets the run exits quietly.
+
+on:
+  schedule:
+    - cron: '2 20 * * *'    # 3:02 PM CDT / 2:02 PM CST (skipped in winter)
+    - cron: '32 20 * * *'
+    - cron: '2 21 * * *'    # 3:02 PM CST / 4:02 PM CDT
+    - cron: '32 21 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Send now, even outside 3-5 PM or if today was already sent'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mock-survey-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send the results email
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          REPORT_FROM: ${{ secrets.REPORT_FROM }}
+          REPORT_TO: ${{ secrets.REPORT_TO }}
+          FORCE: ${{ inputs.force && '1' || '' }}
+        run: python3 scripts/mock_survey_report.py

@@ -14,6 +14,7 @@ top of each content file:
     sitemap: yes|no   (default yes)
     robots: noindex, follow   (optional robots meta)
     analytics: no   (optional: drop the Google tag and lock scripts to this site)
+    layout: app     (optional: bare staff-app template, templates/staff-app.html)
     -->
 
 Usage: python3 build.py
@@ -29,6 +30,8 @@ import urllib.parse
 
 ROOT = pathlib.Path(__file__).parent
 TEMPLATE = (ROOT / "templates" / "base.html").read_text()
+# Bare layout for staff web apps (layout: app): no site header, footer, chat or ads tags.
+TEMPLATE_APP = (ROOT / "templates" / "staff-app.html").read_text()
 CONTENT = ROOT / "content"
 PUBLIC = ROOT / "public"
 
@@ -1385,7 +1388,7 @@ def build():
         if f.stem.endswith(".head"):
             continue
         meta, body = parse(f.read_text(), f.name)
-        html = TEMPLATE
+        html = TEMPLATE_APP if meta.get("layout", "").strip() == "app" else TEMPLATE
         if meta.get("analytics", "yes").strip() == "no":
             # Staff/private pages: no Google tag, and only our own scripts may run.
             html = re.sub(r"\s*<!--analytics-->.*?<!--/analytics-->", "", html, flags=re.S)
@@ -1421,6 +1424,10 @@ def build():
             "js_v": js_v,
             "head_extra": (('<meta name="robots" content="%s">\n  ' % _html.escape(meta["robots"].strip(), quote=True)) if meta.get("robots") else "") + meta.get("head_extra", ""),
             "body_attr": (" " + meta["body_attr"]) if meta.get("body_attr") else "",
+            # cache-busting versions for the mock survey app's own files
+            "ms_css_v": fhash(PUBLIC / "assets" / "css" / "mock-survey.css"),
+            "ms_js_v": fhash(PUBLIC / "assets" / "js" / "mock-survey.js"),
+            "ms_cfg_v": fhash(PUBLIC / "assets" / "js" / "mock-survey-config.js"),
         }
         for key in NAV_KEYS:
             repl[f"active_{key}"] = 'aria-current="page"' if meta.get("nav") == key else ""
