@@ -369,7 +369,7 @@ function applyRows(coll, rows, full){
   }
 }
 async function loadAll(){
-  if (!S.sb || !S.profile || S.profile.mustChangePassword) return;
+  if (!S.sb || !S.profile || S.profile.mustChangePassword || !S.profile.termsOk) return;
   const since = addDays(today(), -WINDOW_DAYS);
   let c, a, u, p;
   try {
@@ -416,7 +416,7 @@ function startSync(){
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && S.syncing) loadAll(); });
 
 /* ------------------------------------------------------------- routing -- */
-const VIEWS = ["dashboard", "checklists", "actions", "audits", "binder", "account"];
+const VIEWS = ["dashboard", "checklists", "actions", "audits", "binder", "account", "privacy"];
 function route(){
   const hash = (location.hash || "").slice(1);
   if (hash.startsWith("dept-") && DEPT[hash.slice(5)]) { S.view = "checklists"; S.dept = hash.slice(5); }
@@ -435,7 +435,7 @@ function renderStatus(){
   let cls = "live", txt = "Live";
   if (S.offline) { cls = "off"; txt = "Offline · will save when back"; }
   else if (S.stale) { cls = "off"; txt = "Can't reach the server"; }
-  else if (!S.profile.mustChangePassword && !(S.loaded.checks && S.loaded.actions && S.loaded.audits)) { cls = "saving"; txt = "Loading…"; }
+  else if (!S.profile.mustChangePassword && S.profile.termsOk && !(S.loaded.checks && S.loaded.actions && S.loaded.audits)) { cls = "saving"; txt = "Loading…"; }
   else if (S.saving) { cls = "saving"; txt = "Saving…"; }
   row.append(h("span", {class:"pill " + cls, title:"Sync status"}, h("span", {class:"dot"}), txt));
   if (IS_DEMO) row.append(h("span", {class:"pill demo-pill"}, "Demo · sample data"));
@@ -447,7 +447,7 @@ function renderStatus(){
 }
 function renderTabs(){
   const tabs = document.getElementById("tabs"); tabs.replaceChildren();
-  if (!S.profile || S.profile.mustChangePassword) return;
+  if (!S.profile || S.profile.mustChangePassword || !S.profile.termsOk) return;
   const active = actionList().filter(a => a.status !== "Closed");
   const hot = active.some(a => a.urgent) || active.some(isOverdue);
   const defs = [["dashboard","Dashboard","Home"],["checklists","Daily checklists","Checklist"],["actions","Corrective actions","Actions", active.length, hot],["audits","Scheduled audits","Audits", auditsDueCount()],["binder","Survey binder","Binder"]];
@@ -465,10 +465,11 @@ function render(force){
   S.dirty = false;
   const y = window.scrollY;
   const view = !S.configured ? viewNotConfigured
-    : !S.profile ? viewLogin
+    : !S.profile ? (S.view === "privacy" ? viewPrivacy : viewLogin)
+    : !S.profile.termsOk ? viewTerms
     : S.profile.mustChangePassword ? () => viewChangePassword(true)
-    : ({dashboard:viewDashboard, checklists:viewChecklists, actions:viewActions, audits:viewAudits, binder:viewBinder, account:viewAccount}[S.view] || viewDashboard);
-  main.replaceChildren(view());
+    : ({dashboard:viewDashboard, checklists:viewChecklists, actions:viewActions, audits:viewAudits, binder:viewBinder, account:viewAccount, privacy:viewPrivacy}[S.view] || viewDashboard);
+  main.replaceChildren(view(), noticeFooter());
   if (!force) window.scrollTo(0, y); else window.scrollTo(0, 0);
   renderTabs();
 }
@@ -1063,17 +1064,18 @@ function save(filename, data){
     toast("Downloaded " + filename);
   } catch (e) { toast("Couldn't create the file on this device."); }
 }
+const CONF_NOTICE = "CONFIDENTIAL: contains protected health information (PHI). For authorized quality-improvement and survey use only. Do not copy, forward or leave unattended. Store securely and destroy by shredding.";
 function csv(rows){ return rows.map(r => r.map(v => { const s = String(v == null ? "" : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(",")).join("\r\n"); }
 function downloadChecksCsv(){
   const {rows} = binderData(); const out = [["Date","Department","Section","Item #","Item","Result","Reviewer","Signed","Submitted"]];
   for (const r of rows) { if (!r.c) continue; r.dept.items.forEach((text, i) => out.push([r.date, r.dept.name, (secOf(r.dept, i) || {}).title || "", i+1, text, r.marks[i+1] || "", r.c.reviewer || "", r.c.signature || "", r.c.submitted ? fmtStamp(r.c.submittedAt) : ""])); }
-  save("kirby-gate-checklists_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv(out));
+  save("kirby-gate-checklists_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv([[CONF_NOTICE]].concat(out)));
   logAccess("export", "checklists CSV " + S.binder.from + " to " + S.binder.to);
 }
 function downloadActionsCsv(){
   const {acts} = binderData(); const out = [["Found","Department","Checklist item","Deficiency identified","Immediate safety measures","Corrective action required","Person responsible","Target completion date","Actual completion date","Verified by","Status","Resident safety"]];
   for (const a of acts) out.push([a.date, DEPT[a.dept] ? DEPT[a.dept].name : a.dept, a.item ? "#" + a.item + " " + (a.itemText || "") : "", a.deficiency, a.safety, a.corrective, a.responsible, a.targetDate, a.actualDate, a.verifiedBy, a.status, a.urgent ? "Yes" : "No"]);
-  save("kirby-gate-corrective-actions_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv(out));
+  save("kirby-gate-corrective-actions_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv([[CONF_NOTICE]].concat(out)));
   logAccess("export", "corrective actions CSV " + S.binder.from + " to " + S.binder.to);
 }
 function downloadPacket(){
@@ -1088,7 +1090,8 @@ function downloadPacket(){
     '.band{background:#111;color:#fff;padding:14px 18px;margin-bottom:14px}.band .s{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}' +
     'table{border-collapse:collapse;width:100%;margin-bottom:8px}th,td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top}th{background:#eee;font-size:11px}' +
     '.kp{display:flex;gap:12px;flex-wrap:wrap}.kp div{border:1px solid #999;padding:8px 12px}.kp b{display:block;font-size:18px}.c{text-align:center}.nc{background:#fde4d4;font-weight:bold}' +
-    '.pg{page-break-before:always}.small{font-size:10.5px;color:#444}@media print{body{margin:0}.band{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>';
+    '.pg{page-break-before:always}.small{font-size:10.5px;color:#444}.conf{border:2px solid #111;padding:6px 10px;margin:0 0 12px;font-size:11px;font-weight:bold}@media print{body{margin:0}.band{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>';
+  html += '<div class="conf">' + esc(CONF_NOTICE) + '</div>';
   html += '<div class="band"><div class="s">' + esc(BRAND.facility + (BRAND.address ? " · " + BRAND.address : "")) + '</div><h1>' + esc(BRAND.product) + ' Packet</h1><div>' + esc(range) + '</div></div>';
   html += '<p class="small">Generated ' + esc(fmtStamp(new Date().toISOString())) + ' (Central) from the ' + esc(BRAND.product) + ' system. Daily Departmental Compliance Checklists: C = compliant, NC = needs correction, NA = not applicable. Every NC is documented in the corrective-action log.</p>';
   html += '<div class="kp"><div><b>' + done + '/' + rows.length + '</b>checklists submitted</div><div><b>' + (C + NC ? pct(C, C + NC) + '%' : '—') + '</b>compliance rate</div><div><b>' + C + ' / ' + NC + ' / ' + NA + '</b>C / NC / NA</div><div><b>' + acts.filter(a => a.status === "Closed").length + '/' + acts.length + '</b>corrective actions closed</div></div>';
@@ -1110,7 +1113,7 @@ function downloadPacket(){
   if (b.detail) {
     for (const r of rows) {
       if (!r.c) continue;
-      html += '<div class="pg"><div class="band"><div class="s">' + esc(BRAND.facility) + ' · Daily Departmental Compliance Checklist</div><h1>' + esc(r.dept.name) + '</h1><div>Responsible lead: ' + esc(r.dept.lead) + '</div></div>';
+      html += '<div class="pg"><div class="conf">' + esc(CONF_NOTICE) + '</div><div class="band"><div class="s">' + esc(BRAND.facility) + ' · Daily Departmental Compliance Checklist</div><h1>' + esc(r.dept.name) + '</h1><div>Responsible lead: ' + esc(r.dept.lead) + '</div></div>';
       html += '<p>Date: <b>' + esc(fmtDay(r.date, {year:"numeric"})) + '</b> &nbsp; Reviewer: <b>' + esc(r.c.reviewer || "") + '</b></p><table><tr><th>#</th><th>Compliance item</th><th>C</th><th>NC</th><th>NA</th></tr>';
       r.dept.items.forEach((text, i) => { const m = r.marks[i+1]; const sh = (r.dept.sections || []).find(x => x.start === i); if (sh && r.dept.sections.length > 1) html += '<tr><th colspan="5">' + esc(sh.title) + '</th></tr>'; html += '<tr><td>' + (i+1) + '</td>' + td(text) + '<td class="c">' + (m === "C" ? "X" : "") + '</td><td class="c' + (m === "NC" ? " nc" : "") + '">' + (m === "NC" ? "X" : "") + '</td><td class="c">' + (m === "NA" ? "X" : "") + '</td></tr>'; });
       html += '</table>';
@@ -1120,6 +1123,7 @@ function downloadPacket(){
       html += '<p>Department head signature: <b>' + esc(r.c.signature || "") + '</b> &nbsp; Time submitted: <b>' + esc(r.c.submitted ? fmtStamp(r.c.submittedAt) : "Not submitted") + '</b></p></div>';
     }
   }
+  html += '<p class="conf">' + esc(CONF_NOTICE) + ' Printed by ' + esc(S.meName || "") + ' on ' + esc(fmtStamp(new Date().toISOString())) + ' (Central).</p>';
   html += '</body></html>';
   save(BRAND.fileSlug + "_" + b.from + "_to_" + b.to + ".html", html);
 }
@@ -1201,6 +1205,7 @@ function viewLogin(){
     field("li-user", "Username", {type:"text", name:"username", value: IS_DEMO ? "" : (lsGet("kg-last-user") || ""), autocomplete:"username", autocapitalize:"none", autocorrect:"off", spellcheck:"false", required:true}),
     field("li-pass", "Password", {type:"password", name:"password", autocomplete:"current-password", required:true}),
     showPw(["li-pass"]), err, btn,
+    h("p", {class:"auth-warning", role:"note"}, "Authorized " + BRAND.facilityShort + " staff only. This system contains confidential resident health information. Use is monitored and recorded. Unauthorized access is prohibited and may be reported."),
     h("p", {class:"note", style:"margin:0"}, IS_DEMO ? "Forgot your password? Ask ownership to reset it." : "Forgot your password? Ask ownership to reset it. For privacy, Daily Rounds signs you out after 15 minutes without activity."));
   return form;
 }
@@ -1229,6 +1234,70 @@ function passwordForm(forced){
     field("pw-again", "Type it again", {type:"password", autocomplete:"new-password", minlength:"8"}),
     showPw(["pw-new", "pw-again"]), err, btn);
 }
+/* ---------------------------------------------------------- disclosures -- */
+/* Shown in full once to every person (they must agree before anything opens), again
+   whenever TERMS_VERSION changes, and any time from the "Privacy & rules" link.
+   Acceptance is recorded in the database (staff_terms) with date, time and device. */
+const TERMS_VERSION = "2026-11-25";
+const NOTICE_LINE = "Confidential: contains resident health information. Authorized staff only. Activity is logged.";
+function disclosures(){
+  const f = BRAND.facilityShort;
+  return [
+    ["Authorized use only", "Daily Rounds is for " + f + " staff who have been given access. Use only your own username. Never share your password or let anyone use the app while you are signed in. Leadership can turn off access at any time."],
+    ["Confidential resident information", "Daily Rounds can contain protected health information (PHI) about residents, which is protected by HIPAA and Tennessee law. Look at and use it only to do your job, and only as much as you need. Do not copy, screenshot, photograph, forward, post or talk about it outside of work needs."],
+    ["What to write", "Use room numbers or initials. Never write a resident's full name, date of birth or Social Security number, and do not add photos. Describe the problem and the fix, not the person."],
+    ["Everything is recorded", "Daily Rounds records who signs in, which screens they open, every change they make, and every print or download, with the date, time and device. Leadership reviews these records. You should have no expectation of privacy when using this system."],
+    ["Keep your device safe", "For privacy, Daily Rounds signs you out after 15 minutes without activity. Keep a passcode or screen lock on your phone, do not use public or shared computers, and report a lost or stolen phone the same day."],
+    ["Report problems right away", "If you see information you should not see, send something to the wrong person, or think someone used your login, tell the Administrator or your supervisor the same day. Reporting quickly protects residents and you."],
+    ["Records are official", "Entries are time-stamped by the server and cannot be backdated. Enter only what you actually checked. Making false entries is prohibited."],
+    ["Not for emergencies", "Daily Rounds does not replace emergency procedures. If anyone is in danger, call 911 and follow the facility's emergency plan. Report urgent safety issues in person to the Administrator and the Director of Nursing; logging them here is not enough."],
+    ["Not the medical record", "Daily Rounds is a compliance and quality-improvement tool. It is not a resident's medical record. Document resident care in the medical record system."],
+    ["Consequences", "Breaking these rules can lead to discipline, up to and including losing your job, and may be reported to the authorities. HIPAA violations can carry civil and criminal penalties."],
+    ["Information about you", "Daily Rounds keeps your name, username, role, departments and activity records to run the system and to show compliance. Compliance records are kept for at least six years."]
+  ];
+}
+function disclosureList(){
+  return h("ol", {class:"terms"}, disclosures().map(([t, b]) => h("li", {}, h("strong", {}, t), h("span", {}, b))));
+}
+function viewTerms(){
+  const box = h("input", {type:"checkbox", id:"terms-ok"});
+  const err = h("div", {class:"err", role:"alert"});
+  const btn = h("button", {class:"btn primary", type:"button", style:"width:100%", onclick: async () => {
+    if (!box.checked) { err.textContent = "Tick the box to show you have read and agree to these rules."; return; }
+    btn.disabled = true; btn.textContent = "Saving…"; err.textContent = "";
+    let res;
+    try { res = await S.sb.rpc("accept_terms", {p_version: TERMS_VERSION, p_user_agent: (navigator.userAgent || "").slice(0, 300)}); }
+    catch (ex) { res = {error: {message: String(ex)}}; }
+    if (res.error) { btn.disabled = false; btn.textContent = "I agree"; err.textContent = isNetErr(res.error) ? "Can't reach the server. Try again." : res.error.message; return; }
+    S.profile.termsAcceptedAt = res.data || new Date().toISOString(); S.profile.termsOk = true;
+    logAccess("view", "agreed to rules " + TERMS_VERSION);
+    route(); renderStatus();
+    if (!S.profile.mustChangePassword) startSync();
+  }}, "I agree");
+  return h("section", {class:"panel stack terms-gate"},
+    h("h2", {}, "Before you start: privacy and confidentiality"),
+    h("p", {class:"note", style:"margin:0"}, "Welcome, " + (S.meName || "") + ". Please read these rules. You need to agree to them once before using " + BRAND.product + "."),
+    disclosureList(),
+    h("label", {class:"check agree", for:"terms-ok"}, box, "I have read these rules and I agree to follow them."),
+    err, btn,
+    h("button", {class:"btn", type:"button", style:"width:100%", onclick:signOut}, "Not now, sign me out"));
+}
+function viewPrivacy(){
+  const p = S.profile || {};
+  return h("div", {class:"stack"},
+    !S.profile ? h("a", {href:"#", class:"btn back"}, "‹ Back to sign in") : null,
+    h("div", {class:"section-h"}, h("h2", {}, "Privacy & rules"), h("span", {class:"sub"}, "Version " + TERMS_VERSION)),
+    h("section", {class:"panel stack"},
+      p.termsAcceptedAt ? h("div", {class:"submitted"}, "You agreed to these rules on " + new Date(p.termsAcceptedAt).toLocaleString("en-US", {timeZone:"America/Chicago", dateStyle:"medium", timeStyle:"short"}) + " (Central).") : null,
+      disclosureList(),
+      h("p", {class:"note", style:"margin:0"}, "Questions about privacy? Ask the Administrator. " + BRAND.facility + (BRAND.address ? ", " + BRAND.address : "") + ".")));
+}
+function noticeFooter(){
+  return h("footer", {class:"notice-foot", role:"note"},
+    h("span", {}, NOTICE_LINE + " In an emergency, call 911."),
+    h("a", {href:"#privacy"}, "Privacy & rules"));
+}
+
 function viewChangePassword(){
   return h("section", {class:"panel stack auth"},
     h("h2", {}, "Choose your own password"),
@@ -1244,6 +1313,7 @@ function viewAccount(){
       h("div", {class:"note"}, "Username: " + p.username),
       h("div", {class:"note"}, ROLE_LABEL[p.role] || p.role),
       h("div", {class:"note"}, "Can fill in: " + (p.role === "admin" ? "every department" : (myDepts().map(d => d.name).join(", ") || "nothing (view only)"))),
+      h("a", {href:"#privacy", class:"note"}, "Privacy & rules you agreed to"),
       h("div", {class:"row"}, h("button", {class:"btn", type:"button", onclick:signOut}, "Sign out of this phone"),
         IS_DEMO ? h("button", {class:"btn", type:"button", onclick:() => window.KG_DEMO_RESET && window.KG_DEMO_RESET()}, "Reset demo data") : null)),
     h("section", {class:"panel stack", style:"gap:10px"}, h("h2", {style:"font-size:16px"}, "Change password"), passwordForm(false)),
@@ -1267,11 +1337,18 @@ async function loadProfile(){
   const d = res.data;
   S.profile = {id:d.id, username:d.username, name:d.name || d.username, role:d.role, depts:d.depts || [], mustChangePassword:!!d.mustChangePassword};
   applyVisibility(S.profile);
-  if (!IS_DEMO) { markActive(true); lsSet("kg-locked", null); }
+  if (IS_DEMO) S.profile.termsOk = true;
+  else {
+    markActive(true); lsSet("kg-locked", null);
+    let t = null;
+    try { t = await S.sb.from("staff_terms").select("accepted_at").eq("user_id", d.id).eq("version", TERMS_VERSION).maybeSingle(); } catch (e) {}
+    S.profile.termsAcceptedAt = t && t.data ? t.data.accepted_at : null;
+    S.profile.termsOk = !!S.profile.termsAcceptedAt;
+  }
   S.meId = d.id; S.meName = S.profile.name; S.readOnly = d.role === "viewer";
   logAccess("open", S.profile.role);
   route(); renderStatus();
-  if (!S.profile.mustChangePassword) startSync();
+  if (!S.profile.mustChangePassword && S.profile.termsOk) startSync();
 }
 async function signOut(){
   await logAccess("sign_out");

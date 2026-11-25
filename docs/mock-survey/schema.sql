@@ -521,3 +521,38 @@ begin
 end $$;
 revoke all on function public.log_access(text, text, text) from public, anon;
 grant execute on function public.log_access(text, text, text) to authenticated;
+
+-- ------------------------------------------------ rules acceptance (terms) ---
+-- (Applied to the live project as migration "staff_terms_acceptance".)
+-- Everyone must agree to the confidentiality and acceptable-use rules (shown in
+-- the app, version TERMS_VERSION in mock-survey.js) before anything opens.
+create table if not exists public.staff_terms (
+  user_id uuid not null references public.staff(user_id) on delete cascade,
+  version text not null,
+  accepted_at timestamptz not null default now(),
+  user_agent text,
+  primary key (user_id, version)
+);
+alter table public.staff_terms enable row level security;
+revoke all on public.staff_terms from anon, authenticated;
+grant select on public.staff_terms to authenticated;
+drop policy if exists staff_terms_read on public.staff_terms;
+create policy staff_terms_read on public.staff_terms for select to authenticated
+  using (user_id = auth.uid() or public.is_leader());
+create or replace function public.accept_terms(p_version text, p_user_agent text default null)
+returns timestamptz language plpgsql security definer set search_path = public as $$
+declare t timestamptz;
+begin
+  if auth.uid() is null or not exists (select 1 from public.staff where user_id = auth.uid() and active) then
+    raise exception 'Not signed in' using errcode = '28000'; end if;
+  if p_version is null or p_version !~ '^[0-9A-Za-z._-]{1,40}$' then raise exception 'Bad version' using errcode = '22023'; end if;
+  insert into public.staff_terms (user_id, version, user_agent) values (auth.uid(), p_version, left(p_user_agent, 300))
+    on conflict (user_id, version) do nothing;
+  select accepted_at into t from public.staff_terms where user_id = auth.uid() and version = p_version;
+  return t;
+end $$;
+revoke all on function public.accept_terms(text, text) from public, anon;
+grant execute on function public.accept_terms(text, text) to authenticated;
+-- Who has agreed (run in the SQL Editor):
+--   select s.full_name, t.version, t.accepted_at at time zone 'America/Chicago' as accepted_central
+--   from public.staff s left join public.staff_terms t on t.user_id = s.user_id order by s.full_name;

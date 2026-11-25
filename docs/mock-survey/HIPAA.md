@@ -18,6 +18,7 @@ This page tracks all three.
 | Nothing stored on the phone | Records live only in memory; the phone keeps just the sign-in token and preferences |
 | Encryption | HTTPS/TLS in transit; Supabase encrypts data at rest (AES-256) |
 | No PHI in email or GitHub | The 3:00 PM email and the GitHub Action request only codes, counts, dates and statuses, never the free-text finding fields |
+| Disclosures | Sign-in warning (authorized use, monitoring); 11-point confidentiality and acceptable-use rules every person must agree to before anything opens, recorded with date, time and device (`staff_terms`); "Privacy & rules" page and a confidentiality notice under every screen; CONFIDENTIAL notices on printed packets (every page), CSV downloads and the 3:00 PM email |
 | Demo is separate | /rounds/demo/ runs on sample data in the browser and never touches the database |
 
 ## Owner steps (Supabase dashboard and contracts, cannot be done in code)
@@ -33,6 +34,27 @@ This page tracks all three.
    - set the minimum password length to **10**;
    - turn **on** leaked-password protection.
 8. Re-run the Security Advisor and fix anything it flags under High Compliance.
+
+## The in-app rules (disclosures)
+
+The rules shown in the app (`disclosures()` in `public/assets/js/mock-survey.js`) cover:
+1. authorized use only;
+2. confidential resident information (PHI, minimum necessary);
+3. what to write (room numbers or initials only);
+4. monitoring and logging;
+5. device security and auto sign-out;
+6. reporting problems the same day;
+7. records are official;
+8. not for emergencies (call 911);
+9. not the medical record;
+10. consequences;
+11. information kept about staff.
+
+To change the wording, edit that list and raise `TERMS_VERSION`; everyone is then asked to agree again.
+Have healthcare counsel review the wording once. Residents' own Notice of Privacy Practices is a facility
+document given to residents; it is not part of this staff app.
+
+To see who has agreed, run the query at the end of `schema.sql` in the Supabase SQL Editor.
 
 ## Policies and paperwork (administrative safeguards)
 

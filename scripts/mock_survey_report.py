@@ -168,6 +168,7 @@ def build(data, day, depts):
             b, tail = act_line(a); t.append(f"  - {b[0]}: {b[1]} [{'; '.join(tail)}]")
         t.append("")
     t.append("Resident details stay in Daily Rounds and are never included in email.")
+    t.append("CONFIDENTIAL: for the named recipients only. If you received this by mistake, tell the sender and delete it. Do not forward.")
     t.append(f"Live dashboard: {APP_URL}")
     text = "\n".join(t)
 
@@ -201,7 +202,8 @@ def build(data, day, depts):
 <h3 style="margin:18px 0 6px">Findings logged today ({len(today_findings)})</h3>{table(today_findings)}
 <h3 style="margin:18px 0 6px">Overdue corrective actions ({len(overdue)})</h3>{table(overdue)}
 <p><a href="{APP_URL}" style="display:inline-block;background:#2c6a37;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;font-weight:bold">Open the live dashboard</a></p>
-<p style="font-size:12px;color:#56675a">Sent automatically at 3:00 PM Central from Kirby Gate Daily Rounds. All times are Central (CT). Resident details stay in Daily Rounds and are never included in email; open the dashboard to see them.</p></div>"""
+<p style="font-size:12px;color:#56675a">Sent automatically at 3:00 PM Central from Kirby Gate Daily Rounds. All times are Central (CT). Resident details stay in Daily Rounds and are never included in email; open the dashboard to see them.</p>
+<p style="font-size:12px;color:#56675a">CONFIDENTIAL: this message is for the named recipients only. If you received it by mistake, tell the sender and delete it. Do not forward.</p></div>"""
     return subject, text, body
 
 
