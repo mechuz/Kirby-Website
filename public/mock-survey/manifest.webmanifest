@@ -1,0 +1,13 @@
+{
+  "name": "Kirby Gate Mock Survey",
+  "short_name": "Mock Survey",
+  "start_url": "/mock-survey/",
+  "scope": "/mock-survey/",
+  "display": "standalone",
+  "background_color": "#121c15",
+  "theme_color": "#121c15",
+  "icons": [
+    {"src": "/assets/img/mock-survey-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/assets/img/mock-survey-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
