@@ -122,6 +122,11 @@ analytics: no
       <noscript><p class="center">This page needs JavaScript turned on.</p></noscript>
     </div>
     <div id="kg-team" hidden></div>
+    <div class="card" style="margin:2rem auto 0;max-width:440px;padding:1.5rem;text-align:center">
+      <h2 style="font-size:1.25rem;margin:0">Daily Rounds</h2>
+      <p style="margin:0.5rem 0 1rem">Department heads: complete your daily checklist by 2:30 PM. This has its own username and password.</p>
+      <a href="/rounds/" class="btn btn-primary btn-lg" style="width:100%">Open Daily Rounds</a>
+    </div>
   </div>
 </section>
 <script type="application/json" id="kg-gate-data">${data}</script>

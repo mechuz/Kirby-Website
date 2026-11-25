@@ -1,8 +1,8 @@
 {
-  "name": "Kirby Gate Mock Survey",
-  "short_name": "Mock Survey",
-  "start_url": "/mock-survey/",
-  "scope": "/mock-survey/",
+  "name": "Kirby Gate Daily Rounds",
+  "short_name": "Daily Rounds",
+  "start_url": "/rounds/",
+  "scope": "/rounds/",
   "display": "standalone",
   "background_color": "#121c15",
   "theme_color": "#121c15",

@@ -31,7 +31,7 @@ import zoneinfo
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CENTRAL = zoneinfo.ZoneInfo("America/Chicago")
-APP_URL = "https://www.kirbygateliving.com/mock-survey/"
+APP_URL = "https://www.kirbygateliving.com/rounds/"
 DEADLINE = datetime.time(14, 30)
 
 
@@ -112,7 +112,7 @@ def build(data, day, depts):
     overdue = [a for a in actions if a.get("status") != "Closed" and a.get("targetDate") and a["targetDate"] < day]
     open_count = sum(1 for a in actions if a.get("status") != "Closed")
     pretty_day = datetime.date.fromisoformat(day).strftime("%a, %b %-d")
-    subject = f"Mock survey 3:00 PM results · {pretty_day} · {ready}% ready · {submitted}/{len(depts)} submitted"
+    subject = f"Daily Rounds 3:00 PM CT results · {pretty_day} · {ready}% ready · {submitted}/{len(depts)} submitted"
     if urgent:
         subject += f" · {len(urgent)} URGENT"
 
@@ -123,7 +123,7 @@ def build(data, day, depts):
         return bits, tail
 
     # plain text
-    t = [f"THE POINTE AT KIRBY GATE: MOCK SURVEY RESULTS, {pretty_day.upper()}", "",
+    t = [f"THE POINTE AT KIRBY GATE: DAILY ROUNDS RESULTS, {pretty_day.upper()}", "",
          f"Survey readiness: {ready}% ({C + NA} of {total} items verified compliant or N/A)",
          f"Checklists submitted: {submitted} of {len(depts)} ({late} after the 2:30 PM deadline)",
          f"Items needing correction today: {NC} · Open corrective actions: {open_count} ({len(overdue)} overdue)", ""]
@@ -164,7 +164,7 @@ def build(data, day, depts):
                    f"<b style='color:#b91c1c'>{len(urgent)} urgent resident-safety finding{'s' if len(urgent) != 1 else ''} still open</b>{table(urgent)}</div>") if urgent else ""
     body = f"""<div style="font-family:Arial,Helvetica,sans-serif;color:#16221a;max-width:760px">
 <div style="background:#121c15;color:#eef4ed;padding:14px 16px"><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.75">The Pointe at Kirby Gate</div>
-<div style="font-size:20px;font-weight:bold">Mock survey results · {e(pretty_day)}</div></div>
+<div style="font-size:20px;font-weight:bold">Daily Rounds results · {e(pretty_day)}</div></div>
 <p style="font-size:15px;margin:14px 0 4px"><b style="font-size:28px">{ready}%</b> survey ready ({C + NA} of {total} items verified compliant or N/A)</p>
 <p style="margin:0 0 12px;color:#56675a">{submitted} of {len(depts)} checklists submitted · {late} after the 2:30 PM deadline · {NC} items need correction · {open_count} open corrective actions ({len(overdue)} overdue)</p>
 {urgent_html}
@@ -174,7 +174,7 @@ def build(data, day, depts):
 <h3 style="margin:18px 0 6px">Findings logged today ({len(today_findings)})</h3>{table(today_findings)}
 <h3 style="margin:18px 0 6px">Overdue corrective actions ({len(overdue)})</h3>{table(overdue)}
 <p><a href="{APP_URL}" style="display:inline-block;background:#2c6a37;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;font-weight:bold">Open the live dashboard</a></p>
-<p style="font-size:12px;color:#56675a">Sent automatically at 3:00 PM Central from the Kirby Gate mock survey.</p></div>"""
+<p style="font-size:12px;color:#56675a">Sent automatically at 3:00 PM Central from Kirby Gate Daily Rounds. All times are Central (CT).</p></div>"""
     return subject, text, body
 
 

@@ -1,10 +1,10 @@
-# Live Mock Survey: setup and account management
+# Daily Rounds (live mock survey): setup and account management
 
-The staff app at **kirbygateliving.com/mock-survey/** is a page on this website. Staff sign in with a username and password; no other app or account is needed. Accounts, permissions and survey data live in a Supabase project (a hosted Postgres database with sign-in built in). The website itself never stores passwords or survey data.
+The staff app, called **Daily Rounds**, at **kirbygateliving.com/rounds/** (the old /mock-survey/ address forwards there) is a page on this website. Staff sign in with a username and password; no other app or account is needed. Accounts, permissions and survey data live in a Supabase project (a hosted Postgres database with sign-in built in). The website itself never stores passwords or survey data.
 
 | Piece | Where |
 |---|---|
-| App page | `content/mock-survey.html` (layout `app`, built by `build.py`) |
+| App page | `content/rounds.html` (layout `app`, built by `build.py`) |
 | App code / styles | `public/assets/js/mock-survey.js`, `public/assets/css/mock-survey.css` |
 | Sign-in library | `public/assets/js/vendor/supabase-2.119.2.js` (served from our own site) |
 | Project address + public key | `public/assets/js/mock-survey-config.js` |
