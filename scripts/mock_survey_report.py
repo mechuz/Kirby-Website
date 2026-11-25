@@ -39,8 +39,7 @@ def load_depts():
     """Read the department checklists from the app itself, so there is one source of truth."""
     js = (ROOT / "public" / "assets" / "js" / "mock-survey.js").read_text()
     block = js[js.index("const DEPTS = [") + len("const DEPTS = "): js.index("];\nconst DEPT =") + 1]
-    block = re.sub(r"\{(id|name|short|lead|items):", r'{"\1":', block)
-    block = re.sub(r", (id|name|short|lead|items):", r', "\1":', block)
+    block = re.sub(r"([{,]\s*)(id|name|short|lead|sections|title|start|items):", r'\1"\2":', block)
     block = re.sub(r",\s*([\]}])", r"\1", block)  # JS allows trailing commas; JSON does not
     return json.loads(block)
 
@@ -113,7 +112,7 @@ def build(data, day, depts):
     overdue = [a for a in actions if a.get("status") != "Closed" and a.get("targetDate") and a["targetDate"] < day]
     open_count = sum(1 for a in actions if a.get("status") != "Closed")
     pretty_day = datetime.date.fromisoformat(day).strftime("%a, %b %-d")
-    subject = f"Mock survey 3:00 PM results · {pretty_day} · {ready}% ready · {submitted}/8 submitted"
+    subject = f"Mock survey 3:00 PM results · {pretty_day} · {ready}% ready · {submitted}/{len(depts)} submitted"
     if urgent:
         subject += f" · {len(urgent)} URGENT"
 
@@ -126,7 +125,7 @@ def build(data, day, depts):
     # plain text
     t = [f"THE POINTE AT KIRBY GATE: MOCK SURVEY RESULTS, {pretty_day.upper()}", "",
          f"Survey readiness: {ready}% ({C + NA} of {total} items verified compliant or N/A)",
-         f"Checklists submitted: {submitted} of 8 ({late} after the 2:30 PM deadline)",
+         f"Checklists submitted: {submitted} of {len(depts)} ({late} after the 2:30 PM deadline)",
          f"Items needing correction today: {NC} · Open corrective actions: {open_count} ({len(overdue)} overdue)", ""]
     if urgent:
         t.append("URGENT RESIDENT-SAFETY FINDINGS STILL OPEN:")
@@ -167,7 +166,7 @@ def build(data, day, depts):
 <div style="background:#121c15;color:#eef4ed;padding:14px 16px"><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.75">The Pointe at Kirby Gate</div>
 <div style="font-size:20px;font-weight:bold">Mock survey results · {e(pretty_day)}</div></div>
 <p style="font-size:15px;margin:14px 0 4px"><b style="font-size:28px">{ready}%</b> survey ready ({C + NA} of {total} items verified compliant or N/A)</p>
-<p style="margin:0 0 12px;color:#56675a">{submitted} of 8 checklists submitted · {late} after the 2:30 PM deadline · {NC} items need correction · {open_count} open corrective actions ({len(overdue)} overdue)</p>
+<p style="margin:0 0 12px;color:#56675a">{submitted} of {len(depts)} checklists submitted · {late} after the 2:30 PM deadline · {NC} items need correction · {open_count} open corrective actions ({len(overdue)} overdue)</p>
 {urgent_html}
 <h3 style="margin:16px 0 6px">By department</h3>
 <table cellpadding="6" style="border-collapse:collapse;width:100%;font-size:13px">

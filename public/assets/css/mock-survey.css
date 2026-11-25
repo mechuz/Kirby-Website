@@ -247,3 +247,5 @@ img{max-width:100%}
 .input,select.input,textarea.input{font-size:16px} /* 16px stops phones zooming in on focus */
 .auth{max-width:440px;margin:6vh auto 0;gap:14px}
 .auth h2{font-size:22px}
+
+.sec-h{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 2px;font-family:var(--font-display)}

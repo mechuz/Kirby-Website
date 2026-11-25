@@ -21,9 +21,9 @@
 -- Staff accounts are made and managed from the SQL Editor (no email needed):
 --   select add_staff('dion', 'Dion', 'director', array['maint'], 'TempPass-1234');
 --   select reset_staff_password('dion', 'NewTemp-5678');   -- forces a change at next sign-in
---   select set_staff_access('dion', 'director', array['maint','evs']);
+--   select set_staff_access('dion', 'director', array['maint']);
 --   select set_staff_active('dion', false);                -- blocks sign-in at once
--- Department ids: nursing, memory, dietary, evs, maint, hr, rights, admin
+-- Department ids: nursing (incl. memory care), activities, dietary, maint (incl. housekeeping), admin (incl. staffing/HR and rights/admissions)
 -- =============================================================================
 
 create extension if not exists pgcrypto with schema extensions;
@@ -123,7 +123,7 @@ begin
   else
     v_dept := p_patch ->> 'dept';
   end if;
-  if v_dept is null or v_dept not in ('nursing','memory','dietary','evs','maint','hr','rights','admin') then
+  if v_dept is null or v_dept not in ('nursing','activities','dietary','maint','admin') then
     raise exception 'Unknown department' using errcode = '22023'; end if;
   if me.role = 'director' and not (v_dept = any(me.depts)) then
     raise exception 'Your account cannot change this department' using errcode = '42501'; end if;
@@ -350,7 +350,7 @@ begin
   else
     v_dept := p_patch ->> 'dept';
   end if;
-  if v_dept is null or v_dept not in ('nursing','memory','dietary','evs','maint','hr','rights','admin') then
+  if v_dept is null or v_dept not in ('nursing','activities','dietary','maint','admin') then
     raise exception 'Unknown department' using errcode = '22023'; end if;
   if me.role = 'director' and not (v_dept = any(me.depts)) then
     raise exception 'Your account cannot change this department' using errcode = '42501'; end if;

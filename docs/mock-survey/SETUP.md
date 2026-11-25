@@ -38,16 +38,16 @@ To test right away: GitHub → **Actions** → *Mock survey 3 PM results email* 
 
 ## Managing people (SQL Editor)
 
-Department ids: `nursing`, `memory`, `dietary`, `evs`, `maint`, `hr`, `rights`, `admin`.
+Department ids (5 checklists): `nursing` (Nursing + Memory Care), `activities`, `dietary`, `maint` (Maintenance + Housekeeping), `admin` (Administration + Staffing/HR + Resident Rights/Admissions).
 Roles: `admin` (changes every department), `director` (changes only their departments), `viewer` (reads only).
 
 ```sql
 -- add someone (they must change the password at first sign-in)
-select add_staff('tasha', 'Tasha', 'director', array['evs'], 'Temporary-Pass-2468');
+select add_staff('tasha', 'Tasha', 'director', array['maint'], 'Temporary-Pass-2468');
 -- forgot password: set a new temporary one
 select reset_staff_password('dion', 'Temporary-Pass-1357');
 -- change role or departments
-select set_staff_access('lakita', 'director', array['nursing','memory']);
+select set_staff_access('laketa', 'director', array['nursing']);
 -- someone leaves: blocks sign-in and signs them out everywhere
 select set_staff_active('dion', false);
 ```

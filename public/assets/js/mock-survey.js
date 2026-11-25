@@ -5,7 +5,7 @@
    NA = not applicable. Every NC must be documented.
 --------------------------------------------------------------------------- */
 const DEPTS = [
-  {id:"nursing", name:"Clinical Services / Nursing", short:"Nursing", lead:"Director of Nursing / RN Supervisor", items:[
+  {id:"nursing", name:"Nursing & Memory Care", short:"Nursing", lead:"Director of Nursing (DON)", sections:[{title:"Clinical Services / Nursing", start:0}, {title:"Memory Care", start:12}], items:[
     "MAR/TAR records checked for omissions, missed doses, and discrepancies.",
     "Medication carts, refrigerators, rooms, and controlled drugs secured; required counts/temperatures logged.",
     "New and changed orders reconciled with EMR, prescriber and pharmacy.",
@@ -17,21 +17,21 @@ const DEPTS = [
     "Shift report, staff assignments, care staffing, and supervision verified.",
     "ADL assistance, transfers, toileting, and infection-control practice observed.",
     "Missing charting, monthly summaries, and due quarterly reviews tracked.",
-    "Needs beyond facility capacity promptly escalated and addressed."]},
-  {id:"memory", name:"Memory Care", short:"Memory Care", lead:"Memory Care Lead / DON / Activities", items:[
+    "Needs beyond facility capacity promptly escalated and addressed.",
     "Resident whereabouts and supervision confirmed throughout shift.",
     "Doors, access controls, exits, and elopement alarms functioning.",
     "Individual elopement risk and prevention measures communicated to staff.",
     "Staff know usual cognition, behavior, and communication approaches.",
     "ADL, toileting, meals, fluids, and transfers assisted per plan.",
     "New behavior changes and distress assessed, documented, and escalated.",
-    "Meaningful dementia-appropriate activities and engagement offered.",
     "Dignity, choice, and least-restrictive safe practices respected.",
     "Unsafe objects, chemicals, and unsecured areas addressed.",
     "Emergency evacuation assistance needs known to caregivers.",
     "Falls, wandering, and incidents reviewed with prevention steps.",
     "Admission and condition changes reviewed for safe ongoing placement."]},
-  {id:"dietary", name:"Dietary Services", short:"Dietary", lead:"Dietary Director / Lead Cook", items:[
+  {id:"activities", name:"Activities", short:"Activities", lead:"Activities Director", sections:[{title:"Memory Care engagement", start:0}], items:[
+    "Meaningful dementia-appropriate activities and engagement offered."]},
+  {id:"dietary", name:"Dietary Services", short:"Dietary", lead:"Dietary Director / Lead Cook", sections:[{title:"Dietary Services", start:0}], items:[
     "Kitchen, dining areas, and equipment sanitary and free of pest evidence.",
     "Handwashing sinks supplied and appropriate employee hygiene observed.",
     "Staff illness and food-handler practices reviewed.",
@@ -46,7 +46,21 @@ const DEPTS = [
     "Emergency food supply and food stock sufficient.",
     "Floors, drains, trash, shelving, and storage areas clean.",
     "Meal-service staffing and closing cleaning logs verified."]},
-  {id:"evs", name:"Housekeeping / Environmental Services", short:"Housekeeping", lead:"Environmental Services Supervisor", items:[
+  {id:"maint", name:"Maintenance & Housekeeping", short:"Maintenance", lead:"Maintenance Director", sections:[{title:"Maintenance / Life Safety", start:0}, {title:"Housekeeping / Environmental Services", start:14}], items:[
+    "Exit doors, corridors, fire lanes, and evacuation routes kept clear.",
+    "Fire/smoke doors unobstructed and functioning; not improperly propped open.",
+    "Fire-alarm panel trouble/supervisory conditions promptly reported.",
+    "Fire extinguishers accessible; visible damage or blockage addressed.",
+    "Panels, cords, receptacles, and electrical equipment visibly safe.",
+    "Sprinkler clearance maintained; ceiling hazards addressed.",
+    "Exit signs and emergency lighting visually checked; defects reported.",
+    "Resident call systems, room doors, locks, and safety devices working.",
+    "Memory-care door controls and elopement alarms functioning.",
+    "Mechanical, kitchen hood, laundry, and utility areas free of hazards.",
+    "Hot-water, plumbing, HVAC, leaks, and comfort concerns addressed.",
+    "Exterior paths, entrances, and grounds safe.",
+    "Work orders prioritized, assigned, and tracked; urgent risks mitigated.",
+    "Generator tests, fire drills, and inspections completed when due.",
     "Assigned rooms cleaned on the daily schedule.",
     "Bathrooms, toilets, showers, sinks, and touchpoints cleaned/disinfected.",
     "Hallways, dining areas, common spaces, offices, and entrances sanitary.",
@@ -61,48 +75,7 @@ const DEPTS = [
     "Leaks, moisture, suspected mold, and ventilation issues escalated promptly.",
     "High-touch disinfection and indicated infection precautions followed.",
     "Daily completion logs signed; missed assignments reported."]},
-  {id:"maint", name:"Maintenance / Life Safety", short:"Maintenance", lead:"Maintenance Director", items:[
-    "Exit doors, corridors, fire lanes, and evacuation routes kept clear.",
-    "Fire/smoke doors unobstructed and functioning; not improperly propped open.",
-    "Fire-alarm panel trouble/supervisory conditions promptly reported.",
-    "Fire extinguishers accessible; visible damage or blockage addressed.",
-    "Panels, cords, receptacles, and electrical equipment visibly safe.",
-    "Sprinkler clearance maintained; ceiling hazards addressed.",
-    "Exit signs and emergency lighting visually checked; defects reported.",
-    "Resident call systems, room doors, locks, and safety devices working.",
-    "Memory-care door controls and elopement alarms functioning.",
-    "Mechanical, kitchen hood, laundry, and utility areas free of hazards.",
-    "Hot-water, plumbing, HVAC, leaks, and comfort concerns addressed.",
-    "Exterior paths, entrances, and grounds safe.",
-    "Work orders prioritized, assigned, and tracked; urgent risks mitigated.",
-    "Generator tests, fire drills, and inspections completed when due."]},
-  {id:"hr", name:"Staffing / Human Resources", short:"Staffing / HR", lead:"Staffing Coordinator / HR / Department Heads", items:[
-    "All shifts covered with qualified staff, including memory care.",
-    "Call-ins, absences, tardiness, and vacancies managed by Staffing.",
-    "Agency/replacement staff qualified for assigned responsibilities.",
-    "New hires cleared and authorized before beginning resident care.",
-    "Licenses, certificates, registry/background clearances checked and monitored.",
-    "Orientation, ongoing training, and competency needs identified.",
-    "Timekeeping, missing punches, and staffing variances reviewed.",
-    "Staffing assignments match resident needs and service plans.",
-    "Infection control, medication safety, and dementia-care training needs flagged.",
-    "Employee concerns, misconduct, and performance issues appropriately routed.",
-    "Responsible on-site coverage and supervision maintained on all shifts.",
-    "Confidential records and corrective-action documentation safeguarded."]},
-  {id:"rights", name:"Resident Rights / Admissions", short:"Rights / Admissions", lead:"Admissions / Administration / Clinical Team", items:[
-    "Prospective residents assessed before acceptance per facility policy.",
-    "Admission agreements, disclosures, and required acknowledgments complete.",
-    "Facility ability to meet resident needs verified.",
-    "Contacts, representatives, directives, and consents recorded as applicable.",
-    "Allergies, dietary, mobility, cognitive, and safety needs shared with staff.",
-    "Privacy, dignity, autonomy, and choice upheld.",
-    "Complaints/grievances logged and addressed without retaliation.",
-    "Personal property, confidentiality, and possessions respected.",
-    "Resident refusals/preferences documented without coercion.",
-    "Hospital transfers, returns, and discharges documented and communicated.",
-    "Changing service needs referred for reassessment and agreement review.",
-    "Missing admissions-file elements identified and assigned for completion."]},
-  {id:"admin", name:"Administration / Business Office", short:"Administration", lead:"Executive Director / Administrative Designee", items:[
+  {id:"admin", name:"Administration, Staffing/HR & Admissions", short:"Administration", lead:"Executive Director / AED / Administrative Designee", sections:[{title:"Administration / Business Office", start:0}, {title:"Staffing / Human Resources", start:13}, {title:"Resident Rights / Admissions", start:25}], items:[
     "Licenses, required notices, complaint process, and rights information posted.",
     "Manager coverage and daily operations reporting confirmed.",
     "Prior incidents, complaints, falls, medication events, and safety issues reviewed.",
@@ -115,7 +88,31 @@ const DEPTS = [
     "Supply shortages, vendors, and service disruptions addressed.",
     "QAPI/CQI indicators and repeat findings tracked for trends.",
     "Serious matters reported to licensed administrator/authorities as indicated.",
-    "Daily department checklists collected, checked, and signed off."]},
+    "Daily department checklists collected, checked, and signed off.",
+    "All shifts covered with qualified staff, including memory care.",
+    "Call-ins, absences, tardiness, and vacancies managed by Staffing.",
+    "Agency/replacement staff qualified for assigned responsibilities.",
+    "New hires cleared and authorized before beginning resident care.",
+    "Licenses, certificates, registry/background clearances checked and monitored.",
+    "Orientation, ongoing training, and competency needs identified.",
+    "Timekeeping, missing punches, and staffing variances reviewed.",
+    "Staffing assignments match resident needs and service plans.",
+    "Infection control, medication safety, and dementia-care training needs flagged.",
+    "Employee concerns, misconduct, and performance issues appropriately routed.",
+    "Responsible on-site coverage and supervision maintained on all shifts.",
+    "Confidential records and corrective-action documentation safeguarded.",
+    "Prospective residents assessed before acceptance per facility policy.",
+    "Admission agreements, disclosures, and required acknowledgments complete.",
+    "Facility ability to meet resident needs verified.",
+    "Contacts, representatives, directives, and consents recorded as applicable.",
+    "Allergies, dietary, mobility, cognitive, and safety needs shared with staff.",
+    "Privacy, dignity, autonomy, and choice upheld.",
+    "Complaints/grievances logged and addressed without retaliation.",
+    "Personal property, confidentiality, and possessions respected.",
+    "Resident refusals/preferences documented without coercion.",
+    "Hospital transfers, returns, and discharges documented and communicated.",
+    "Changing service needs referred for reassessment and agreement review.",
+    "Missing admissions-file elements identified and assigned for completion."]},
 ];
 const DEPT = Object.fromEntries(DEPTS.map(d => [d.id, d]));
 const TOTAL_ITEMS = DEPTS.reduce((n, d) => n + d.items.length, 0);
@@ -128,9 +125,9 @@ const AUDITS = [
   {id:"mo-summ", freq:"month", label:"Monthly", dept:"nursing", text:"Resident monthly summaries, medication audits and documentation reviews"},
   {id:"q-isp", freq:"quarter", label:"When due (quarterly)", dept:"nursing", text:"Quarterly individual service plan/care plan reviews"},
   {id:"wk-diet", freq:"week", label:"Weekly", dept:"dietary", text:"Dietary sanitation and food-storage inspection"},
-  {id:"wk-evs", freq:"week", label:"Weekly", dept:"evs", text:"Deep-cleaning progress and room-quality inspection"},
+  {id:"wk-evs", freq:"week", label:"Weekly", dept:"maint", text:"Deep-cleaning progress and room-quality inspection"},
   {id:"mo-maint", freq:"month", label:"When scheduled (logged monthly)", dept:"maint", text:"Fire drills, equipment testing and preventive maintenance"},
-  {id:"mo-hr", freq:"month", label:"Monthly", dept:"hr", text:"Training, personnel-file and license-expiration audit"},
+  {id:"mo-hr", freq:"month", label:"Monthly", dept:"admin", text:"Training, personnel-file and license-expiration audit"},
   {id:"mo-qapi", freq:"month", label:"Monthly", dept:"admin", text:"QAPI/CQI review, grievance trends and corrective-action effectiveness"},
 ];
 const SHIFTS = [{k:"D", name:"Day", ends:15}, {k:"E", name:"Evening", ends:23}, {k:"N", name:"Night", ends:31}];
@@ -490,9 +487,9 @@ function viewDashboard(){
         h("span", {}, h("i", {style:"background:var(--na)"}), tot.NA + " not applicable"),
         h("span", {}, h("i", {style:"background:var(--empty)"}), (TOTAL_ITEMS - tot.answered) + " not checked")),
       h("div", {class:"row"}, h("span", {class:"chip " + (dl.over && pendingN ? "bad" : "plain")}, dl.text),
-        h("span", {class:"note"}, pendingN ? pendingN + " of 8 checklists not submitted yet" : "All 8 checklists submitted"))),
+        h("span", {class:"note"}, pendingN ? pendingN + " of " + DEPTS.length + " checklists not submitted yet" : "All " + DEPTS.length + " checklists submitted"))),
     h("div", {class:"kpis"},
-      kpi(tot.submitted + "/8", "Departments submitted today"),
+      kpi(tot.submitted + "/" + DEPTS.length, "Departments submitted today"),
       kpi(tot.C + tot.NC ? pct(tot.C, tot.C + tot.NC) + "%" : "—", "Compliance rate of checked items"),
       kpi(active.length, "Open corrective actions", overdue.length > 0, overdue.length ? overdue.length + " overdue" : "none overdue"),
       kpi(auditsDueCount(), "Scheduled audits due or overdue", auditsOverdueCount() > 0, auditsOverdueCount() ? auditsOverdueCount() + " overdue" : "")));
@@ -552,7 +549,7 @@ function meetingPanel(y, active, overdue){
     h("div", {class:"section-h"}, h("h2", {}, "For the 9:00 AM meeting"), h("span", {class:"sub"}, "Yesterday, " + fmtDay(y))),
     h("div", {class:"panel stack", style:"gap:14px"},
       h("div", {}, h("div", {class:"lbl"}, "Checklists not submitted yesterday"),
-        missing.length ? h("div", {class:"row", style:"margin-top:6px"}, missing.map(d => h("span", {class:"chip bad"}, d.short))) : h("div", {class:"chip ok", style:"margin-top:6px"}, "All 8 submitted")),
+        missing.length ? h("div", {class:"row", style:"margin-top:6px"}, missing.map(d => h("span", {class:"chip bad"}, d.short))) : h("div", {class:"chip ok", style:"margin-top:6px"}, "All " + DEPTS.length + " submitted")),
       h("div", {}, h("div", {class:"lbl"}, "Submitted after the 2:30 PM deadline yesterday"),
         lateY.length ? h("div", {class:"row", style:"margin-top:6px"}, lateY.map(d => h("span", {class:"chip warn"}, d.short))) : h("div", {class:"chip ok", style:"margin-top:6px"}, "None")),
       listBlock("Findings logged yesterday", yFindings),
@@ -612,12 +609,15 @@ function viewChecklists(){
       x.submitted ? h("span", {class:"chip " + (isLate(c, date) ? "warn" : "ok")}, (isLate(c, date) ? "Submitted late " : "Submitted ") + fmtTime(c.submittedAt)) : (date === t ? h("span", {class:"chip " + (deadlineText().over ? "bad" : "plain")}, deadlineText().text) : h("span", {class:"note"}, "Not submitted"))),
     h("div", {class:"mini", style:"height:10px"}, dept.items.map((_, i) => h("span", {class:x.marks[i+1] || ""}))));
 
-  const items = h("section", {class:"items"}, dept.items.map((text, i) => itemRow(dept, date, id, i + 1, text, x.marks[i+1], locked)));
+  const items = h("section", {class:"items"}, dept.items.map((text, i) => [secHead(dept, i), itemRow(dept, date, id, i + 1, text, x.marks[i+1], locked)]));
 
   const viewOnly = !canEditData(dept.id) ? h("div", {class:"panel note"}, "View only. Your account can fill in: " + (myDepts().map(d => d.short).join(", ") || "no departments") + ".") : null;
   return h("div", {class:"stack"}, noDbNotice(), urgentBanner(), head, viewOnly,
     x.submitted ? submittedBanner(c, dept, date, id) : null, meta, prog, items, signoff(dept, date, id, x, c, locked));
 }
+// Section heading (the original paper form) before the first item of each section
+function secOf(dept, i){ let s = null; for (const x of dept.sections || []) if (i >= x.start) s = x; return s; }
+function secHead(dept, i){ const s = (dept.sections || []).find(x => x.start === i); return s && dept.sections.length > 1 ? h("h3", {class:"sec-h"}, s.title) : null; }
 function baseFields(date, dept, extra){ return Object.assign({date, dept}, extra); }
 function itemRow(dept, date, cid, n, text, mark, locked){
   const key = dept.id + "." + n, aid = date + "_" + dept.id + "_" + n, act = S.actions.get(aid);
@@ -722,7 +722,7 @@ function signoff(dept, date, id, x, c, locked){
 function deptPicker(){
   const t = today();
   return h("div", {class:"stack"}, noDbNotice(),
-    h("div", {class:"section-h"}, h("h2", {}, "Daily departmental compliance checklists"), h("span", {class:"sub"}, fmtDay(t, {year:"numeric"}) + " · " + TOTAL_ITEMS + " line items across 8 departments")),
+    h("div", {class:"section-h"}, h("h2", {}, "Daily departmental compliance checklists"), h("span", {class:"sub"}, fmtDay(t, {year:"numeric"}) + " · " + TOTAL_ITEMS + " line items across " + DEPTS.length + " departments")),
     h("div", {class:"dept-pick"}, DEPTS.map(d => { const x = countFor(d, t);
       return h("button", {class:"dept", type:"button", onclick:() => { S.date = t; go("dept-" + d.id); }},
         h("h3", {}, d.short), h("span", {class:"lead"}, d.items.length + " items · " + d.lead),
@@ -1012,8 +1012,8 @@ function save(filename, data){
 }
 function csv(rows){ return rows.map(r => r.map(v => { const s = String(v == null ? "" : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(",")).join("\r\n"); }
 function downloadChecksCsv(){
-  const {rows} = binderData(); const out = [["Date","Department","Item #","Item","Result","Reviewer","Signed","Submitted"]];
-  for (const r of rows) { if (!r.c) continue; r.dept.items.forEach((text, i) => out.push([r.date, r.dept.name, i+1, text, r.marks[i+1] || "", r.c.reviewer || "", r.c.signature || "", r.c.submitted ? fmtStamp(r.c.submittedAt) : ""])); }
+  const {rows} = binderData(); const out = [["Date","Department","Section","Item #","Item","Result","Reviewer","Signed","Submitted"]];
+  for (const r of rows) { if (!r.c) continue; r.dept.items.forEach((text, i) => out.push([r.date, r.dept.name, (secOf(r.dept, i) || {}).title || "", i+1, text, r.marks[i+1] || "", r.c.reviewer || "", r.c.signature || "", r.c.submitted ? fmtStamp(r.c.submittedAt) : ""])); }
   save("kirby-gate-checklists_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv(out));
 }
 function downloadActionsCsv(){
@@ -1056,7 +1056,7 @@ function downloadPacket(){
       if (!r.c) continue;
       html += '<div class="pg"><div class="band"><div class="s">The Pointe at Kirby Gate · Daily Departmental Compliance Checklist</div><h1>' + esc(r.dept.name) + '</h1><div>Responsible lead: ' + esc(r.dept.lead) + '</div></div>';
       html += '<p>Date: <b>' + esc(fmtDay(r.date, {year:"numeric"})) + '</b> &nbsp; Reviewer: <b>' + esc(r.c.reviewer || "") + '</b></p><table><tr><th>#</th><th>Compliance item</th><th>C</th><th>NC</th><th>NA</th></tr>';
-      r.dept.items.forEach((text, i) => { const m = r.marks[i+1]; html += '<tr><td>' + (i+1) + '</td>' + td(text) + '<td class="c">' + (m === "C" ? "X" : "") + '</td><td class="c' + (m === "NC" ? " nc" : "") + '">' + (m === "NC" ? "X" : "") + '</td><td class="c">' + (m === "NA" ? "X" : "") + '</td></tr>'; });
+      r.dept.items.forEach((text, i) => { const m = r.marks[i+1]; const sh = (r.dept.sections || []).find(x => x.start === i); if (sh && r.dept.sections.length > 1) html += '<tr><th colspan="5">' + esc(sh.title) + '</th></tr>'; html += '<tr><td>' + (i+1) + '</td>' + td(text) + '<td class="c">' + (m === "C" ? "X" : "") + '</td><td class="c' + (m === "NC" ? " nc" : "") + '">' + (m === "NC" ? "X" : "") + '</td><td class="c">' + (m === "NA" ? "X" : "") + '</td></tr>'; });
       html += '</table>';
       const f = acts.filter(a => a.date === r.date && a.dept === r.dept.id);
       html += '<p><b>Findings / corrective actions / responsible person / target date</b></p>' + (f.length ? '<table>' + f.map(a => '<tr>' + td(a.item ? "#" + a.item : "") + td(a.deficiency) + td(a.corrective) + td(a.responsible) + td(a.targetDate ? fmtShort(a.targetDate) : "") + td(a.status) + '</tr>').join("") + '</table>' : '<p>None.</p>');
