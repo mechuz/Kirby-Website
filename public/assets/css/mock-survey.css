@@ -288,3 +288,91 @@ img{max-width:100%}
 .sec-h{font-size:13px;font-weight:600;letter-spacing:0;color:var(--muted);margin:18px 4px 4px;font-family:var(--font-ui)}
 .band .pill.demo-pill{background:var(--warn-soft);color:var(--warn);font-weight:600}
 .demo-banner{background:var(--warn-soft);color:var(--warn);padding:9px 16px;text-align:center;font-weight:500;font-size:13px}
+
+/* =====================================================================
+   Easy to use: big type, big tap targets, squarer corners.
+   Built for people who don't use apps much: every button is at least
+   54px tall, answers are words (Compliant / Needs fix / N/A), and the
+   phone tab bar has an icon over each label.
+   ===================================================================== */
+:root{--r:10px;--r-sm:8px}
+body{font-size:17px;line-height:1.5}
+.sub,.note{font-size:15px}
+.eyebrow,.sec-h{font-size:14px}
+.section-h h2{font-size:24px}
+.ck-head h2{font-size:30px}
+
+/* Buttons and fields */
+.btn{min-height:54px;padding:0 22px;font-size:17px;border-radius:8px}
+.btn.small{min-height:44px;padding:0 16px;font-size:15px;border-radius:7px}
+.btn.back{min-height:48px;padding:0 18px;font-size:16px;align-self:flex-start;background:var(--surface);box-shadow:var(--shadow);margin-bottom:4px}
+.input,select.input,textarea.input{min-height:54px;font-size:17px;border-radius:8px;padding:12px 14px}
+.field label,.lbl{font-size:15px;color:var(--ink);font-weight:600}
+.check{font-size:17px}
+.check input{width:28px;height:28px}
+.radios{border-radius:10px;padding:4px}
+.radios label{min-height:52px;padding:0 20px;border-radius:7px;font-size:17px}
+.radios input{width:22px;height:22px}
+
+/* Labels and status */
+.chip{border-radius:6px;font-size:13.5px;padding:4px 10px}
+.pill{border-radius:7px;font-size:13.5px;padding:6px 12px}
+.toast{border-radius:10px;font-size:16px;padding:14px 20px}
+
+/* Section switcher (computer) */
+.tabs{border-radius:10px;padding:4px}
+.tabs a{font-size:16px;padding:11px 20px;border-radius:7px}
+.tabs .ico{display:none}
+
+/* Cards */
+.panel,.dept,.item,.act,.audit,.urgent-banner,.submitted,.tbl-wrap,.list,.empty{border-radius:var(--r)}
+.dept{padding:20px 22px;gap:12px}
+.dept h3{font-size:19px}
+.dept .lead,.dept .meta{font-size:14.5px}
+.kpi{border-radius:8px;padding:16px 18px}
+.kpi .v{font-size:32px}
+.kpi .k{font-size:15px}
+.li{padding:16px 20px;font-size:16px}
+.act-sum{padding:20px 22px;font-size:17px}
+.audit{padding:22px;gap:14px}
+.audit h3{font-size:18px}
+.slot{border-radius:8px;font-size:15px;padding:12px 14px}
+.datenav{border-radius:10px}
+.datenav .btn{min-height:48px;min-width:48px;font-size:22px}
+.datenav .d{font-size:17px}
+
+/* The checklist answer: three big word buttons */
+.item{padding:20px 22px;gap:16px}
+.item-text{font-size:18px;line-height:1.45}
+.seg{border-radius:10px;padding:4px;gap:4px}
+.seg button{width:auto;min-width:118px;padding:0 14px;min-height:60px;border-radius:7px;font-size:17px;font-weight:600}
+.seg button:not([aria-pressed="true"]){background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.finding{border-radius:8px;padding:18px}
+.seg-f{border-radius:10px;padding:4px}
+.seg-f button{min-height:46px;padding:0 18px;font-size:16px;border-radius:7px}
+.filters select.input{min-height:54px}
+table.heat td{border-radius:5px;height:38px;font-size:13px}
+.itembar,.mini{border-radius:3px}
+.auth .btn.primary{min-height:58px;font-size:18px}
+
+@media (max-width:600px){
+  .ck-head h2{font-size:26px}
+  .section-h h2{font-size:22px}
+  .item{padding:16px}
+  .item-text{font-size:18px}
+  .seg button{flex:1;min-width:0;min-height:64px;font-size:16.5px;padding:0 6px}
+  .dept{padding:18px}
+  /* Phone tab bar: icon over a word, big tap area */
+  .tabs{padding:6px max(4px,env(safe-area-inset-left,0px)) calc(env(safe-area-inset-bottom,0px) + 6px) max(4px,env(safe-area-inset-right,0px));border-radius:0}
+  .tabs a{flex-direction:column;gap:4px;padding:8px 2px 6px;font-size:12.5px;position:relative;border-radius:8px}
+  .tabs .ico{display:block;width:28px;height:28px;background:currentColor;
+    -webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}
+  .tabs a .count{position:absolute;top:2px;left:calc(50% + 8px);margin:0}
+  main{padding-block:18px calc(112px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 100px)}
+}
+.ico-dashboard{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z'/%3E%3C/svg%3E")}
+.ico-checklists{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Crect x='4.5' y='4' width='15' height='17' rx='2'/%3E%3Cpath d='M9 3h6v3H9zM8.5 13l2.5 2.5 4.5-5'/%3E%3C/svg%3E")}
+.ico-actions{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M12 3.5 21.5 20h-19z'/%3E%3Cpath d='M12 10v4.5M12 17.5v.01'/%3E%3C/svg%3E")}
+.ico-audits{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E")}
+.ico-binder{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M3 6.5a1.5 1.5 0 0 1 1.5-1.5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z'/%3E%3C/svg%3E")}

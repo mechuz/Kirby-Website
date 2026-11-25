@@ -451,7 +451,7 @@ function renderTabs(){
   const hot = active.some(a => a.urgent) || active.some(isOverdue);
   const defs = [["dashboard","Dashboard","Home"],["checklists","Daily checklists","Checklist"],["actions","Corrective actions","Actions", active.length, hot],["audits","Scheduled audits","Audits", auditsDueCount()],["binder","Survey binder","Binder"]];
   for (const [id, long, short, n, isHot] of defs) {
-    tabs.append(h("a", {href:"#" + id, "aria-current": S.view === id ? "page" : null}, h("span", {class:"lf"}, long), h("span", {class:"ls"}, short), n ? h("span", {class:"count" + (isHot ? " hot" : "")}, n) : null));
+    tabs.append(h("a", {href:"#" + id, "aria-current": S.view === id ? "page" : null}, h("span", {class:"ico ico-" + id, "aria-hidden":"true"}), h("span", {class:"lf"}, long), h("span", {class:"ls"}, short), n ? h("span", {class:"count" + (isHot ? " hot" : "")}, n) : null));
   }
   requestAnimationFrame(() => { const b = document.getElementById("band"); document.documentElement.style.setProperty("--band-h", b.offsetHeight + "px"); });
 }
@@ -639,7 +639,7 @@ function viewChecklists(){
 
   const head = h("section", {class:"ck-head"},
     h("div", {class:"stack", style:"gap:4px"},
-      h("a", {href:"#checklists", class:"note"}, "‹ All departments"),
+      h("a", {href:"#checklists", class:"btn back"}, "‹ All departments"),
       h("h2", {}, dept.name),
       h("div", {class:"sub"}, "Responsible lead: " + dept.lead)),
     h("div", {class:"datenav"},
@@ -652,7 +652,7 @@ function viewChecklists(){
     h("div", {class:"field"}, h("label", {for:"ck-reviewer"}, "Reviewer"),
       h("input", {class:"input", id:"ck-reviewer", value:c.reviewer || "", placeholder:"Name of the person doing the rounds", disabled:locked, autocomplete:"name",
         onchange:e => writeDoc("checks", id, baseFields(date, dept.id, {reviewer:e.target.value.trim()}))})),
-    h("div", {class:"note", style:"align-self:end"}, "Mark each item: C = compliant · NC = needs correction · NA = not applicable. Every NC is documented as a finding and goes to the corrective-action log."));
+    h("div", {class:"note", style:"align-self:end"}, "Tap one answer for each item: Compliant, Needs fix (NC) or N/A. Every \"Needs fix\" asks you to write down what you found and goes to the corrective-action list."));
 
   const prog = h("div", {class:"progress"},
     h("div", {class:"row"}, h("strong", {class:"num"}, x.answered + " of " + x.total + " checked"),
@@ -685,7 +685,7 @@ function itemRow(dept, date, cid, n, text, mark, locked){
     h("div", {class:"item-top"},
       h("div", {class:"item-text"}, h("span", {class:"n num"}, n + "."), h("span", {}, text)),
       h("div", {class:"seg", role:"group", "aria-label":"Item " + n + " result"},
-        ["C","NC","NA"].map(m => h("button", {type:"button", class:m, "aria-pressed": mark === m ? "true" : "false", disabled:locked && mark !== m, onclick:() => setMark(m), title:{C:"Compliant", NC:"Needs correction", NA:"Not applicable"}[m]}, m)))));
+        ["C","NC","NA"].map(m => h("button", {type:"button", class:m, "aria-pressed": mark === m ? "true" : "false", disabled:locked && mark !== m, onclick:() => setMark(m), title:{C:"Compliant", NC:"Needs correction", NA:"Not applicable"}[m]}, {C:"Compliant", NC:"Needs fix", NA:"N/A"}[m])))));
   if (mark === "NC" || act) row.append(findingBlock(dept, date, n, text, aid, act, locked && !canEditData(dept.id)));
   return row;
 }
