@@ -249,3 +249,5 @@ img{max-width:100%}
 .auth h2{font-size:22px}
 
 .sec-h{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 2px;font-family:var(--font-display)}
+.band .pill.demo-pill{background:#e2b53e;color:#121c15}
+.demo-banner{background:#faefcc;color:#5c4300;border-bottom:1px solid #e2b53e;padding:8px 16px;text-align:center;font-weight:600;font-size:13.5px}

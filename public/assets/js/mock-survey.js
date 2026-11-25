@@ -417,6 +417,7 @@ function renderStatus(){
   else if (!S.profile.mustChangePassword && !(S.loaded.checks && S.loaded.actions && S.loaded.audits)) { cls = "saving"; txt = "Loading…"; }
   else if (S.saving) { cls = "saving"; txt = "Saving…"; }
   row.append(h("span", {class:"pill " + cls, title:"Sync status"}, h("span", {class:"dot"}), txt));
+  if (IS_DEMO) row.append(h("span", {class:"pill demo-pill"}, "Demo · sample data"));
   const urg = openUrgent().length;
   if (urg) row.append(h("a", {class:"pill urgent-pill", href:"#actions", onclick:() => { S.actFilter = "active"; }}, urg + " urgent safety " + (urg === 1 ? "issue" : "issues")));
   if (S.readOnly) row.append(h("span", {class:"pill"}, "View only"));
@@ -1077,6 +1078,8 @@ S.lastDay = today();
 
 /* ------------------------------------------------------------- sign-in -- */
 const STAFF_DOMAIN = "@staff.kirbygateliving.com";
+const IS_DEMO = !!(window.KG_SURVEY && window.KG_SURVEY.demo);
+const HOME_PATH = IS_DEMO ? "/rounds/demo/" : "/rounds/";
 function loginEmail(u){ u = u.trim().toLowerCase(); return u.includes("@") ? u : u + STAFF_DOMAIN; }
 function field(id, label, attrs){ return h("div", {class:"field"}, h("label", {for:id}, label), h("input", Object.assign({class:"input", id}, attrs))); }
 function showPw(ids){ return h("label", {class:"check", style:"font-weight:500"}, h("input", {type:"checkbox", onchange:e => ids.forEach(i => { const el = document.getElementById(i); if (el) el.type = e.target.checked ? "text" : "password"; })}), "Show password"); }
@@ -1110,6 +1113,7 @@ function viewLogin(){
   }},
     h("h2", {}, "Sign in"),
     h("p", {class:"note", style:"margin:0"}, "For Kirby Gate department heads and leadership. Use the username and password you were given."),
+    IS_DEMO ? h("div", {class:"panel note"}, "Demo logins (password demo for each): partner (leadership view), don (Director of Nursing), dietary (Dietary Director).") : null,
     field("li-user", "Username", {type:"text", name:"username", autocomplete:"username", autocapitalize:"none", autocorrect:"off", spellcheck:"false", required:true}),
     field("li-pass", "Password", {type:"password", name:"password", autocomplete:"current-password", required:true}),
     showPw(["li-pass"]), err, btn,
@@ -1156,7 +1160,8 @@ function viewAccount(){
       h("div", {class:"note"}, "Username: " + p.username),
       h("div", {class:"note"}, ROLE_LABEL[p.role] || p.role),
       h("div", {class:"note"}, "Can fill in: " + (p.role === "admin" ? "every department" : (myDepts().map(d => d.name).join(", ") || "nothing (view only)"))),
-      h("div", {}, h("button", {class:"btn", type:"button", onclick:signOut}, "Sign out of this phone"))),
+      h("div", {class:"row"}, h("button", {class:"btn", type:"button", onclick:signOut}, "Sign out of this phone"),
+        IS_DEMO ? h("button", {class:"btn", type:"button", onclick:() => window.KG_DEMO_RESET && window.KG_DEMO_RESET()}, "Reset demo data") : null)),
     h("section", {class:"panel stack", style:"gap:10px"}, h("h2", {style:"font-size:16px"}, "Change password"), passwordForm(false)),
     setupPanel());
 }
@@ -1183,7 +1188,7 @@ async function loadProfile(){
 }
 async function signOut(){
   try { await S.sb.auth.signOut(); } catch (e) {}
-  location.replace("/rounds/");
+  location.replace(HOME_PATH);
 }
 
 route(); renderStatus();
@@ -1193,7 +1198,7 @@ route(); renderStatus();
   if (!cfg.url || !cfg.anonKey || !window.supabase) { S.configured = false; S.authChecked = true; render(true); renderStatus(); return; }
   S.sb = window.supabase.createClient(cfg.url, cfg.anonKey, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:false, storageKey:"kg-mock-survey-auth"}});
   S.sb.auth.onAuthStateChange((event) => {
-    if (event === "SIGNED_OUT" && S.profile) location.replace("/rounds/");
+    if (event === "SIGNED_OUT" && S.profile) location.replace(HOME_PATH);
   });
   let session = null;
   try { session = (await S.sb.auth.getSession()).data.session; } catch (e) {}

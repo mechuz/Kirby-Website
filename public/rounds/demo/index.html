@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Daily Rounds Demo | The Pointe at Kirby Gate</title>
+  <meta name="description" content="Try Daily Rounds with sample data. Nothing you do here affects real records.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+  <link rel="stylesheet" href="/assets/css/mock-survey.css?v=0c02b8f9">
+</head>
+<body data-page="rounds-demo">
+<div class="demo-banner">Demo with sample data. Nothing you do here changes Kirby Gate's real records; it stays on this device.</div>
+<header class="band" id="band">
+  <div class="wrap">
+    <div class="brand">
+      <span class="fac">The Pointe at Kirby Gate</span>
+      <h1>Daily Rounds</h1>
+    </div>
+    <div class="status-row" id="statusRow"></div>
+    <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+  </div>
+</header>
+<main class="wrap" id="main" tabindex="-1">
+  <noscript><p class="panel">Turn on JavaScript to use Daily Rounds.</p></noscript>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="/assets/js/rounds-demo-backend.js?v=3e3686b6"></script>
+<script src="/assets/js/mock-survey.js?v=a5b9911c"></script>
+
+</body>
+</html>

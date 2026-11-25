@@ -1,0 +1,26 @@
+<!--meta
+title: Daily Rounds Demo | The Pointe at Kirby Gate
+description: Try Daily Rounds with sample data. Nothing you do here affects real records.
+path: /rounds/demo/
+layout: app
+body_attr: data-page="rounds-demo"
+sitemap: no
+robots: noindex, nofollow
+-->
+<div class="demo-banner">Demo with sample data. Nothing you do here changes Kirby Gate's real records; it stays on this device.</div>
+<header class="band" id="band">
+  <div class="wrap">
+    <div class="brand">
+      <span class="fac">The Pointe at Kirby Gate</span>
+      <h1>Daily Rounds</h1>
+    </div>
+    <div class="status-row" id="statusRow"></div>
+    <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+  </div>
+</header>
+<main class="wrap" id="main" tabindex="-1">
+  <noscript><p class="panel">Turn on JavaScript to use Daily Rounds.</p></noscript>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="/assets/js/rounds-demo-backend.js?v={{ms_cfg_v}}"></script>
+<script src="/assets/js/mock-survey.js?v={{ms_js_v}}"></script>
