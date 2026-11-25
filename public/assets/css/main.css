@@ -105,6 +105,13 @@ body { letter-spacing: -0.005em; }
   white-space: nowrap; font-size: 0.95rem;
 }
 .main-nav .sub a:hover, .main-nav .sub a[aria-current="page"] { background: var(--ice); color: var(--navy); border-bottom: none; }
+/* Daily Rounds: a Kirby green button inside the Team Login menu */
+.main-nav .sub li.sub-btn { margin-top: 0.4rem; padding-top: 0.45rem; border-top: 1px solid var(--ice); }
+.main-nav .sub a.btn-survey { background: var(--green); color: #fff; font-weight: 700; text-align: center; }
+.main-nav .sub a.btn-survey:hover, .main-nav .sub a.btn-survey:focus-visible { background: #3d7f41; color: #fff; }
+.site-footer li.footer-btn { margin-top: 0.75rem; }
+.site-footer a.btn-survey-footer { display: inline-block; padding: 0.6rem 1.4rem; font-size: 0.95rem; color: #fff; }
+.site-footer a.btn-survey-footer:hover { color: #fff; }
 .header-cta { display: flex; align-items: center; gap: 1rem; white-space: nowrap; }
 .phone-link { font-weight: 700; color: var(--navy); text-decoration: none; }
 .phone-link:hover { color: var(--green); }
@@ -417,6 +424,8 @@ body { letter-spacing: -0.005em; }
   .main-nav .caret { display: none; }
   .main-nav .sub { display: flex !important; position: static; transform: none; box-shadow: none; background: none; min-width: 0; padding: 0; }
   .main-nav .sub a { text-align: center; padding: 0.55rem 0; }
+  .main-nav .sub li.sub-btn { border-top: none; padding: 0.35rem 0 0; }
+  .main-nav .sub a.btn-survey { display: inline-block; padding: 0.7rem 2.2rem; border-radius: 999px; }
   .main-nav li { text-align: center; }
   .main-nav a { display: block; padding: 0.65rem 0; border-bottom: none; font-size: 1rem; }
   .phone-link { display: inline; }
