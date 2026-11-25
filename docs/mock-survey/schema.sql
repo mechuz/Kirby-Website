@@ -275,3 +275,176 @@ do $$ begin
     begin alter publication supabase_realtime add table public.audits; exception when duplicate_object then null; end;
   end if;
 end $$;
+
+-- =============================================================================
+-- Hardening (applied to the live project 2026-11-25 as migration "security_hardening")
+-- Until someone replaces their starting password they can sign in, but cannot
+-- read or change any survey data, and cannot skip the change by calling
+-- password_changed() directly.
+-- =============================================================================
+alter function public.jsonb_merge_patch(jsonb, jsonb) set search_path = public;
+alter function public.central_today() set search_path = public;
+
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+create table if not exists private.staff_temp_pw (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  pw_hash text not null,
+  set_at  timestamptz not null default now());
+revoke all on private.staff_temp_pw from public, anon, authenticated;
+
+insert into private.staff_temp_pw (user_id, pw_hash)
+select s.user_id, u.encrypted_password from public.staff s join auth.users u on u.id = s.user_id
+where s.must_change_password
+on conflict (user_id) do update set pw_hash = excluded.pw_hash, set_at = now();
+
+create or replace function public.is_staff()
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.staff where user_id = auth.uid() and active and not must_change_password)
+$$;
+
+create or replace function public.current_staff()
+returns public.staff language sql stable security definer set search_path = public as $$
+  select * from public.staff where user_id = auth.uid() and active and not must_change_password
+$$;
+
+drop policy if exists change_log_read on public.change_log;
+create policy change_log_read on public.change_log for select to authenticated
+  using (exists (select 1 from public.staff where user_id = auth.uid() and active
+                 and not must_change_password and role = 'admin'));
+
+create or replace function public.password_changed()
+returns void language plpgsql security definer set search_path = public, private, auth as $$
+begin
+  if exists (select 1 from private.staff_temp_pw t join auth.users u on u.id = t.user_id
+             where t.user_id = auth.uid() and u.encrypted_password = t.pw_hash) then
+    raise exception 'Change your password first' using errcode = '42501';
+  end if;
+  update public.staff set must_change_password = false where user_id = auth.uid();
+  delete from private.staff_temp_pw where user_id = auth.uid();
+end $$;
+
+-- save_doc: same as above plus a "change your password first" check
+create or replace function public.save_doc(p_table text, p_id text, p_patch jsonb)
+returns jsonb language plpgsql security definer set search_path = public, extensions as $$
+declare
+  me public.staff; cur jsonb; v_dept text; v_day date; merged jsonb; exists_row boolean;
+  stamp text := to_char(now() at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
+begin
+  select * into me from public.staff where user_id = auth.uid() and active;
+  if me.user_id is null then raise exception 'Not signed in' using errcode = '28000'; end if;
+  if me.must_change_password then raise exception 'Change your password first' using errcode = '42501'; end if;
+  if me.role = 'viewer' then raise exception 'View-only account' using errcode = '42501'; end if;
+  if p_table not in ('checks','actions','audits') then raise exception 'Unknown table' using errcode = '22023'; end if;
+  if p_id !~ '^[A-Za-z0-9_.:-]{1,100}$' then raise exception 'Bad id' using errcode = '22023'; end if;
+  if p_patch is null or jsonb_typeof(p_patch) <> 'object' or length(p_patch::text) > 60000 then
+    raise exception 'Bad change' using errcode = '22023'; end if;
+
+  perform pg_advisory_xact_lock(hashtext(p_table || '/' || p_id));
+  execute format('select data, dept from public.%I where id = $1', p_table) into cur, v_dept using p_id;
+  exists_row := v_dept is not null;
+
+  if exists_row then
+    p_patch := p_patch - 'dept';
+    if p_table = 'checks' then p_patch := p_patch - 'date'; end if;
+  else
+    v_dept := p_patch ->> 'dept';
+  end if;
+  if v_dept is null or v_dept not in ('nursing','memory','dietary','evs','maint','hr','rights','admin') then
+    raise exception 'Unknown department' using errcode = '22023'; end if;
+  if me.role = 'director' and not (v_dept = any(me.depts)) then
+    raise exception 'Your account cannot change this department' using errcode = '42501'; end if;
+
+  p_patch := p_patch - 'updatedAt' - 'updatedBy' - 'submittedAt' - 'submittedBy' - 'createdAt' - 'createdBy' - 'doneAt' - 'closedAt';
+  p_patch := p_patch || jsonb_build_object('updatedAt', stamp, 'updatedBy', me.user_id);
+
+  if p_table = 'checks' then
+    if exists_row and coalesce((cur ->> 'submitted')::boolean, false) and not (p_patch ? 'submitted') then
+      raise exception 'This checklist is already submitted. Reopen it to make changes.' using errcode = '55000'; end if;
+    if (p_patch ->> 'submitted') = 'true' then
+      p_patch := p_patch || jsonb_build_object('submittedAt', stamp, 'submittedBy', me.user_id);
+    elsif (p_patch ->> 'submitted') = 'false' then
+      p_patch := p_patch || jsonb_build_object('reopenedAt', stamp);
+    end if;
+  elsif p_table = 'actions' then
+    if not exists_row then p_patch := p_patch || jsonb_build_object('createdAt', stamp, 'createdBy', me.user_id); end if;
+    if (p_patch ->> 'status') = 'Closed' and coalesce(cur ->> 'status', '') <> 'Closed' then
+      p_patch := p_patch || jsonb_build_object('closedAt', stamp); end if;
+  elsif p_table = 'audits' then
+    if exists_row then raise exception 'This audit is already logged' using errcode = '55000'; end if;
+    p_patch := p_patch || jsonb_build_object('doneAt', stamp, 'userId', me.user_id,
+      'doneDate', to_char(public.central_today(), 'YYYY-MM-DD'));
+  end if;
+
+  merged := public.jsonb_merge_patch(cur, p_patch);
+  v_day := case p_table when 'checks' then (merged ->> 'date')::date
+                        when 'actions' then (merged ->> 'date')::date
+                        else (merged ->> 'doneDate')::date end;
+  if v_day is null then raise exception 'Missing date' using errcode = '22023'; end if;
+
+  if p_table = 'checks' and me.role = 'director'
+     and (v_day > public.central_today() or v_day < public.central_today() - 1) then
+    raise exception 'Directors can only fill in today''s or yesterday''s checklist' using errcode = '42501'; end if;
+
+  execute format(
+    'insert into public.%I (id, dept, day, data, updated_at, updated_by) values ($1,$2,$3,$4,now(),$5)
+     on conflict (id) do update set data = excluded.data, updated_at = now(), updated_by = excluded.updated_by',
+    p_table) using p_id, v_dept, v_day, merged, me.user_id;
+  insert into public.change_log (user_id, table_name, doc_id, patch) values (me.user_id, p_table, p_id, p_patch);
+  return merged;
+end $$;
+
+-- add_staff / reset_staff_password also remember the starting password's hash
+create or replace function public.add_staff(p_username text, p_full_name text, p_role text, p_depts text[], p_password text)
+returns text language plpgsql security definer set search_path = public, extensions, auth, private as $$
+declare uid uuid := gen_random_uuid(); em text; uname text := lower(trim(p_username)); h text;
+begin
+  if length(p_password) < 8 then raise exception 'Password must be at least 8 characters'; end if;
+  em := uname || '@staff.kirbygateliving.com';
+  if exists (select 1 from auth.users where email = em) then raise exception 'Username % already exists', uname; end if;
+  h := crypt(p_password, gen_salt('bf', 10));
+  insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+    confirmation_token, recovery_token, email_change_token_new, email_change,
+    email_change_token_current, phone_change, phone_change_token, reauthentication_token)
+  values ('00000000-0000-0000-0000-000000000000', uid, 'authenticated', 'authenticated', em,
+    h, now(),
+    '{"provider":"email","providers":["email"]}', jsonb_build_object('full_name', p_full_name), now(), now(),
+    '', '', '', '', '', '', '', '');
+  insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+  values (gen_random_uuid(), uid, uid::text,
+    jsonb_build_object('sub', uid::text, 'email', em, 'email_verified', true), 'email', now(), now(), now());
+  insert into public.staff (user_id, username, full_name, role, depts)
+  values (uid, uname, p_full_name, p_role, coalesce(p_depts, '{}'));
+  insert into private.staff_temp_pw (user_id, pw_hash) values (uid, h);
+  return 'Created ' || uname || ' (' || p_role || ')';
+end $$;
+
+create or replace function public.reset_staff_password(p_username text, p_password text)
+returns text language plpgsql security definer set search_path = public, extensions, auth, private as $$
+declare uid uuid; h text;
+begin
+  if length(p_password) < 8 then raise exception 'Password must be at least 8 characters'; end if;
+  select user_id into uid from public.staff where username = lower(trim(p_username));
+  if uid is null then raise exception 'No such username'; end if;
+  h := crypt(p_password, gen_salt('bf', 10));
+  update auth.users set encrypted_password = h, updated_at = now() where id = uid;
+  update public.staff set must_change_password = true where user_id = uid;
+  insert into private.staff_temp_pw (user_id, pw_hash) values (uid, h)
+    on conflict (user_id) do update set pw_hash = excluded.pw_hash, set_at = now();
+  delete from auth.refresh_tokens where user_id::text = uid::text;
+  return 'Password reset for ' || lower(trim(p_username));
+end $$;
+
+revoke all on function public.current_staff(), public.is_staff(), public.save_doc(text,text,jsonb),
+  public.my_profile(), public.password_changed(), public.jsonb_merge_patch(jsonb,jsonb), public.central_today(),
+  public.add_staff(text,text,text,text[],text), public.reset_staff_password(text,text),
+  public.set_staff_access(text,text,text[]), public.set_staff_active(text,boolean)
+  from public, anon, authenticated;
+grant execute on function public.is_staff(), public.save_doc(text,text,jsonb), public.my_profile(),
+  public.password_changed() to authenticated;
+
+revoke all on sequence public.change_log_id_seq from anon, authenticated;
+alter default privileges in schema public revoke execute on functions from public, anon, authenticated;
+alter default privileges in schema public revoke all on tables from anon, authenticated;
+alter default privileges in schema public revoke all on sequences from anon, authenticated;

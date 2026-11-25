@@ -3,6 +3,6 @@
 // in. Every read and write is checked in the database against the staff
 // table (see docs/mock-survey/schema.sql). Never put the service_role key here.
 window.KG_SURVEY = {
-  url: "",      // e.g. https://abcdefghijklmnop.supabase.co
-  anonKey: ""   // Project Settings > API Keys > publishable (or legacy anon) key
+  url: "https://ryxdolvddrxnawhmnsea.supabase.co",
+  anonKey: "sb_publishable_plgbpDzzli8YImUG77TDvg_j9mmXE2i"   // publishable key (public by design)
 };
