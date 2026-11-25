@@ -378,6 +378,9 @@ async function loadAll(){
     applyRows("checks", c.data, true); applyRows("actions", a.data, true); applyRows("audits", u.data, true);
     S.loaded = {checks:true, actions:true, audits:true};
     if (p && p.data) S.people = new Map(p.data.map(x => [x.user_id, x.full_name]));
+    if (S.profile.role === "admin") {
+      try { const tm = await S.sb.rpc("team_status"); if (!tm.error && Array.isArray(tm.data)) S.team = tm.data; } catch (e) {}
+    }
   }
   renderStatus(); render();
 }
@@ -521,8 +524,38 @@ function viewDashboard(){
           x.c && x.c.reviewer ? h("span", {}, "· " + x.c.reviewer) : null));
     })));
 
-  return h("div", {class:"stack"}, noDbNotice(), urgentBanner(), hero, board, heatmap(t),
+  return h("div", {class:"stack"}, noDbNotice(), urgentBanner(), hero, board, teamPanel(t), heatmap(t),
     h("div", {class:"two"}, meetingPanel(y, active, overdue), repeatPanel(t)));
+}
+/* Leadership only: who has signed in, when each person was last active, and how far
+   their own checklists are today. */
+function teamPanel(t){
+  if (!S.profile || S.profile.role !== "admin" || !Array.isArray(S.team) || !S.team.length) return null;
+  const last = {};
+  for (const coll of [S.checks, S.actions, S.audits]) for (const d of coll.values()) {
+    if (d && d.updatedBy && d.updatedAt && (!last[d.updatedBy] || d.updatedAt > last[d.updatedBy])) last[d.updatedBy] = d.updatedAt;
+  }
+  const notIn = S.team.filter(p => !p.set_password).length;
+  return h("section", {},
+    h("div", {class:"section-h"}, h("h2", {}, "Team"),
+      h("span", {class:"sub"}, notIn ? notIn + " of " + S.team.length + " have not signed in yet" : "Everyone has signed in")),
+    h("ul", {class:"list"}, S.team.map(p => {
+      const depts = (p.depts || []).map(id => DEPT[id]).filter(Boolean);
+      const seen = [p.last_sign_in, last[p.user_id]].filter(Boolean).sort().pop();
+      const status = !p.active ? h("span", {class:"chip plain"}, "Deactivated")
+        : !p.set_password ? h("span", {class:"chip bad"}, "Not signed in yet")
+        : h("span", {class:"chip ok"}, "Active" + (seen ? " · " + (fmtYMD.format(new Date(seen)) === t ? fmtTime(seen) : fmtStamp(seen)) : ""));
+      const today = depts.map(d => {
+        const x = countFor(d, t);
+        const txt = x.submitted ? (isLate(x.c, t) ? "Late " : "Submitted ") + fmtTime(x.c.submittedAt)
+          : x.answered ? x.answered + "/" + x.total + " checked" : "Not started";
+        const cls = x.submitted ? (isLate(x.c, t) ? "warn" : "ok") : (deadlineText().over ? "bad" : x.answered ? "warn" : "plain");
+        return h("span", {class:"chip " + cls, title:d.name}, d.short + ": " + txt);
+      });
+      return h("li", {class:"li"},
+        h("span", {class:"t"}, h("strong", {}, p.full_name), h("span", {class:"note"}, "  " + (p.role === "admin" ? "Leadership" : depts.map(d => d.short).join(", ") || "No department"))),
+        status, today);
+    })));
 }
 function kpi(v, k, alert, sub){ return h("div", {class:"kpi" + (alert ? " alert" : "")}, h("span", {class:"v"}, v), h("span", {class:"k"}, k), sub ? h("span", {class:"note"}, sub) : null); }
 

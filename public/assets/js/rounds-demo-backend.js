@@ -142,6 +142,13 @@
           var u = me();
           if (name === "my_profile") return Promise.resolve({ data: u ? { id: u.id, username: u.username, name: u.name, role: u.role, depts: u.depts, mustChangePassword: false } : null, error: null });
           if (name === "password_changed") return Promise.resolve({ data: null, error: null });
+          if (name === "team_status") {
+            if (!u || u.role !== "admin") return Promise.resolve({ data: [], error: null });
+            var now = Date.now();
+            return Promise.resolve({ data: Object.keys(USERS).map(function (k, i) { var x = USERS[k];
+              return { user_id: x.id, full_name: x.name, username: x.username, role: x.role, depts: x.depts, active: true,
+                       set_password: true, last_sign_in: new Date(now - (i + 1) * 47 * 60000).toISOString() }; }), error: null });
+          }
           if (name === "save_doc") return Promise.resolve(saveDoc(args));
           return Promise.resolve(err("22023", "Unknown function"));
         },
