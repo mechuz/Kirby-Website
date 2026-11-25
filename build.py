@@ -1432,6 +1432,7 @@ def build():
             "sp_css_v": fhash(PUBLIC / "surveypass" / "surveypass.css") if (PUBLIC / "surveypass" / "surveypass.css").exists() else "",
             "sp_brand_v": fhash(PUBLIC / "surveypass" / "brand.js") if (PUBLIC / "surveypass" / "brand.js").exists() else "",
             "app_icon": meta.get("icon", "/assets/img/favicon-32.png").strip(),
+            "kg_theme_v": fhash(PUBLIC / "assets" / "css" / "rounds-kirby.css"),
         }
         for key in NAV_KEYS:
             repl[f"active_{key}"] = 'aria-current="page"' if meta.get("nav") == key else ""

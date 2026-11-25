@@ -10,8 +10,7 @@
   <meta name="description" content="Staff sign-in for Daily Rounds at The Pointe at Kirby Gate.">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
   <link rel="stylesheet" href="/assets/css/mock-survey.css?v=913c4abf">
-  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="/rounds/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/assets/img/mock-survey-180.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,11 +21,15 @@
 
 </head>
 <body data-page="rounds">
+<link rel="stylesheet" href="/assets/css/rounds-kirby.css?v=43ca1d24">
 <header class="band" id="band">
   <div class="wrap">
     <div class="brand">
-      <span class="fac">The Pointe at Kirby Gate</span>
-      <h1>Daily Rounds</h1>
+      <img class="kg-logo" src="/assets/img/logo.png" alt="The Pointe at Kirby Gate" width="87" height="46">
+      <div class="brand-text">
+        <span class="fac">The Pointe at Kirby Gate</span>
+        <h1>Daily Rounds</h1>
+      </div>
     </div>
     <div class="status-row" id="statusRow"></div>
     <nav class="tabs" id="tabs" aria-label="Sections"></nav>
