@@ -3,7 +3,13 @@
 
 Runs from .github/workflows/mock-survey-report.yml. Reads today's checklists,
 corrective actions and audits from Supabase with the service key and emails a
-summary to leadership. Sends at most once per day (report_log table), only
+summary to leadership.
+
+HIPAA: findings can describe residents, so this script never requests any
+free-text field (finding, safety measures, fix, owner, notes). It asks the
+database only for codes, counts, dates and statuses, and names each issue by
+its standard checklist line. GitHub and the email provider therefore never
+receive resident information; the details stay in Daily Rounds. Sends at most once per day (report_log table), only
 between 3:00 and 5:00 PM Central unless FORCE=1.
 
 Environment (GitHub repository secrets):
@@ -59,12 +65,29 @@ def mark_sent(base, key, day):
     urllib.request.urlopen(req, timeout=30).read()
 
 
+# Only these JSON fields are ever requested. No free text: see the note at the top.
+CHECK_FIELDS = {"marks": "->", "submitted": "->", "submittedAt": "->>", "submittedBy": "->>", "signature": "->>", "reviewer": "->>"}
+ACTION_FIELDS = {"dept": "->>", "item": "->", "date": "->>", "status": "->>", "urgent": "->", "targetDate": "->>"}
+
+
+def safe_select(fields):
+    return "id," + ",".join(f"{k}:data{op}{k}" for k, op in fields.items())
+
+
+def safe_rows(rows, fields):
+    """Rebuild {id, data} rows keeping only the allowed fields (also cleans test fixtures)."""
+    out = []
+    for r in rows:
+        src = r.get("data") if isinstance(r.get("data"), dict) else r
+        out.append({"id": r["id"], "data": {k: src.get(k) for k in fields if src.get(k) is not None}})
+    return out
+
+
 def fetch(base, key, day):
     since = (datetime.date.fromisoformat(day) - datetime.timedelta(days=180)).isoformat()
     return {
-        "checks": rest(base, key, f"checks?select=id,data&day=eq.{day}"),
-        "actions": rest(base, key, f"actions?select=id,data&day=gte.{since}&order=day.desc&limit=1000"),
-        "audits": rest(base, key, f"audits?select=id,data&day=eq.{day}"),
+        "checks": rest(base, key, f"checks?select={safe_select(CHECK_FIELDS)}&day=eq.{day}"),
+        "actions": rest(base, key, f"actions?select={safe_select(ACTION_FIELDS)}&day=gte.{since}&order=day.desc&limit=1000"),
         "staff": rest(base, key, "staff?select=user_id,full_name"),
         "sent": rest(base, key, f"report_log?select=day&day=eq.{day}"),
     }
@@ -83,8 +106,9 @@ def fmt_time(iso):
 
 def build(data, day, depts):
     people = {p["user_id"]: p["full_name"] for p in data.get("staff", [])}
-    checks = {r["id"]: r["data"] for r in data["checks"]}
-    actions = [dict(r["data"], id=r["id"]) for r in data["actions"]]
+    checks = {r["id"]: r["data"] for r in safe_rows(data["checks"], CHECK_FIELDS)}
+    actions = [dict(r["data"], id=r["id"]) for r in safe_rows(data["actions"], ACTION_FIELDS)]
+    item_text = {d["id"]: d["items"] for d in depts}
     total = sum(len(d["items"]) for d in depts)
     rows, C, NC, NA, submitted, late = [], 0, 0, 0, 0, 0
     for d in depts:
@@ -117,9 +141,11 @@ def build(data, day, depts):
         subject += f" · {len(urgent)} URGENT"
 
     def act_line(a):
-        bits = [names.get(a.get("dept"), a.get("dept", "")) + (f" #{a['item']}" if a.get("item") else ""), a.get("deficiency") or "(no description)"]
-        tail = [x for x in [a.get("corrective") and "Fix: " + a["corrective"], a.get("responsible") and "Owner: " + a["responsible"],
-                            a.get("targetDate") and "Due " + a["targetDate"], a.get("status")] if x]
+        # Named by the standard checklist line only; the finding itself stays in the app.
+        items, n = item_text.get(a.get("dept")) or [], a.get("item")
+        line = items[int(n) - 1] if isinstance(n, (int, str)) and str(n).isdigit() and 0 < int(n) <= len(items) else "Corrective action (details in the app)"
+        bits = [names.get(a.get("dept"), a.get("dept", "")) + (f" #{n}" if n else ""), line]
+        tail = [x for x in [a.get("targetDate") and "Due " + a["targetDate"], a.get("status")] if x]
         return bits, tail
 
     # plain text
@@ -141,6 +167,7 @@ def build(data, day, depts):
         for a in lst:
             b, tail = act_line(a); t.append(f"  - {b[0]}: {b[1]} [{'; '.join(tail)}]")
         t.append("")
+    t.append("Resident details stay in Daily Rounds and are never included in email.")
     t.append(f"Live dashboard: {APP_URL}")
     text = "\n".join(t)
 
@@ -174,7 +201,7 @@ def build(data, day, depts):
 <h3 style="margin:18px 0 6px">Findings logged today ({len(today_findings)})</h3>{table(today_findings)}
 <h3 style="margin:18px 0 6px">Overdue corrective actions ({len(overdue)})</h3>{table(overdue)}
 <p><a href="{APP_URL}" style="display:inline-block;background:#2c6a37;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;font-weight:bold">Open the live dashboard</a></p>
-<p style="font-size:12px;color:#56675a">Sent automatically at 3:00 PM Central from Kirby Gate Daily Rounds. All times are Central (CT).</p></div>"""
+<p style="font-size:12px;color:#56675a">Sent automatically at 3:00 PM Central from Kirby Gate Daily Rounds. All times are Central (CT). Resident details stay in Daily Rounds and are never included in email; open the dashboard to see them.</p></div>"""
     return subject, text, body
 
 

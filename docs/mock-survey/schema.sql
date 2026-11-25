@@ -490,3 +490,34 @@ create policy audits_read on public.audits for select to authenticated using (pu
 drop policy if exists staff_read on public.staff;
 create policy staff_read on public.staff for select to authenticated
   using (public.is_leader() or (user_id = auth.uid() and public.is_staff()));
+
+-- ------------------------------------------------------ HIPAA access log ---
+-- (Applied to the live project as migration "hipaa_access_log".)
+-- Who opened Daily Rounds, which screens they viewed, every print/export, auto
+-- sign-outs. Append-only through log_access(); readable by leadership only.
+create table if not exists public.access_log (
+  id bigserial primary key,
+  at timestamptz not null default now(),
+  user_id uuid not null,
+  event text not null check (event in ('open','view','print','export','auto_lock','sign_out')),
+  detail text,
+  user_agent text
+);
+create index if not exists access_log_at_idx on public.access_log (at desc);
+create index if not exists access_log_user_idx on public.access_log (user_id, at desc);
+alter table public.access_log enable row level security;
+revoke all on public.access_log from anon, authenticated;
+revoke all on sequence public.access_log_id_seq from anon, authenticated;
+grant select on public.access_log to authenticated;
+drop policy if exists access_log_read on public.access_log;
+create policy access_log_read on public.access_log for select to authenticated using (public.is_leader());
+create or replace function public.log_access(p_event text, p_detail text default null, p_user_agent text default null)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null or not exists (select 1 from public.staff where user_id = auth.uid() and active) then return; end if;
+  if p_event not in ('open','view','print','export','auto_lock','sign_out') then return; end if;
+  insert into public.access_log (user_id, event, detail, user_agent)
+  values (auth.uid(), p_event, left(p_detail, 200), left(p_user_agent, 300));
+end $$;
+revoke all on function public.log_access(text, text, text) from public, anon;
+grant execute on function public.log_access(text, text, text) to authenticated;

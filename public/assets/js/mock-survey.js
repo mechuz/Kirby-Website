@@ -423,6 +423,7 @@ function route(){
   else if (VIEWS.includes(hash)) { S.view = hash; if (hash === "checklists") S.dept = null; }
   else { const home = homeDept(); if (home) { S.view = "checklists"; S.dept = home; } else S.view = "dashboard"; }
   S.openFinding = null; render(true);
+  logAccess("view", S.view + (S.view === "checklists" && S.dept ? ":" + S.dept : ""));
 }
 function go(hash){ if (location.hash === "#" + hash) route(); else location.hash = hash; }
 window.addEventListener("hashchange", route);
@@ -1067,14 +1068,17 @@ function downloadChecksCsv(){
   const {rows} = binderData(); const out = [["Date","Department","Section","Item #","Item","Result","Reviewer","Signed","Submitted"]];
   for (const r of rows) { if (!r.c) continue; r.dept.items.forEach((text, i) => out.push([r.date, r.dept.name, (secOf(r.dept, i) || {}).title || "", i+1, text, r.marks[i+1] || "", r.c.reviewer || "", r.c.signature || "", r.c.submitted ? fmtStamp(r.c.submittedAt) : ""])); }
   save("kirby-gate-checklists_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv(out));
+  logAccess("export", "checklists CSV " + S.binder.from + " to " + S.binder.to);
 }
 function downloadActionsCsv(){
   const {acts} = binderData(); const out = [["Found","Department","Checklist item","Deficiency identified","Immediate safety measures","Corrective action required","Person responsible","Target completion date","Actual completion date","Verified by","Status","Resident safety"]];
   for (const a of acts) out.push([a.date, DEPT[a.dept] ? DEPT[a.dept].name : a.dept, a.item ? "#" + a.item + " " + (a.itemText || "") : "", a.deficiency, a.safety, a.corrective, a.responsible, a.targetDate, a.actualDate, a.verifiedBy, a.status, a.urgent ? "Yes" : "No"]);
   save("kirby-gate-corrective-actions_" + S.binder.from + "_to_" + S.binder.to + ".csv", csv(out));
+  logAccess("export", "corrective actions CSV " + S.binder.from + " to " + S.binder.to);
 }
 function downloadPacket(){
   const b = S.binder, {rows, acts, auds} = binderData();
+  logAccess("print", "survey packet " + b.from + " to " + b.to);
   const C = rows.reduce((n, r) => n + r.C, 0), NC = rows.reduce((n, r) => n + r.NC, 0), NA = rows.reduce((n, r) => n + r.NA, 0);
   const done = rows.filter(r => r.c && r.c.submitted).length;
   const range = fmtDay(b.from, {year:"numeric"}) + " – " + fmtDay(b.to, {year:"numeric"});
@@ -1131,6 +1135,33 @@ S.lastDay = today();
 const STAFF_DOMAIN = (window.KG_SURVEY && window.KG_SURVEY.staffDomain) || "@staff.kirbygateliving.com";
 const IS_DEMO = !!(window.KG_SURVEY && window.KG_SURVEY.demo);
 const HOME_PATH = (window.KG_SURVEY && window.KG_SURVEY.homePath) || (IS_DEMO ? "/rounds/demo/" : "/rounds/");
+/* HIPAA safeguards (not in the demo):
+   - access log: opening the app, each screen viewed, and every print/export are recorded
+     in the database (log_access), readable by leadership only;
+   - automatic sign-out after 15 minutes without a tap or keypress, also checked when the
+     phone wakes up or the app is reopened. */
+const IDLE_LIMIT_MS = 15 * 60 * 1000;
+function logAccess(event, detail){
+  if (IS_DEMO || !S.sb || !S.profile || S.profile.mustChangePassword) return Promise.resolve();
+  return S.sb.rpc("log_access", {p_event: event, p_detail: detail || null, p_user_agent: (navigator.userAgent || "").slice(0, 300)}).then(() => {}, () => {});
+}
+let lastMark = 0;
+function markActive(force){ const n = Date.now(); if (force === true || n - lastMark > 15000) { lastMark = n; lsSet("kg-last-active", String(n)); } }
+function idleTooLong(){ const t = Number(lsGet("kg-last-active") || 0); return !!t && Date.now() - t > IDLE_LIMIT_MS; }
+async function autoLock(){
+  if (IS_DEMO || S.locking) return; S.locking = true;
+  try { await S.sb.rpc("log_access", {p_event:"auto_lock", p_detail:null, p_user_agent:null}); } catch (e) {}
+  lsSet("kg-locked", "1"); lsSet("kg-last-active", null);
+  try { await S.sb.auth.signOut(); } catch (e) {}
+  location.replace(HOME_PATH);
+}
+function checkIdle(){ if (!IS_DEMO && S.profile && idleTooLong()) autoLock(); }
+if (!IS_DEMO) {
+  ["pointerdown", "keydown", "touchstart", "wheel"].forEach(t => window.addEventListener(t, markActive, {passive:true, capture:true}));
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkIdle(); });
+  window.addEventListener("pageshow", checkIdle);
+  setInterval(checkIdle, 30000);
+}
 function loginEmail(u){ u = u.trim().toLowerCase(); return u.includes("@") ? u : u + STAFF_DOMAIN; }
 function field(id, label, attrs){ return h("div", {class:"field"}, h("label", {for:id}, label), h("input", Object.assign({class:"input", id}, attrs))); }
 function showPw(ids){ return h("label", {class:"check", style:"font-weight:500"}, h("input", {type:"checkbox", onchange:e => ids.forEach(i => { const el = document.getElementById(i); if (el) el.type = e.target.checked ? "text" : "password"; })}), "Show password"); }
@@ -1160,15 +1191,17 @@ function viewLogin(){
       return;
     }
     delete S.errors.login;
+    lsSet("kg-last-user", u.trim().toLowerCase());
     await loadProfile();
   }},
     h("h2", {}, "Sign in"),
+    !IS_DEMO && lsGet("kg-locked") ? h("div", {class:"submitted", role:"status"}, "For privacy, you were signed out after 15 minutes without activity. Sign in again to continue.") : null,
     h("p", {class:"note", style:"margin:0"}, "For " + BRAND.facilityShort + " department heads and leadership. Use the username and password you were given."),
     IS_DEMO ? h("div", {class:"panel note"}, "Demo logins (password demo for each): partner (leadership view), don (Director of Nursing), dietary (Dietary Director).") : null,
-    field("li-user", "Username", {type:"text", name:"username", autocomplete:"username", autocapitalize:"none", autocorrect:"off", spellcheck:"false", required:true}),
+    field("li-user", "Username", {type:"text", name:"username", value: IS_DEMO ? "" : (lsGet("kg-last-user") || ""), autocomplete:"username", autocapitalize:"none", autocorrect:"off", spellcheck:"false", required:true}),
     field("li-pass", "Password", {type:"password", name:"password", autocomplete:"current-password", required:true}),
     showPw(["li-pass"]), err, btn,
-    h("p", {class:"note", style:"margin:0"}, "Forgot your password? Ask ownership to reset it. Once you sign in, this phone keeps you signed in."));
+    h("p", {class:"note", style:"margin:0"}, IS_DEMO ? "Forgot your password? Ask ownership to reset it." : "Forgot your password? Ask ownership to reset it. For privacy, Daily Rounds signs you out after 15 minutes without activity."));
   return form;
 }
 function passwordForm(forced){
@@ -1234,11 +1267,15 @@ async function loadProfile(){
   const d = res.data;
   S.profile = {id:d.id, username:d.username, name:d.name || d.username, role:d.role, depts:d.depts || [], mustChangePassword:!!d.mustChangePassword};
   applyVisibility(S.profile);
+  if (!IS_DEMO) { markActive(true); lsSet("kg-locked", null); }
   S.meId = d.id; S.meName = S.profile.name; S.readOnly = d.role === "viewer";
+  logAccess("open", S.profile.role);
   route(); renderStatus();
   if (!S.profile.mustChangePassword) startSync();
 }
 async function signOut(){
+  await logAccess("sign_out");
+  lsSet("kg-last-active", null);
   try { await S.sb.auth.signOut(); } catch (e) {}
   location.replace(HOME_PATH);
 }
@@ -1254,6 +1291,7 @@ route(); renderStatus();
   });
   let session = null;
   try { session = (await S.sb.auth.getSession()).data.session; } catch (e) {}
+  if (session && !IS_DEMO && idleTooLong()) { await autoLock(); return; }
   if (session) await loadProfile();
   else { S.authChecked = true; render(true); renderStatus(); }
 })();
