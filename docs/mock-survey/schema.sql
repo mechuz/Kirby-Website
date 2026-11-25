@@ -464,3 +464,29 @@ language sql stable security definer set search_path = public, auth as $$
 $$;
 revoke all on function public.team_status() from public, anon, authenticated;
 grant execute on function public.team_status() to authenticated;
+-- ------------------------------------------------- department visibility ---
+-- Department heads (role 'director') read only their own department(s).
+-- Leadership (role 'admin') and view-only accounts ('viewer') read everything.
+-- (Applied to the live project as migration "department_visibility".)
+create or replace function public.can_view_dept(p_dept text)
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.staff
+    where user_id = auth.uid() and active and not must_change_password
+      and (role in ('admin','viewer') or p_dept = any(depts)))
+$$;
+create or replace function public.is_leader()
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.staff
+    where user_id = auth.uid() and active and not must_change_password and role in ('admin','viewer'))
+$$;
+revoke all on function public.can_view_dept(text), public.is_leader() from public, anon;
+grant execute on function public.can_view_dept(text), public.is_leader() to authenticated;
+drop policy if exists checks_read on public.checks;
+create policy checks_read on public.checks for select to authenticated using (public.can_view_dept(dept));
+drop policy if exists actions_read on public.actions;
+create policy actions_read on public.actions for select to authenticated using (public.can_view_dept(dept));
+drop policy if exists audits_read on public.audits;
+create policy audits_read on public.audits for select to authenticated using (public.can_view_dept(dept));
+drop policy if exists staff_read on public.staff;
+create policy staff_read on public.staff for select to authenticated
+  using (public.is_leader() or (user_id = auth.uid() and public.is_staff()));

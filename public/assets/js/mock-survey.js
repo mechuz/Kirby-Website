@@ -121,7 +121,17 @@ const DEPTS = [
     "Missing admissions-file elements identified and assigned for completion."]},
 ];
 const DEPT = Object.fromEntries(DEPTS.map(d => [d.id, d]));
-const TOTAL_ITEMS = DEPTS.reduce((n, d) => n + d.items.length, 0);
+let TOTAL_ITEMS = DEPTS.reduce((n, d) => n + d.items.length, 0);
+/* Department heads see only their own department(s); leadership and view-only accounts see
+   every department. The database enforces the same rule; this keeps the screens consistent. */
+const ALL_DEPTS = DEPTS.slice();
+const canSeeDept = id => DEPTS.some(d => d.id === id);
+function applyVisibility(p){
+  const own = p && p.role === "director" ? ALL_DEPTS.filter(d => (p.depts || []).includes(d.id)) : ALL_DEPTS;
+  DEPTS.splice(0, DEPTS.length, ...own);
+  TOTAL_ITEMS = DEPTS.reduce((n, d) => n + d.items.length, 0);
+}
+const visibleAudits = () => AUDITS.filter(a => canSeeDept(a.dept));
 
 /* Additional compliance checks by frequency (page 6 of the scan). */
 const AUDITS = [
@@ -344,6 +354,7 @@ function applyRows(coll, rows, full){
   const map = COLL[coll], seen = new Set();
   for (const r of rows) {
     if (!r || !r.id) continue;
+    if (r.data && r.data.dept && !canSeeDept(r.data.dept)) continue;   // another department's record
     seen.add(r.id);
     const w = W[coll + "/" + r.id];
     if (w && w.busy) continue;              // the save result will land in a moment
@@ -497,7 +508,7 @@ function viewDashboard(){
         h("span", {}, h("i", {style:"background:var(--na)"}), tot.NA + " not applicable"),
         h("span", {}, h("i", {style:"background:var(--empty)"}), (TOTAL_ITEMS - tot.answered) + " not checked")),
       h("div", {class:"row"}, h("span", {class:"chip " + (dl.over && pendingN ? "bad" : "plain")}, dl.text),
-        h("span", {class:"note"}, pendingN ? pendingN + " of " + DEPTS.length + " checklists not submitted yet" : "All " + DEPTS.length + " checklists submitted"))),
+        h("span", {class:"note"}, pendingN ? pendingN + " of " + DEPTS.length + " checklists not submitted yet" : (DEPTS.length === 1 ? "Checklist submitted" : "All " + DEPTS.length + " checklists submitted")))),
     h("div", {class:"kpis"},
       kpi(tot.submitted + "/" + DEPTS.length, "Departments submitted today"),
       kpi(tot.C + tot.NC ? pct(tot.C, tot.C + tot.NC) + "%" : "—", "Compliance rate of checked items"),
@@ -589,7 +600,7 @@ function meetingPanel(y, active, overdue){
     h("div", {class:"section-h"}, h("h2", {}, "For the 9:00 AM meeting"), h("span", {class:"sub"}, "Yesterday, " + fmtDay(y))),
     h("div", {class:"panel stack", style:"gap:14px"},
       h("div", {}, h("div", {class:"lbl"}, "Checklists not submitted yesterday"),
-        missing.length ? h("div", {class:"row", style:"margin-top:6px"}, missing.map(d => h("span", {class:"chip bad"}, d.short))) : h("div", {class:"chip ok", style:"margin-top:6px"}, "All " + DEPTS.length + " submitted")),
+        missing.length ? h("div", {class:"row", style:"margin-top:6px"}, missing.map(d => h("span", {class:"chip bad"}, d.short))) : h("div", {class:"chip ok", style:"margin-top:6px"}, (DEPTS.length === 1 ? "Submitted" : "All " + DEPTS.length + " submitted"))),
       h("div", {}, h("div", {class:"lbl"}, "Submitted after the 2:30 PM deadline yesterday"),
         lateY.length ? h("div", {class:"row", style:"margin-top:6px"}, lateY.map(d => h("span", {class:"chip warn"}, d.short))) : h("div", {class:"chip ok", style:"margin-top:6px"}, "None")),
       listBlock("Findings logged yesterday", yFindings),
@@ -762,7 +773,7 @@ function signoff(dept, date, id, x, c, locked){
 function deptPicker(){
   const t = today();
   return h("div", {class:"stack"}, noDbNotice(),
-    h("div", {class:"section-h"}, h("h2", {}, "Daily departmental compliance checklists"), h("span", {class:"sub"}, fmtDay(t, {year:"numeric"}) + " · " + TOTAL_ITEMS + " line items across " + DEPTS.length + " departments")),
+    h("div", {class:"section-h"}, h("h2", {}, "Daily departmental compliance checklists"), h("span", {class:"sub"}, fmtDay(t, {year:"numeric"}) + " · " + TOTAL_ITEMS + " line items across " + DEPTS.length + (DEPTS.length === 1 ? " department" : " departments"))),
     h("div", {class:"dept-pick"}, DEPTS.map(d => { const x = countFor(d, t);
       return h("button", {class:"dept", type:"button", onclick:() => { S.date = t; go("dept-" + d.id); }},
         h("h3", {}, d.short), h("span", {class:"lead"}, d.items.length + " items · " + d.lead),
@@ -879,7 +890,7 @@ function auditState(a){
 }
 function auditsDueCount(){
   let n = 0;
-  for (const a of AUDITS) {
+  for (const a of visibleAudits()) {
     if (a.freq === "shift") { n += shiftSlots(a).filter(s => !s.doc && s.started).length; continue; }
     const st = auditState(a); if (!st.doc) n++;
   }
@@ -887,7 +898,7 @@ function auditsDueCount(){
 }
 function auditsOverdueCount(){
   let n = 0;
-  for (const a of AUDITS) {
+  for (const a of visibleAudits()) {
     if (a.freq === "shift") { n += shiftSlots(a).filter(s => !s.doc && s.ended).length; continue; }
     if (auditState(a).overdue) n++;
   }
@@ -908,7 +919,7 @@ function shiftSlots(a){
 function viewAudits(){
   return h("div", {class:"stack"}, noDbNotice(),
     h("div", {class:"section-h"}, h("h2", {}, "Additional compliance checks by frequency"), h("span", {class:"sub"}, "Scheduled audits that supplement the daily checklists so responsibilities do not get overlooked.")),
-    h("div", {class:"audits"}, AUDITS.map(auditCard)),
+    h("div", {class:"audits"}, visibleAudits().map(auditCard)),
     h("p", {class:"note"}, "These are a combination of regulatory obligations, documentation reviews, and The Pointe's internal quality expectations. Not every item is required by Tennessee law at the listed frequency."));
 }
 function auditCard(a){
@@ -1222,6 +1233,7 @@ async function loadProfile(){
   }
   const d = res.data;
   S.profile = {id:d.id, username:d.username, name:d.name || d.username, role:d.role, depts:d.depts || [], mustChangePassword:!!d.mustChangePassword};
+  applyVisibility(S.profile);
   S.meId = d.id; S.meName = S.profile.name; S.readOnly = d.role === "viewer";
   route(); renderStatus();
   if (!S.profile.mustChangePassword) startSync();
