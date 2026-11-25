@@ -1,4 +1,10 @@
 "use strict";
+/* Brand: Kirby Gate by default; another deployment (e.g. SurveyPass) overrides
+   these through window.KG_SURVEY.brand in its config script. */
+const BRAND = Object.assign({
+  product: "Daily Rounds", facility: "The Pointe at Kirby Gate", facilityShort: "Kirby Gate",
+  address: "6480 Quince Rd, Memphis, TN 38119", fileSlug: "kirby-gate-daily-rounds"
+}, (window.KG_SURVEY && window.KG_SURVEY.brand) || {});
 /* ---------------------------------------------------------------------------
    Checklist definitions: transcribed from the Daily Departmental Compliance
    Checklist (scan of Nov 13, 2026). C = compliant, NC = needs correction,
@@ -1029,14 +1035,14 @@ function downloadPacket(){
   const done = rows.filter(r => r.c && r.c.submitted).length;
   const range = fmtDay(b.from, {year:"numeric"}) + " – " + fmtDay(b.to, {year:"numeric"});
   const td = v => "<td>" + esc(v) + "</td>";
-  let html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daily Rounds Packet — The Pointe at Kirby Gate</title><style>' +
+  let html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + esc(BRAND.product) + ' Packet — ' + esc(BRAND.facility) + '</title><style>' +
     'body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:24px;font-size:12px}h1{font-size:20px;margin:0}h2{font-size:15px;margin:22px 0 8px;border-bottom:2px solid #111;padding-bottom:3px}' +
     '.band{background:#111;color:#fff;padding:14px 18px;margin-bottom:14px}.band .s{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}' +
     'table{border-collapse:collapse;width:100%;margin-bottom:8px}th,td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top}th{background:#eee;font-size:11px}' +
     '.kp{display:flex;gap:12px;flex-wrap:wrap}.kp div{border:1px solid #999;padding:8px 12px}.kp b{display:block;font-size:18px}.c{text-align:center}.nc{background:#fde4d4;font-weight:bold}' +
     '.pg{page-break-before:always}.small{font-size:10.5px;color:#444}@media print{body{margin:0}.band{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>';
-  html += '<div class="band"><div class="s">The Pointe at Kirby Gate · 6480 Quince Rd, Memphis, TN 38119</div><h1>Daily Rounds Packet</h1><div>' + esc(range) + '</div></div>';
-  html += '<p class="small">Generated ' + esc(fmtStamp(new Date().toISOString())) + ' (Central) from the Daily Rounds system. Daily Departmental Compliance Checklists: C = compliant, NC = needs correction, NA = not applicable. Every NC is documented in the corrective-action log.</p>';
+  html += '<div class="band"><div class="s">' + esc(BRAND.facility + (BRAND.address ? " · " + BRAND.address : "")) + '</div><h1>' + esc(BRAND.product) + ' Packet</h1><div>' + esc(range) + '</div></div>';
+  html += '<p class="small">Generated ' + esc(fmtStamp(new Date().toISOString())) + ' (Central) from the ' + esc(BRAND.product) + ' system. Daily Departmental Compliance Checklists: C = compliant, NC = needs correction, NA = not applicable. Every NC is documented in the corrective-action log.</p>';
   html += '<div class="kp"><div><b>' + done + '/' + rows.length + '</b>checklists submitted</div><div><b>' + (C + NC ? pct(C, C + NC) + '%' : '—') + '</b>compliance rate</div><div><b>' + C + ' / ' + NC + ' / ' + NA + '</b>C / NC / NA</div><div><b>' + acts.filter(a => a.status === "Closed").length + '/' + acts.length + '</b>corrective actions closed</div></div>';
   html += '<h2>Checklist completion log</h2><table><tr><th>Date</th><th>Department</th><th>Reviewer</th><th>C</th><th>NC</th><th>NA</th><th>Completed</th><th>Urgent escalated</th><th>Department head signature</th><th>Time submitted</th></tr>';
   for (const r of rows) if (r.c || r.answered) html += '<tr>' + td(fmtDay(r.date)) + td(r.dept.name) + td(r.c && r.c.reviewer) + '<td class="c">' + r.C + '</td><td class="c' + (r.NC ? ' nc' : '') + '">' + r.NC + '</td><td class="c">' + r.NA + '</td>' + td(r.answered === r.dept.items.length ? "Yes" : "Partial") + td(r.c && r.c.urgentEscalated) + td(r.c && r.c.signature) + td(r.c && r.c.submitted ? fmtStamp(r.c.submittedAt) + (isLate(r.c, r.date) ? " (late)" : "") : "Not submitted") + '</tr>';
@@ -1056,7 +1062,7 @@ function downloadPacket(){
   if (b.detail) {
     for (const r of rows) {
       if (!r.c) continue;
-      html += '<div class="pg"><div class="band"><div class="s">The Pointe at Kirby Gate · Daily Departmental Compliance Checklist</div><h1>' + esc(r.dept.name) + '</h1><div>Responsible lead: ' + esc(r.dept.lead) + '</div></div>';
+      html += '<div class="pg"><div class="band"><div class="s">' + esc(BRAND.facility) + ' · Daily Departmental Compliance Checklist</div><h1>' + esc(r.dept.name) + '</h1><div>Responsible lead: ' + esc(r.dept.lead) + '</div></div>';
       html += '<p>Date: <b>' + esc(fmtDay(r.date, {year:"numeric"})) + '</b> &nbsp; Reviewer: <b>' + esc(r.c.reviewer || "") + '</b></p><table><tr><th>#</th><th>Compliance item</th><th>C</th><th>NC</th><th>NA</th></tr>';
       r.dept.items.forEach((text, i) => { const m = r.marks[i+1]; const sh = (r.dept.sections || []).find(x => x.start === i); if (sh && r.dept.sections.length > 1) html += '<tr><th colspan="5">' + esc(sh.title) + '</th></tr>'; html += '<tr><td>' + (i+1) + '</td>' + td(text) + '<td class="c">' + (m === "C" ? "X" : "") + '</td><td class="c' + (m === "NC" ? " nc" : "") + '">' + (m === "NC" ? "X" : "") + '</td><td class="c">' + (m === "NA" ? "X" : "") + '</td></tr>'; });
       html += '</table>';
@@ -1067,7 +1073,7 @@ function downloadPacket(){
     }
   }
   html += '</body></html>';
-  save("kirby-gate-daily-rounds_" + b.from + "_to_" + b.to + ".html", html);
+  save(BRAND.fileSlug + "_" + b.from + "_to_" + b.to + ".html", html);
 }
 
 /* ---------------------------------------------------------------- boot -- */
@@ -1078,16 +1084,16 @@ setInterval(() => { if (S.lastDay !== today()) { const old = S.lastDay; S.lastDa
 S.lastDay = today();
 
 /* ------------------------------------------------------------- sign-in -- */
-const STAFF_DOMAIN = "@staff.kirbygateliving.com";
+const STAFF_DOMAIN = (window.KG_SURVEY && window.KG_SURVEY.staffDomain) || "@staff.kirbygateliving.com";
 const IS_DEMO = !!(window.KG_SURVEY && window.KG_SURVEY.demo);
-const HOME_PATH = IS_DEMO ? "/rounds/demo/" : "/rounds/";
+const HOME_PATH = (window.KG_SURVEY && window.KG_SURVEY.homePath) || (IS_DEMO ? "/rounds/demo/" : "/rounds/");
 function loginEmail(u){ u = u.trim().toLowerCase(); return u.includes("@") ? u : u + STAFF_DOMAIN; }
 function field(id, label, attrs){ return h("div", {class:"field"}, h("label", {for:id}, label), h("input", Object.assign({class:"input", id}, attrs))); }
 function showPw(ids){ return h("label", {class:"check", style:"font-weight:500"}, h("input", {type:"checkbox", onchange:e => ids.forEach(i => { const el = document.getElementById(i); if (el) el.type = e.target.checked ? "text" : "password"; })}), "Show password"); }
 
 function viewNotConfigured(){
   return h("section", {class:"panel stack auth"},
-    h("h2", {}, "Daily Rounds isn't connected yet"),
+    h("h2", {}, BRAND.product + " isn't connected yet"),
     h("p", {class:"note", style:"margin:0"}, "Ownership still needs to connect the database. If you see this after setup, reload the page."));
 }
 function viewLogin(){
@@ -1113,7 +1119,7 @@ function viewLogin(){
     await loadProfile();
   }},
     h("h2", {}, "Sign in"),
-    h("p", {class:"note", style:"margin:0"}, "For Kirby Gate department heads and leadership. Use the username and password you were given."),
+    h("p", {class:"note", style:"margin:0"}, "For " + BRAND.facilityShort + " department heads and leadership. Use the username and password you were given."),
     IS_DEMO ? h("div", {class:"panel note"}, "Demo logins (password demo for each): partner (leadership view), don (Director of Nursing), dietary (Dietary Director).") : null,
     field("li-user", "Username", {type:"text", name:"username", autocomplete:"username", autocapitalize:"none", autocorrect:"off", spellcheck:"false", required:true}),
     field("li-pass", "Password", {type:"password", name:"password", autocomplete:"current-password", required:true}),
@@ -1178,7 +1184,7 @@ async function loadProfile(){
   }
   if (!res.data) {
     await S.sb.auth.signOut().catch(() => {});
-    S.errors.login = "This account doesn't have access to Daily Rounds. Ask ownership to check it.";
+    S.errors.login = "This account doesn't have access to " + BRAND.product + ". Ask ownership to check it.";
     render(true); renderStatus(); return;
   }
   const d = res.data;

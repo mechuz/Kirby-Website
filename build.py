@@ -1428,6 +1428,10 @@ def build():
             "ms_css_v": fhash(PUBLIC / "assets" / "css" / "mock-survey.css"),
             "ms_js_v": fhash(PUBLIC / "assets" / "js" / "mock-survey.js"),
             "ms_cfg_v": fhash(PUBLIC / "assets" / "js" / "mock-survey-config.js"),
+            "ms_demo_v": fhash(PUBLIC / "assets" / "js" / "rounds-demo-backend.js"),
+            "sp_css_v": fhash(PUBLIC / "surveypass" / "surveypass.css") if (PUBLIC / "surveypass" / "surveypass.css").exists() else "",
+            "sp_brand_v": fhash(PUBLIC / "surveypass" / "brand.js") if (PUBLIC / "surveypass" / "brand.js").exists() else "",
+            "app_icon": meta.get("icon", "/assets/img/favicon-32.png").strip(),
         }
         for key in NAV_KEYS:
             repl[f"active_{key}"] = 'aria-current="page"' if meta.get("nav") == key else ""

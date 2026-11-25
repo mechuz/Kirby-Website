@@ -1,19 +1,21 @@
-// Daily Rounds DEMO backend (kirbygateliving.com/rounds/demo/).
+// Demo backend for Daily Rounds (/rounds/demo/) and SurveyPass (/surveypass/demo/).
+// A page may set window.DEMO_BRAND first (separate script) to rebrand it.
 // Stands in for the Supabase client the real app uses, so the demo runs the
 // real app code with sample data that lives only in this browser
 // (localStorage). Nothing here talks to a server or touches real records.
 (function () {
   "use strict";
-  window.KG_SURVEY = { url: "demo", anonKey: "demo", demo: true };
+  var DB_CFG = window.DEMO_BRAND || {};
+  window.KG_SURVEY = Object.assign({ url: "demo", anonKey: "demo", demo: true }, DB_CFG);
+  var PREFIX = DB_CFG.storageKey || "kg-rounds-demo", DOMAIN = DB_CFG.staffDomain || "@staff.kirbygateliving.com";
 
-  var DB_KEY = "kg-rounds-demo-db-v2", AUTH_KEY = "kg-rounds-demo-auth", OUT_KEY = "kg-rounds-demo-signedout";
+  var DB_KEY = PREFIX + "-db-v2", AUTH_KEY = PREFIX + "-auth", OUT_KEY = PREFIX + "-signedout";
   var TZ = "America/Chicago";
   var ITEMS = { nursing: 23, activities: 1, dietary: 14, maint: 28, admin: 37 };
-  var USERS = {
-    "partner@staff.kirbygateliving.com": { pw: "demo", id: "demo-partner", username: "partner", name: "Partner (demo)", role: "admin", depts: [] },
-    "don@staff.kirbygateliving.com": { pw: "demo", id: "demo-don", username: "don", name: "Director of Nursing (demo)", role: "director", depts: ["nursing"] },
-    "dietary@staff.kirbygateliving.com": { pw: "demo", id: "demo-dietary", username: "dietary", name: "Dietary Director (demo)", role: "director", depts: ["dietary"] }
-  };
+  var USERS = {};
+  USERS["partner" + DOMAIN] = { pw: "demo", id: "demo-partner", username: "partner", name: DB_CFG.leaderName || "Partner (demo)", role: "admin", depts: [] };
+  USERS["don" + DOMAIN] = { pw: "demo", id: "demo-don", username: "don", name: "Director of Nursing (demo)", role: "director", depts: ["nursing"] };
+  USERS["dietary" + DOMAIN] = { pw: "demo", id: "demo-dietary", username: "dietary", name: "Dietary Director (demo)", role: "director", depts: ["dietary"] };
 
   function ls(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k)); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
   var fmt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
@@ -148,5 +150,5 @@
       };
     }
   };
-  window.KG_DEMO_RESET = function () { ls(DB_KEY, null); ls(AUTH_KEY, null); ls(OUT_KEY, null); location.replace("/rounds/demo/"); };
+  window.KG_DEMO_RESET = function () { ls(DB_KEY, null); ls(AUTH_KEY, null); ls(OUT_KEY, null); location.replace(window.KG_SURVEY.homePath || "/rounds/demo/"); };
 })();
