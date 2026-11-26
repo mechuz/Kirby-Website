@@ -1,11 +1,11 @@
 {
- "fetched_at": "2026-11-25T19:15:51Z",
+ "fetched_at": "2026-11-26T19:00:04Z",
  "sources": [
   {
    "name": "Senior Housing News",
    "url": "https://seniorhousingnews.com/feed/",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
@@ -75,7 +75,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/health_medicine/healthy_aging.xml",
    "ok": true,
-   "count": 3,
+   "count": 4,
    "error": ""
   },
   {
@@ -108,6 +108,18 @@
   }
  ],
  "items": [
+  {
+   "title": "Too much of this common nutrient could be accelerating blood vessel aging",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261124055847.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-26T03:53:48Z"
+  },
+  {
+   "title": "High-End Senior Living Development Wave Offers New Opportunities to Go Green",
+   "link": "https://seniorhousingnews.com/2026/11/25/high-end-senior-living-development-wave-offers-new-opportunities-to-go-green/",
+   "source": "Senior Housing News",
+   "published": "2026-11-25T20:50:07Z"
+  },
   {
    "title": "Are You Prepared for an Emergency?",
    "link": "https://www.argentum.org/are-you-prepared-for-an-emergency/",
