@@ -389,7 +389,7 @@ async function loadAll(){
     applyRows("checks", c.data, true); applyRows("actions", a.data, true); applyRows("audits", u.data, true);
     S.loaded = {checks:true, actions:true, audits:true};
     if (p && p.data) S.people = new Map(p.data.map(x => [x.user_id, x.full_name]));
-    if (S.profile.role === "admin") {
+    if (S.profile.role === "admin" || S.profile.role === "viewer") {
       try { const tm = await S.sb.rpc("team_status"); if (!tm.error && Array.isArray(tm.data)) S.team = tm.data; } catch (e) {}
     }
   }
