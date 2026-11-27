@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-26T19:00:04Z",
+ "fetched_at": "2026-11-27T18:59:51Z",
  "sources": [
   {
    "name": "Senior Housing News",
@@ -68,7 +68,7 @@
    "name": "ScienceDaily",
    "url": "https://www.sciencedaily.com/rss/mind_brain/alzheimer's.xml",
    "ok": true,
-   "count": 5,
+   "count": 6,
    "error": ""
   },
   {
@@ -108,6 +108,18 @@
   }
  ],
  "items": [
+  {
+   "title": "12 strategies to cut your risk of dementia. Take this quiz to start",
+   "link": "https://www.npr.org/2026/11/27/nx-s1-6050867/prevent-dementia-alzheimers-your-turn",
+   "source": "NPR Health",
+   "published": "2026-11-27T10:00:00Z"
+  },
+  {
+   "title": "One type of physical activity is linked to a 20% higher dementia risk",
+   "link": "https://www.sciencedaily.com/releases/2026/11/261125045246.htm",
+   "source": "ScienceDaily",
+   "published": "2026-11-27T08:45:06Z"
+  },
   {
    "title": "Too much of this common nutrient could be accelerating blood vessel aging",
    "link": "https://www.sciencedaily.com/releases/2026/11/261124055847.htm",
@@ -197,12 +209,6 @@
    "link": "https://www.npr.org/2026/11/23/nx-s1-6047706/health-medicare-for-all-chances",
    "source": "NPR Health",
    "published": "2026-11-23T16:00:49Z"
-  },
-  {
-   "title": "Medicare looks a bit different in 2027, so don't miss open enrollment",
-   "link": "https://www.npr.org/2026/11/22/nx-s1-6036735/medicare-open-enrollment-2027",
-   "source": "NPR Health",
-   "published": "2026-11-22T13:11:04Z"
   },
   {
    "title": "Alzheimer’s breakthrough exposes a hidden flaw in the brain’s cleanup system",
